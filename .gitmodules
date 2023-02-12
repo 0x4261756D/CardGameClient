@@ -1,0 +1,3 @@
+[submodule "CardGameUtils"]
+	path = CardGameUtils
+	url = https://github.com/0x4261756D/CardGameUtils

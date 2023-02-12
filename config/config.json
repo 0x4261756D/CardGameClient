@@ -1,0 +1,40 @@
+{
+  "windows": {
+    "deck_edit_address": "127.0.0.1",
+    "deck_edit_port": 7042,
+    "width": 1080,
+    "height": 720,
+    "should_spawn_core": true,
+    "core_info": {
+      "FileName": "../../../../CardGameCore/bin/Debug/net6.0/CardGameCore.exe",
+      "Arguments": "--mode=client --config=../../../config/config.json",
+      "CreateNoWindow": false,
+      "Domain": null,
+      "ErrorDialog": false,
+      "UseShellExecute": false,
+      "WorkingDirectory": "../../../../CardGameCore"
+    },
+    "player_name": null,
+    "should_save_player_name": false,
+    "server_address": "127.0.0.1"
+  },
+  "linux": {
+    "deck_edit_address": "127.0.0.1",
+    "deck_edit_port": 7042,
+    "width": 1080,
+    "height": 720,
+    "should_spawn_core": true,
+    "core_info": {
+      "FileName": "../../../../CardGameCore/bin/Debug/net6.0/CardGameCore",
+      "Arguments": "--mode=client --config=../../../config/config.json",
+      "CreateNoWindow": false,
+      "Domain": null,
+      "ErrorDialog": false,
+      "UseShellExecute": false,
+      "WorkingDirectory": "../../../../CardGameCore"
+    },
+    "player_name": null,
+    "should_save_player_name": false,
+    "server_address": "localhost"
+  }
+}
