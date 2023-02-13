@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -156,6 +157,10 @@ public partial class DeckEditWindow : Window
 		}
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 	}
+	public void ClassSelectionChanged(object sender, SelectionChangedEventArgs args)
+	{
+		Log($"{args.ToString()}");
+	}
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
 		string newName = this.Find<TextBox>("NewDeckName").Text;
@@ -221,6 +226,8 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 		{
 			Decknames.Add(name);
 		}
+		classes.Remove(GameConstants.PlayerClass.UNKNOWN);
+		classes.Remove(GameConstants.PlayerClass.All);
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;
@@ -231,6 +238,11 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 
+	private ObservableCollection<GameConstants.PlayerClass> classes = new ObservableCollection<GameConstants.PlayerClass>(Enum.GetValues<GameConstants.PlayerClass>());
+	public ObservableCollection<GameConstants.PlayerClass> Classes
+	{
+		get => classes;
+	}
 	private ObservableCollection<string> decknames = new ObservableCollection<string>();
 	public ObservableCollection<string> Decknames
 	{
