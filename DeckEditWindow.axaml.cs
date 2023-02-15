@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using CardGameUtils;
 using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
@@ -184,6 +185,23 @@ public partial class DeckEditWindow : Window
 	public void ClassSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
 		LoadSidebar(SidebarTextBox?.Text ?? "");
+		foreach(Button child in DecklistPanel.Children)
+		{
+												// Oh boy, do I love GUI programming...
+			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content).DataContext!).card_class;
+			if(cardClass != GameConstants.PlayerClass.All &&
+				cardClass != (GameConstants.PlayerClass?)args.AddedItems[0])
+			{
+				child.BorderBrush = Brushes.Red;
+				child.BorderThickness = new Avalonia.Thickness(5);
+			}
+			else
+			{
+				child.BorderBrush = null;
+				child.BorderThickness = new Avalonia.Thickness(1);
+			}
+			
+		}
 	}
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
