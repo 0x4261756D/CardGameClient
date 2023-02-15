@@ -27,6 +27,8 @@ public partial class DeckEditWindow : Window
 			DeckSelectBox.SelectedIndex = 0;
 		}
 		LoadSidebar("");
+		this.Find<Viewbox>("ClassAbilityBox").DataContext = null;
+		this.Find<Viewbox>("ClassQuestBox").DataContext = null;
 	}
 	public void BackClick(object sender, RoutedEventArgs args)
 	{
@@ -152,7 +154,27 @@ public partial class DeckEditWindow : Window
 				name = args.AddedItems[0]!.ToString()!
 			}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 			DecklistPanel.Children.Clear();
-			foreach (CardStruct c in DeserializePayload<DeckPackets.ListResponse>(payload).cards)
+			DeckPackets.Deck response = DeserializePayload<DeckPackets.ListResponse>(payload).deck;
+			if(response.player_class == GameConstants.PlayerClass.UNKNOWN)
+			{
+				ClassSelectBox.SelectedIndex = -1;
+			}
+			else
+			{
+				ClassSelectBox.SelectedItem = response.player_class;
+			}
+			if(response.ability != null)
+			{
+				Viewbox b = this.Find<Viewbox>("ClassAbilityBox");
+				b = UIUtils.CreateGenericCard(response.ability);
+			}
+			if(response.quest != null)
+			{
+				Viewbox b = this.Find<Viewbox>("ClassQuestBox");
+				b = UIUtils.CreateGenericCard(response.quest);
+			}
+
+			foreach (CardStruct c in response.cards)
 			{
 				DecklistPanel.Children.Add(CreateDeckButton(c));
 			}
@@ -182,12 +204,14 @@ public partial class DeckEditWindow : Window
 	}
 	public void SaveDeckClick(object? sender, RoutedEventArgs args)
 	{
-		var DecklistPanel = this.Find<WrapPanel>("DecklistPanel");
 		Request(new DeckPackets.ListUpdateRequest
 		{
 			deck = new DeckPackets.Deck
 			{
 				cards = DecklistPanel.Children.ToList().ConvertAll(x => (CardStruct)((Viewbox)((Button)x).Content).DataContext!).ToArray(),
+				ability = (CardStruct?)this.Find<Viewbox>("ClassAbilityBox").DataContext,
+				quest = (CardStruct?)this.Find<Viewbox>("ClassQuestBox").DataContext,
+				player_class = (GameConstants.PlayerClass?)ClassSelectBox.SelectedItem ?? GameConstants.PlayerClass.UNKNOWN,
 				name = ((string)DeckSelectBox.SelectedItem!)
 			}
 		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
