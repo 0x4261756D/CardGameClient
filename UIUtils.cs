@@ -43,14 +43,15 @@ public class UIUtils
 		{
 			Text = c.name,
 			FontSize = 18,
+			Foreground = c.card_type == GameConstants.CardType.Creature ? Brushes.Black : Brushes.White,
 		});
 		if(c.card_type == GameConstants.CardType.Creature)
 		{
-			p.Background = Brushes.Beige;
+			p.Background = Brushes.Orange;
 		}
 		else if(c.card_type == GameConstants.CardType.Spell)
 		{
-			p.Background = Brushes.AliceBlue;
+			p.Background = Brushes.Blue;
 		}
 		box.Child = p;
 		box.DataContext = c;
