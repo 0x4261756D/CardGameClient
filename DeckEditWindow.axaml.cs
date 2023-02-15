@@ -38,7 +38,9 @@ public partial class DeckEditWindow : Window
 	}
 	public void LoadSidebar(string fil)
 	{
-		List<byte> payload = Request(new DeckPackets.SearchRequest() { filter = fil }, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		GameConstants.PlayerClass playerClass = (GameConstants.PlayerClass?)ClassSelectBox.SelectedItem ?? GameConstants.PlayerClass.All;
+		List<byte> payload = Request(new DeckPackets.SearchRequest() { filter = fil, playerClass = playerClass },
+			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		cardpool = DeserializePayload<DeckPackets.SearchResponse>(payload).cards;
 		List<Control> items = new List<Control>();
 		foreach (CardStruct c in cardpool)
@@ -159,7 +161,7 @@ public partial class DeckEditWindow : Window
 	}
 	public void ClassSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		Log($"{args.ToString()}");
+		LoadSidebar(SidebarTextBox?.Text ?? "");
 	}
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
@@ -205,8 +207,7 @@ public partial class DeckEditWindow : Window
 	public void SidebarTextInput(object? sender, KeyEventArgs args)
 	{
 		TextBox? tb = (TextBox?)sender;
-		if (sender == null || tb?.Text == null) return;
-		LoadSidebar(tb.Text);
+		LoadSidebar(tb?.Text ?? "");
 	}
 }
 
