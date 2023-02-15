@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -60,12 +61,14 @@ public partial class DeckEditWindow : Window
 	{
 		if (sender == null) return;
 		if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-		this.Find<Panel>("CardImagePanel").Children.Clear();
+		CardImagePanel.Children.Clear();
 		CardStruct c = ((CardStruct)(((Viewbox)sender).DataContext!));
 		Viewbox v = UIUtils.CreateGenericCard(c);
-		this.Find<Panel>("CardImagePanel").Children.Add(v);
-		CardTextBlock.Text = c.ToString().Replace(" | ", "\n").Remove(0, 7).Replace("controller: -1\n", "");
+		CardImagePanel.Children.Add(v);
+		
+		CardTextBlock.Text = c.Format(inDeckEdit: true);
 	}
+
 	public void AddCardClick(object? sender, RoutedEventArgs args)
 	{
 		if (sender != null)
