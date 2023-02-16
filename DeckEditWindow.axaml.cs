@@ -104,7 +104,7 @@ public partial class DeckEditWindow : Window
 		}
 	}
 
-	private void ClassQuestRemoveClick(object sender, RoutedEventArgs args)
+	private void ContentRemoveClick(object sender, RoutedEventArgs args)
 	{
 		((Button)sender).Content = null;
 	}
@@ -135,8 +135,8 @@ public partial class DeckEditWindow : Window
 	private void MoveClick(object? sender, RoutedEventArgs e)
 	{
 		Button button = (Button)sender!;
-		int index = this.Find<WrapPanel>("DecklistPanel").Children.IndexOf(button);
-		int max = this.Find<WrapPanel>("DecklistPanel").Children.Count - 1;
+		int index = DecklistPanel.Children.IndexOf(button);
+		int max = DecklistPanel.Children.Count - 1;
 		StackPanel panel = new StackPanel();
 
 		NumericUpDown numeric = new NumericUpDown
@@ -155,13 +155,29 @@ public partial class DeckEditWindow : Window
 				Text = "Move"
 			}
 		};
-		submitButton.Click += (sender, _) =>
+		submitButton.Click += (_, _) =>
 		{
 			int newInd = (int)numeric.Value;
 			if (newInd < 0 || newInd > max) return;
-			this.Find<WrapPanel>("DecklistPanel").Children.RemoveAt(index);
-			this.Find<WrapPanel>("DecklistPanel").Children.Insert(newInd, button);
+			DecklistPanel.Children.RemoveAt(index);
+			DecklistPanel.Children.Insert(newInd, button);
 		};
+		CardStruct c = ((CardStruct)((Viewbox)button.Content).DataContext!);
+		if(c.can_be_class_ability)
+		{
+			Button setAbilityButton = new Button
+			{
+				Content = new TextBlock
+				{
+					Text = "Set as ability"
+				}
+			};
+			setAbilityButton.Click += (_, _) =>
+			{
+				this.Find<Button>("ClassAbilityButton").Content = UIUtils.CreateGenericCard(c);
+			};
+			panel.Children.Add(setAbilityButton);
+		}
 		panel.Children.Add(submitButton);
 		moveFlyout.Content = panel;
 		moveFlyout.ShowAt(button, true);

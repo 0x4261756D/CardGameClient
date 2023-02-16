@@ -59,11 +59,11 @@
 		<TextBlock Grid.Row="3" Grid.Column="4">
 			Your ability:
 		</TextBlock>
-		<Button x:Name="ClassAbilityButton" Grid.Row="3" Grid.Column="5"/>
+		<Button x:Name="ClassAbilityButton" Grid.Row="3" Grid.Column="5" Click="ContentRemoveClick"/>
 		<TextBlock Grid.Row="3" Grid.Column="6">
 			Your quest:
 		</TextBlock>
-		<Button x:Name="ClassQuestButton" Grid.Row="3" Grid.Column="7" Click="ClassQuestRemoveClick"/>
+		<Button x:Name="ClassQuestButton" Grid.Row="3" Grid.Column="7" Click="ContentRemoveClick"/>
 		<Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="6" BorderThickness="2" BorderBrush="White">
 			<WrapPanel x:Name="DecklistPanel">
 			</WrapPanel>
