@@ -28,8 +28,6 @@ public partial class DeckEditWindow : Window
 			DeckSelectBox.SelectedIndex = 0;
 		}
 		LoadSidebar("");
-		this.Find<Viewbox>("ClassAbilityBox").DataContext = null;
-		this.Find<Viewbox>("ClassQuestBox").DataContext = null;
 	}
 	public void BackClick(object sender, RoutedEventArgs args)
 	{
@@ -54,11 +52,19 @@ public partial class DeckEditWindow : Window
 			{
 				Content = v,
 			};
-			b.Click += AddCardClick;
+			if(c.card_type == GameConstants.CardType.Quest)
+			{
+				b.Click += SetCardAsQuestClick;
+			}
+			else
+			{
+				b.Click += AddCardToDeckClick;
+			}
 			items.Add(b);
 		}
 		SidebarList.Items = items;
 	}
+
 	private void CardHover(object? sender, PointerEventArgs args)
 	{
 		if (sender == null) return;
@@ -71,14 +77,13 @@ public partial class DeckEditWindow : Window
 		CardTextBlock.Text = c.Format(inDeckEdit: true);
 	}
 
-	public void AddCardClick(object? sender, RoutedEventArgs args)
+	public void AddCardToDeckClick(object? sender, RoutedEventArgs args)
 	{
 		if (sender != null)
 		{
 			if (cardpool != null /* && args.AddedItems.Count > 0 */ &&
 				DecklistPanel.Children.Count < GameConstants.DECK_SIZE)
 			{
-				var DecklistPanel = this.Find<WrapPanel>("DecklistPanel");
 				CardStruct c = (CardStruct)((Viewbox)(((Button)sender).Content)).DataContext!;
 				if (DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content)).DataContext!)).name == c.name) == GameConstants.MAX_CARD_MULTIPLICITY)
 				{
@@ -86,9 +91,24 @@ public partial class DeckEditWindow : Window
 				}
 				DecklistPanel.Children.Add(CreateDeckButton(c));
 			}
-			this.Find<TextBlock>("DeckSizeBlock").Text = DecklistPanel.Children.Count.ToString();
+			DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 		}
 	}
+	private void SetCardAsQuestClick(object? sender, RoutedEventArgs e)
+	{
+		if(sender != null)
+		{
+			Button ClassQuestButton = this.Find<Button>("ClassQuestButton");
+			Viewbox v = UIUtils.CreateGenericCard((CardStruct)((Viewbox)((Button)sender).Content).DataContext!);
+			ClassQuestButton.Content = v;
+		}
+	}
+
+	private void ClassQuestRemoveClick(object sender, RoutedEventArgs args)
+	{
+		((Button)sender).Content = null;
+	}
+
 	public Button CreateDeckButton(CardStruct c)
 	{
 		Button b = new Button()
@@ -148,7 +168,7 @@ public partial class DeckEditWindow : Window
 	}
 	public void DeckSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		if (args != null && args.AddedItems.Count > 0)
+		if (args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null)
 		{
 			List<byte> payload = Request(new DeckPackets.ListRequest
 			{
@@ -166,13 +186,13 @@ public partial class DeckEditWindow : Window
 			}
 			if(response.ability != null)
 			{
-				Viewbox b = this.Find<Viewbox>("ClassAbilityBox");
-				b = UIUtils.CreateGenericCard(response.ability);
+				Button b = this.Find<Button>("ClassAbilityButton");
+				b.Content = UIUtils.CreateGenericCard(response.ability);
 			}
 			if(response.quest != null)
 			{
-				Viewbox b = this.Find<Viewbox>("ClassQuestBox");
-				b = UIUtils.CreateGenericCard(response.quest);
+				Button b = this.Find<Button>("ClassQuestButton");
+				b.Content = UIUtils.CreateGenericCard(response.quest);
 			}
 
 			foreach (CardStruct c in response.cards)
@@ -184,13 +204,14 @@ public partial class DeckEditWindow : Window
 	}
 	public void ClassSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
+		GameConstants.PlayerClass? playerClass = (GameConstants.PlayerClass?)args.AddedItems[0];
 		LoadSidebar(SidebarTextBox?.Text ?? "");
 		foreach(Button child in DecklistPanel.Children)
 		{
 												// Oh boy, do I love GUI programming...
 			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content).DataContext!).card_class;
 			if(cardClass != GameConstants.PlayerClass.All &&
-				cardClass != (GameConstants.PlayerClass?)args.AddedItems[0])
+				cardClass != playerClass)
 			{
 				child.BorderBrush = Brushes.Red;
 				child.BorderThickness = new Avalonia.Thickness(5);
@@ -200,7 +221,22 @@ public partial class DeckEditWindow : Window
 				child.BorderBrush = null;
 				child.BorderThickness = new Avalonia.Thickness(1);
 			}
-			
+		}
+		Button ClassQuestButton = this.Find<Button>("ClassQuestButton");
+		if(ClassQuestButton.Content != null)
+		{
+			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)ClassQuestButton.Content).DataContext!).card_class;
+			if(cardClass != GameConstants.PlayerClass.All &&
+				cardClass != playerClass)
+			{
+				ClassQuestButton.BorderBrush = Brushes.Red;
+				ClassQuestButton.BorderThickness = new Avalonia.Thickness(5);
+			}
+			else
+			{
+				ClassQuestButton.BorderBrush = null;
+				ClassQuestButton.BorderThickness = new Avalonia.Thickness(1);
+			}
 		}
 	}
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
@@ -222,14 +258,27 @@ public partial class DeckEditWindow : Window
 	}
 	public void SaveDeckClick(object? sender, RoutedEventArgs args)
 	{
+		if(DeckSelectBox.SelectedItem == null || (string)DeckSelectBox.SelectedItem == "")
+		{
+			return;
+		}
+		GameConstants.PlayerClass playerClass = (GameConstants.PlayerClass?)ClassSelectBox.SelectedItem ?? GameConstants.PlayerClass.UNKNOWN;
+		if(playerClass == GameConstants.PlayerClass.All)
+		{
+			playerClass = GameConstants.PlayerClass.UNKNOWN;
+		}
+		Viewbox? abilityBox = (Viewbox)this.Find<Button>("ClassAbilityButton").Content;
+		CardStruct? ability = abilityBox == null ? null : (CardStruct?)(abilityBox).DataContext;
+		Viewbox? questBox = (Viewbox)this.Find<Button>("ClassQuestButton").Content;
+		CardStruct? quest = questBox == null ? null : (CardStruct?)(questBox).DataContext;
 		Request(new DeckPackets.ListUpdateRequest
 		{
 			deck = new DeckPackets.Deck
 			{
 				cards = DecklistPanel.Children.ToList().ConvertAll(x => (CardStruct)((Viewbox)((Button)x).Content).DataContext!).ToArray(),
-				ability = (CardStruct?)this.Find<Viewbox>("ClassAbilityBox").DataContext,
-				quest = (CardStruct?)this.Find<Viewbox>("ClassQuestBox").DataContext,
-				player_class = (GameConstants.PlayerClass?)ClassSelectBox.SelectedItem ?? GameConstants.PlayerClass.UNKNOWN,
+				ability = ability,
+				quest = quest,
+				player_class = playerClass,
 				name = ((string)DeckSelectBox.SelectedItem!)
 			}
 		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
@@ -270,7 +319,6 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 			Decknames.Add(name);
 		}
 		classes.Remove(GameConstants.PlayerClass.UNKNOWN);
-		classes.Remove(GameConstants.PlayerClass.All);
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;

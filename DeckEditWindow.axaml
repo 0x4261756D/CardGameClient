@@ -5,7 +5,7 @@
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="CardGameClient.DeckEditWindow"
 		Title="Deck Edit">
-	<Grid ColumnDefinitions="100,1*,1*,1*,1*,1*,1*,1*" RowDefinitions="Auto,Auto,Auto,Auto,*" x:Name="WindowGrid">
+	<Grid ColumnDefinitions="100,1*,1*,1*,Auto,1*,Auto,1*,1*" RowDefinitions="Auto,Auto,Auto,Auto,*" x:Name="WindowGrid">
 		<Button Click="BackClick"
 				Grid.Row="0"
 				Grid.Column="0">
@@ -59,12 +59,12 @@
 		<TextBlock Grid.Row="3" Grid.Column="4">
 			Your ability:
 		</TextBlock>
-		<Viewbox x:Name="ClassAbilityBox" Grid.Row="3" Grid.Column="5"/>
+		<Button x:Name="ClassAbilityButton" Grid.Row="3" Grid.Column="5"/>
 		<TextBlock Grid.Row="3" Grid.Column="6">
 			Your quest:
 		</TextBlock>
-		<Viewbox x:Name="ClassQuestBox" Grid.Row="3" Grid.Column="7"/>
-		<Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="5" BorderThickness="2" BorderBrush="White">
+		<Button x:Name="ClassQuestButton" Grid.Row="3" Grid.Column="7" Click="ClassQuestRemoveClick"/>
+		<Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="6" BorderThickness="2" BorderBrush="White">
 			<WrapPanel x:Name="DecklistPanel">
 			</WrapPanel>
 		</Border>
