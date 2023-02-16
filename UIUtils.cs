@@ -39,20 +39,29 @@ public class UIUtils
 		box.VerticalAlignment = VerticalAlignment.Stretch;
 		box.HorizontalAlignment = HorizontalAlignment.Stretch;
 		Panel p = new Panel();
-		p.Children.Add(new TextBlock
+		TextBlock block = new TextBlock
 		{
 			Text = c.name,
 			FontSize = 18,
-			Foreground = c.card_type == GameConstants.CardType.Creature ? Brushes.Black : Brushes.White,
-		});
+		};
 		if(c.card_type == GameConstants.CardType.Creature)
 		{
 			p.Background = Brushes.Orange;
+			block.Foreground = Brushes.Black;
 		}
 		else if(c.card_type == GameConstants.CardType.Spell)
 		{
 			p.Background = Brushes.Blue;
+			if(c.can_be_class_ability)
+			{
+				block.FontStyle = FontStyle.Oblique;
+			}
 		}
+		else if(c.card_type == GameConstants.CardType.Quest)
+		{
+			p.Background = Brushes.Green;
+		}
+		p.Children.Add(block);
 		box.Child = p;
 		box.DataContext = c;
 		return box;
