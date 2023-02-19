@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="CardGameClient.DuelWindow"
+		Title="Duel"
+		>
+	<Grid	ColumnDefinitions="100,1*,6*,2*" 
+			RowDefinitions="2*,2*,2*,*,2*,2*,2*"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch">
+		<Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="7"
+				ColumnDefinitions="*" RowDefinitions="Auto,*">
+			<Button Click="SurrenderClick" Grid.Row="0" Grid.Column="0">
+				Surrender
+			</Button>
+			<Panel Grid.Row="1" Grid.Column="0" x:Name="CardImagePanel" DockPanel.Dock="Top"/>
+			<ScrollViewer Grid.Row="6" Grid.Column="0" Grid.RowSpan="4" DockPanel.Dock="Bottom">
+				<TextBlock x:Name="CardTextBlock" TextWrapping="Wrap">
+					No Card Selected
+				</TextBlock>
+			</ScrollViewer>			
+		</Grid>
+	</Grid>
+</Window>

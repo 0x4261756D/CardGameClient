@@ -5,5 +5,33 @@
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="CardGameClient.ServerWindow"
 		Title="Server">
-Welcome to Avalonia!
+	<Grid ColumnDefinitions="100,1*,1*,1*" RowDefinitions="Auto, Auto, *">
+		<Button Click="BackClick"
+				Grid.Row="0"
+				Grid.Column="0">
+			Back
+		</Button>
+		<TextBlock Grid.Row="0" Grid.Column="1">
+			Server Address
+		</TextBlock>
+		<TextBox Grid.Row="1" Grid.Column="1" x:Name="ServerAddressBox" Text="{Binding ServerAddress}"/>
+		<TextBlock Grid.Row="0" Grid.Column="2">
+			Name
+		</TextBlock>
+		<TextBox Grid.Row="1" Grid.Column="2" x:Name="PlayerNameBox" Text="{Binding PlayerName}"/>
+		<Button Grid.Row="0" Grid.Column="3" Click="HostClick">
+			Host
+		</Button>
+		<Button Grid.Row="1" Grid.Column="3" Click="RefreshClick">
+			Refresh
+		</Button>
+
+		<ListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" x:Name="ServerListBox" Items="{Binding ServerRooms}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Button Content="{Binding}" Click="RoomClick" HorizontalAlignment="Stretch"/>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
 </Window>
