@@ -28,7 +28,15 @@ public partial class DeckEditWindow : Window
 			DeckSelectBox.SelectedIndex = 0;
 		}
 		LoadSidebar("");
+		DecklistPanel.LayoutUpdated += DecklistPanelInitialized;
 	}
+
+	private void DecklistPanelInitialized(object? sender, EventArgs e)
+	{
+		LoadDeck(DeckSelectBox.SelectedItem!.ToString()!);
+		DecklistPanel.LayoutUpdated -= DecklistPanelInitialized;
+	}
+
 	public void BackClick(object sender, RoutedEventArgs args)
 	{
 		new MainWindow
@@ -73,7 +81,6 @@ public partial class DeckEditWindow : Window
 		CardStruct c = ((CardStruct)(((Viewbox)sender).DataContext!));
 		Viewbox v = UIUtils.CreateGenericCard(c);
 		CardImagePanel.Children.Add(v);
-		
 		CardTextBlock.Text = c.Format(inDeckEdit: true);
 	}
 
@@ -113,8 +120,8 @@ public partial class DeckEditWindow : Window
 	{
 		Button b = new Button()
 		{
-			Width = Program.config.width / 14,
-			Height = Program.config.height / 7,
+			Width = (DecklistPanel.Bounds.Size.Width - 5) / 10,
+			Height = (DecklistPanel.Bounds.Size.Height / 4 - 5) - 1,
 		};
 		b.Padding = new Avalonia.Thickness(0, 0, 0, 0);
 		Viewbox v = UIUtils.CreateGenericCard(c);
@@ -174,7 +181,7 @@ public partial class DeckEditWindow : Window
 			};
 			setAbilityButton.Click += (_, _) =>
 			{
-				this.Find<Button>("ClassAbilityButton").Content = UIUtils.CreateGenericCard(c);
+				ClassAbilityButton.Content = UIUtils.CreateGenericCard(c);
 			};
 			panel.Children.Add(setAbilityButton);
 		}
@@ -184,37 +191,41 @@ public partial class DeckEditWindow : Window
 	}
 	public void DeckSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		if (args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null)
+		if (args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null && !DecklistPanel.Bounds.IsEmpty)
 		{
-			List<byte> payload = Request(new DeckPackets.ListRequest
-			{
-				name = args.AddedItems[0]!.ToString()!
-			}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
-			DecklistPanel.Children.Clear();
-			DeckPackets.Deck response = DeserializePayload<DeckPackets.ListResponse>(payload).deck;
-			if(response.player_class == GameConstants.PlayerClass.UNKNOWN)
-			{
-				ClassSelectBox.SelectedIndex = -1;
-			}
-			else
-			{
-				ClassSelectBox.SelectedItem = response.player_class;
-			}
-			if(response.ability != null)
-			{
-				Button b = this.Find<Button>("ClassAbilityButton");
-				b.Content = UIUtils.CreateGenericCard(response.ability);
-			}
-			if(response.quest != null)
-			{
-				Button b = this.Find<Button>("ClassQuestButton");
-				b.Content = UIUtils.CreateGenericCard(response.quest);
-			}
+			LoadDeck(args.AddedItems[0]!.ToString()!);
+		}
+	}
+	public void LoadDeck(string deckName)
+	{
+		List<byte> payload = Request(new DeckPackets.ListRequest
+		{
+			name = deckName
+		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		DecklistPanel.Children.Clear();
+		DeckPackets.Deck response = DeserializePayload<DeckPackets.ListResponse>(payload).deck;
+		if(response.player_class == GameConstants.PlayerClass.UNKNOWN)
+		{
+			ClassSelectBox.SelectedIndex = -1;
+		}
+		else
+		{
+			ClassSelectBox.SelectedItem = response.player_class;
+		}
 
-			foreach (CardStruct c in response.cards)
-			{
-				DecklistPanel.Children.Add(CreateDeckButton(c));
-			}
+		foreach(CardStruct c in response.cards)
+		{
+			DecklistPanel.Children.Add(CreateDeckButton(c));
+		}
+		ClassAbilityButton.Content = null;
+		if(response.ability != null)
+		{
+			ClassAbilityButton.Content = UIUtils.CreateGenericCard(response.ability);
+		}
+		ClassQuestButton.Content = null;
+		if(response.quest != null)
+		{
+			ClassQuestButton.Content = UIUtils.CreateGenericCard(response.quest);
 		}
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 	}
