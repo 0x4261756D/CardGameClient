@@ -231,13 +231,13 @@ public partial class DeckEditWindow : Window
 	}
 	public void ClassSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		GameConstants.PlayerClass? playerClass = (GameConstants.PlayerClass?)args.AddedItems[0];
+		GameConstants.PlayerClass? playerClass = args.AddedItems.Count > 0 ? (GameConstants.PlayerClass?)args.AddedItems?[0] : null;
 		LoadSidebar(SidebarTextBox?.Text ?? "");
 		foreach(Button child in DecklistPanel.Children)
 		{
 												// Oh boy, do I love GUI programming...
 			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content).DataContext!).card_class;
-			if(cardClass != GameConstants.PlayerClass.All &&
+			if(cardClass != GameConstants.PlayerClass.All && playerClass != GameConstants.PlayerClass.All &&
 				cardClass != playerClass)
 			{
 				child.BorderBrush = Brushes.Red;
@@ -249,11 +249,10 @@ public partial class DeckEditWindow : Window
 				child.BorderThickness = new Avalonia.Thickness(1);
 			}
 		}
-		Button ClassQuestButton = this.Find<Button>("ClassQuestButton");
 		if(ClassQuestButton.Content != null)
 		{
 			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)ClassQuestButton.Content).DataContext!).card_class;
-			if(cardClass != GameConstants.PlayerClass.All &&
+			if(cardClass != GameConstants.PlayerClass.All && playerClass != GameConstants.PlayerClass.All &&
 				cardClass != playerClass)
 			{
 				ClassQuestButton.BorderBrush = Brushes.Red;
@@ -264,6 +263,31 @@ public partial class DeckEditWindow : Window
 				ClassQuestButton.BorderBrush = null;
 				ClassQuestButton.BorderThickness = new Avalonia.Thickness(1);
 			}
+		}
+		else
+		{
+			ClassQuestButton.BorderBrush = null;
+			ClassQuestButton.BorderThickness = new Avalonia.Thickness(1);
+		}
+		if(ClassAbilityButton.Content != null)
+		{
+			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)ClassAbilityButton.Content).DataContext!).card_class;
+			if(cardClass != GameConstants.PlayerClass.All && playerClass != GameConstants.PlayerClass.All &&
+				cardClass != playerClass)
+			{
+				ClassAbilityButton.BorderBrush = Brushes.Red;
+				ClassAbilityButton.BorderThickness = new Avalonia.Thickness(5);
+			}
+			else
+			{
+				ClassAbilityButton.BorderBrush = null;
+				ClassAbilityButton.BorderThickness = new Avalonia.Thickness(1);
+			}
+		}
+		else
+		{
+			ClassAbilityButton.BorderBrush = null;
+			ClassAbilityButton.BorderThickness = new Avalonia.Thickness(1);
 		}
 	}
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
