@@ -108,12 +108,14 @@ public partial class DeckEditWindow : Window
 			Button ClassQuestButton = this.Find<Button>("ClassQuestButton");
 			Viewbox v = UIUtils.CreateGenericCard((CardStruct)((Viewbox)((Button)sender).Content).DataContext!);
 			ClassQuestButton.Content = v;
+			ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 		}
 	}
 
 	private void ContentRemoveClick(object sender, RoutedEventArgs args)
 	{
 		((Button)sender).Content = null;
+		ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 	}
 
 	public Button CreateDeckButton(CardStruct c)
@@ -182,6 +184,7 @@ public partial class DeckEditWindow : Window
 			setAbilityButton.Click += (_, _) =>
 			{
 				ClassAbilityButton.Content = UIUtils.CreateGenericCard(c);
+				ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 			};
 			panel.Children.Add(setAbilityButton);
 		}
@@ -233,6 +236,11 @@ public partial class DeckEditWindow : Window
 	{
 		GameConstants.PlayerClass? playerClass = args.AddedItems.Count > 0 ? (GameConstants.PlayerClass?)args.AddedItems?[0] : null;
 		LoadSidebar(SidebarTextBox?.Text ?? "");
+		ColorWrongThings(playerClass);
+	}
+
+	private void ColorWrongThings(GameConstants.PlayerClass? playerClass)
+	{
 		foreach(Button child in DecklistPanel.Children)
 		{
 												// Oh boy, do I love GUI programming...
@@ -290,6 +298,7 @@ public partial class DeckEditWindow : Window
 			ClassAbilityButton.BorderThickness = new Avalonia.Thickness(1);
 		}
 	}
+
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
 		string newName = this.Find<TextBox>("NewDeckName").Text;
