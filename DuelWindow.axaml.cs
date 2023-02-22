@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -77,6 +78,29 @@ public partial class DuelWindow : Window
 	}
 
 	private bool HandlePacket(List<byte> bytes)
+	{
+		if(bytes[0] >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		{
+			throw new Exception($"Unrecognized packet type ({bytes[0]})");
+		}
+		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)bytes[0];
+		bytes.RemoveAt(0);
+		string payload = Encoding.UTF8.GetString(bytes.ToArray());
+		Functions.Log(payload);
+		switch (type)
+		{
+			case NetworkingConstants.PacketType.DuelFieldUpdateRequest:
+			{
+				UpdateField(DeserializeJson<DuelPackets.FieldUpdateRequest>(payload));
+			}
+			break;
+			default:
+				throw new NotImplementedException($"{type}");
+		}
+		return true;
+	}
+
+	private void UpdateField(DuelPackets.FieldUpdateRequest request)
 	{
 		throw new NotImplementedException();
 	}
