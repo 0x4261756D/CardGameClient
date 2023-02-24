@@ -122,8 +122,8 @@ public partial class DeckEditWindow : Window
 	{
 		Button b = new Button()
 		{
-			Width = (DecklistPanel.Bounds.Size.Width - 5) / 10,
-			Height = (DecklistPanel.Bounds.Size.Height / 4 - 5) - 1,
+			Width = (DecklistPanel.Bounds.Width - 5) / 10,
+			Height = (DecklistPanel.Bounds.Height / 4 - 5) - 1,
 		};
 		b.Padding = new Avalonia.Thickness(0, 0, 0, 0);
 		Viewbox v = UIUtils.CreateGenericCard(c);
@@ -139,7 +139,7 @@ public partial class DeckEditWindow : Window
 		if (sender == null) return;
 		var DecklistPanel = this.Find<WrapPanel>("DecklistPanel");
 		DecklistPanel.Children.Remove((Button)sender);
-		this.Find<TextBlock>("DeckSizeBlock").Text = DecklistPanel.Children.Count.ToString();
+		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 	}
 	private void MoveClick(object? sender, RoutedEventArgs e)
 	{

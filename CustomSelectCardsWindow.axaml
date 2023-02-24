@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="CardGameClient.CustomSelectCardsWindow"
+		Title="Select cards">
+	<Grid ColumnDefinitions="*" RowDefinitions="Auto,Auto,*">
+		<TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Message}"/>
+		<ListBox Grid.Column="0" Grid.Row="1" VirtualizationMode="None" SelectionMode="Multiple,Toggle" x:Name="CardSelectionList" SelectionChanged="CardSelectionChanged"/>
+		<Button Grid.Column="0" Grid.Row="2" IsEnabled="{Binding CanConfirm}" Click="ConfirmClick">
+			Confirm
+		</Button>
+	</Grid>
+</Window>

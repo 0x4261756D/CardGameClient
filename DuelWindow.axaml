@@ -6,11 +6,17 @@
 		x:Class="CardGameClient.DuelWindow"
 		Title="Duel"
 		>
-	<Grid	ColumnDefinitions="100,1*,6*,2*" 
+	<Window.Styles>
+		<Style Selector="Border">
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="BorderBrush" Value="White"/>
+		</Style>
+	</Window.Styles>
+	<Grid	ColumnDefinitions="100,1*,6*,2*"
 			RowDefinitions="2*,2*,2*,*,2*,2*,2*"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch">
-		<Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="7"
+		<Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="7" Grid.ColumnSpan="2"
 				ColumnDefinitions="*" RowDefinitions="Auto,*">
 			<Button Click="SurrenderClick" Grid.Row="0" Grid.Column="0">
 				Surrender
@@ -20,7 +26,64 @@
 				<TextBlock x:Name="CardTextBlock" TextWrapping="Wrap">
 					No Card Selected
 				</TextBlock>
-			</ScrollViewer>			
+			</ScrollViewer>
 		</Grid>
+		<Border Grid.Column="2" Grid.Row="0">
+			<StackPanel Orientation="Horizontal">
+				<StackPanel>
+					<TextBlock x:Name="OppNameBlock"/>
+					<TextBlock x:Name="OppLifeBlock"/>
+					<TextBlock x:Name="OppMomentumBlock"/>
+				</StackPanel>
+				<Panel x:Name="OppAbilityPanel"/>
+				<Panel x:Name="OppQuestPanel"/>
+			</StackPanel>
+		</Border>
+		<Border Grid.Column="2" Grid.Row="1">
+			<ScrollViewer>
+				<StackPanel x:Name="OppHandPanel" Orientation="Horizontal"/>
+			</ScrollViewer>
+		</Border>
+		<Button Grid.Column="3" Grid.Row="1" x:Name="OppDeckButton">
+			Deck
+		</Button>
+		<Border Grid.Column="2" Grid.Row="2">
+			<WrapPanel x:Name="OppField" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+		</Border>
+		<Button Grid.Column="3" Grid.Row="2" x:Name="OppGraveButton">
+			Grave
+		</Button>
+		<Border Grid.Column="2" Grid.Row="3">
+			<WrapPanel>
+				<Button>Pass</Button>
+				<TextBlock x:Name="TurnBlock"/>
+				<TextBlock x:Name="InitBlock"/>
+			</WrapPanel>
+		</Border>
+		<Border Grid.Column="2" Grid.Row="4">
+			<WrapPanel x:Name="OwnField" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+		</Border>
+		<Button Grid.Column="3" Grid.Row="4" x:Name="OwnGraveButton">
+			Grave
+		</Button>
+		<Border Grid.Column="2" Grid.Row="5">
+			<ScrollViewer>
+				<StackPanel x:Name="OwnHandPanel" Orientation="Horizontal"/>
+			</ScrollViewer>
+		</Border>
+		<Button Grid.Column="3" Grid.Row="5" x:Name="OwnDeckButton">
+			Deck
+		</Button>
+		<Border Grid.Column="2" Grid.Row="6">
+			<StackPanel Orientation="Horizontal">
+				<StackPanel>
+					<TextBlock x:Name="OwnNameBlock"/>
+					<TextBlock x:Name="OwnLifeBlock"/>
+					<TextBlock x:Name="OwnMomentumBlock"/>
+				</StackPanel>
+				<Panel x:Name="OwnAbilityPanel"/>
+				<Panel x:Name="OwnQuestPanel"/>
+			</StackPanel>
+		</Border>
 	</Grid>
 </Window>
