@@ -105,7 +105,6 @@ public partial class DeckEditWindow : Window
 	{
 		if(sender != null)
 		{
-			Button ClassQuestButton = this.Find<Button>("ClassQuestButton");
 			Viewbox v = UIUtils.CreateGenericCard((CardStruct)((Viewbox)((Button)sender).Content).DataContext!);
 			ClassQuestButton.Content = v;
 			ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
@@ -137,7 +136,6 @@ public partial class DeckEditWindow : Window
 	private void RemoveCardClick(object? sender, RoutedEventArgs args)
 	{
 		if (sender == null) return;
-		var DecklistPanel = this.Find<WrapPanel>("DecklistPanel");
 		DecklistPanel.Children.Remove((Button)sender);
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 	}
@@ -301,7 +299,7 @@ public partial class DeckEditWindow : Window
 
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
-		string newName = this.Find<TextBox>("NewDeckName").Text;
+		string newName = NewDeckName.Text;
 		if (newName == "") return;
 		Request(new DeckPackets.ListUpdateRequest
 		{
@@ -313,7 +311,7 @@ public partial class DeckEditWindow : Window
 		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		((DeckEditWindowViewModel)DataContext!).Decknames.Add(newName);
 		DeckSelectBox.SelectedItem = newName;
-		this.Find<TextBlock>("DeckSizeBlock").Text = "0";
+		DeckSizeBlock.Text = "0";
 		NewDeckName.Text = "";
 	}
 	public void SaveDeckClick(object? sender, RoutedEventArgs args)
@@ -327,9 +325,9 @@ public partial class DeckEditWindow : Window
 		{
 			playerClass = GameConstants.PlayerClass.UNKNOWN;
 		}
-		Viewbox? abilityBox = (Viewbox)this.Find<Button>("ClassAbilityButton").Content;
+		Viewbox? abilityBox = (Viewbox)ClassAbilityButton.Content;
 		CardStruct? ability = abilityBox == null ? null : (CardStruct?)(abilityBox).DataContext;
-		Viewbox? questBox = (Viewbox)this.Find<Button>("ClassQuestButton").Content;
+		Viewbox? questBox = (Viewbox)ClassQuestButton.Content;
 		CardStruct? quest = questBox == null ? null : (CardStruct?)(questBox).DataContext;
 		Request(new DeckPackets.ListUpdateRequest
 		{

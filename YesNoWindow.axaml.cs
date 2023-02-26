@@ -21,7 +21,7 @@ public partial class YesNoWindow : Window
 	public YesNoWindow(string description, NetworkStream stream)
 	{
 		InitializeComponent();
-		this.Find<TextBlock>("MessageBlock").Text = description;
+		MessageBlock.Text = description;
 		this.stream = stream;
 		this.Width = Program.config.width / 2;
 		this.Height = Program.config.height / 2;

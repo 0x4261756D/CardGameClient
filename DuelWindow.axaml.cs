@@ -25,6 +25,7 @@ public partial class DuelWindow : Window
 	private TcpClient client;
 	private NetworkStream stream;
 	private Task networkingTask;
+	private Flyout optionsFlyout = new Flyout();
 	private bool closing = false; public DuelWindow()
 	{
 		InitializeComponent();
@@ -126,6 +127,21 @@ public partial class DuelWindow : Window
 					new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, x => ShowCard(x)).Show();
 				}
 				break;
+			case NetworkingConstants.PacketType.DuelGetOptionsResponse:
+				{
+					UpdateCardOptions(DeserializeJson<DuelPackets.GetOptionsResponse>(payload));
+				}
+				break;
+			case NetworkingConstants.PacketType.DuelSelectZoneRequest:
+				{
+					new SelectZoneWindow(DeserializeJson<DuelPackets.SelectZoneRequest>(payload).options, stream).Show();
+				}
+				break;
+			case NetworkingConstants.PacketType.DuelGameResultResponse:
+				{
+					new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(payload)).Show();
+				}
+				break;
 			default:
 				Log($"Unimplemented: {type}");
 				throw new NotImplementedException($"{type}");
@@ -133,9 +149,81 @@ public partial class DuelWindow : Window
 		return false;
 	}
 
+	private void UpdateCardOptions(DuelPackets.GetOptionsResponse response)
+	{
+		if (response.location == GameConstants.Location.Hand)
+		{
+			foreach (Button b in OwnHandPanel.Children)
+			{
+				if (((CardStruct)b.DataContext!).uid == response.uid)
+				{
+					StackPanel p = new StackPanel();
+					foreach (string text in response.options)
+					{
+						Button option = new Button
+						{
+							Content = new TextBlock
+							{
+								Text = text
+							}
+						};
+						option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+						p.Children.Add(option);
+					}
+					optionsFlyout.Content = p;
+					optionsFlyout.ShowAt(b, true);
+					return;
+				}
+			}
+		}
+		else if (response.location == GameConstants.Location.Field)
+		{
+			foreach (Button b in OwnField.Children)
+			{
+				if (((CardStruct)b.DataContext!).uid == response.uid)
+				{
+					StackPanel p = new StackPanel();
+					foreach (string text in response.options)
+					{
+						Button option = new Button
+						{
+							Content = new TextBlock
+							{
+								Text = text
+							}
+						};
+						option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+						p.Children.Add(option);
+					}
+					optionsFlyout.Content = p;
+					optionsFlyout.ShowAt(b, true);
+					return;
+				}
+			}
+		}
+		else
+		{
+			throw new NotImplementedException($"Updating card options at {response.location}");
+		}
+	}
+
+	private void SendCardOption(string option, int uid, GameConstants.Location location)
+	{
+		List<byte> payload = GeneratePayload<DuelPackets.SelectOptionRequest>(new DuelPackets.SelectOptionRequest
+		{
+			desc = option,
+			location = location,
+			uid = uid
+		});
+		stream.Write(payload.ToArray(), 0, payload.Count);
+	}
+
 	private void UpdateField(DuelPackets.FieldUpdateRequest request)
 	{
 		TurnBlock.Text = $"Turn {request.turn}";
+		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
+		Background = request.hasInitiative ? Brushes.Green : Brushes.Black;
+
 		OppNameBlock.Text = request.oppField.name;
 		OppLifeBlock.Text = $"Life: {request.oppField.life}";
 		OppMomentumBlock.Text = $"Momentum: {request.oppField.momentum}";
@@ -173,7 +261,7 @@ public partial class DuelWindow : Window
 			CardStruct? c = request.ownField.field[i];
 			if (c != null)
 			{
-				OppField.Children[i] = CreateCardButton(c);
+				OwnField.Children[i] = CreateCardButton(c);
 			}
 		}
 		OwnHandPanel.Children.Clear();
@@ -226,7 +314,12 @@ public partial class DuelWindow : Window
 
 	private void OptionsRequest(Button button, GameConstants.Location location, int uid)
 	{
-		throw new NotImplementedException();
+		List<byte> payload = GeneratePayload<DuelPackets.GetOptionsRequest>(new DuelPackets.GetOptionsRequest
+		{
+			location = location,
+			uid = uid
+		});
+		stream.Write(payload.ToArray(), 0, payload.Count);
 	}
 
 	public void ShowCard(CardStruct c)
@@ -245,7 +338,7 @@ public partial class DuelWindow : Window
 		}
 		closing = true;
 		List<byte> payload = GeneratePayload<DuelPackets.SurrenderRequest>(new DuelPackets.SurrenderRequest { });
-		if(client.Connected)
+		if (client.Connected)
 		{
 			stream.Write(payload.ToArray(), 0, payload.Count);
 		}

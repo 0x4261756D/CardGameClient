@@ -49,7 +49,7 @@ public partial class ServerWindow : Window
 		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload);
 		if (response.success)
 		{
-			new RoomWindow(this.Find<TextBox>("ServerAddressBox").Text, 7043, playerName)
+			new RoomWindow(ServerAddressBox.Text, 7043, playerName)
 			{
 				WindowState = this.WindowState,
 			}.Show();
@@ -66,11 +66,11 @@ public partial class ServerWindow : Window
 	}
 	private void RoomClick(object sender, RoutedEventArgs args)
 	{
-		if (this.Find<TextBox>("PlayerNameBox").Text == "") return;
+		if (PlayerNameBox.Text == "") return;
 		List<byte>? payload;
 		if (!ServerTryRequest(new ServerPackets.JoinRequest
 		{
-			name = this.Find<TextBox>("PlayerNameBox").Text,
+			name = PlayerNameBox.Text,
 			targetName = (string)((Button)sender).Content
 		}, out payload) || payload == null)
 		{
@@ -79,7 +79,7 @@ public partial class ServerWindow : Window
 		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload);
 		if (response.success)
 		{
-			new RoomWindow(this.Find<TextBox>("ServerAddressBox").Text, 7043, ((ServerWindowViewModel)DataContext!).PlayerName)
+			new RoomWindow(ServerAddressBox.Text, 7043, ((ServerWindowViewModel)DataContext!).PlayerName)
 			{
 				WindowState = this.WindowState,
 			}.Show();
@@ -92,7 +92,7 @@ public partial class ServerWindow : Window
 	}
 	private bool ServerTryRequest(PacketContent request, out List<byte>? payload)
 	{
-		return UIUtils.TryRequest(request, out payload, this.Find<TextBox>("ServerAddressBox").Text, 7043, this);
+		return UIUtils.TryRequest(request, out payload, ServerAddressBox.Text, 7043, this);
 	}
 }
 public class ServerWindowViewModel : INotifyPropertyChanged

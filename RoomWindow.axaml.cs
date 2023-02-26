@@ -35,8 +35,7 @@ public partial class RoomWindow : Window
 		DataContext = new RoomWindowViewModel(name);
 		this.Closed += (sender, args) => CloseRoom();
 		InitializeComponent();
-		ComboBox DeckSelect = this.Find<ComboBox>("DeckSelectBox");
-		if (DeckSelect.ItemCount <= 0)
+		if (DeckSelectBox.ItemCount <= 0)
 		{
 			CloseRoom();
 			new ServerWindow
@@ -45,9 +44,9 @@ public partial class RoomWindow : Window
 			}.Show();
 			this.Close();
 		}
-		if (DeckSelect.SelectedItem == null && DeckSelect.ItemCount > 0)
+		if (DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
 		{
-			DeckSelect.SelectedIndex = 0;
+			DeckSelectBox.SelectedIndex = 0;
 		}
 	}
 	public void BackClick(object? sender, RoutedEventArgs? args)
@@ -72,7 +71,7 @@ public partial class RoomWindow : Window
 	}
 	private void TryStartClick(object? sender, RoutedEventArgs args)
 	{
-		string? deckname = this.Find<ComboBox>("DeckSelectBox").SelectedItem as string;
+		string? deckname = DeckSelectBox.SelectedItem as string;
 		if (deckname == null || deckname == "")
 		{
 			new ErrorPopup("No deck selected").ShowDialog(this);
@@ -99,7 +98,7 @@ public partial class RoomWindow : Window
 		{
 			decklist = decklist,
 			name = ((RoomWindowViewModel)DataContext!).PlayerName,
-			noshuffle = this.Find<CheckBox>("NoShuffleBox").IsChecked ?? false
+			noshuffle = NoShuffleBox.IsChecked ?? false
 		}, out payload, address, port, this) || payload == null)
 		{
 			return;

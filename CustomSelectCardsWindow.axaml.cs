@@ -30,12 +30,12 @@ public partial class CustomSelectCardsWindow : Window
 	{
 		this.stream = stream;
 		Monitor.Enter(stream);
-		DataContext = new CustomSelectCardViewModel(text);
+		DataContext = new CustomSelectCardViewModel(text, initialState);
 		InitializeComponent();
 		this.Closed += (_, _) => Monitor.Exit(stream);
 		this.Width = Program.config.width / 2;
 		this.Height = Program.config.height / 2;
-		this.Find<ListBox>("CardSelectionList").MaxHeight = Program.config.height / 3;
+		CardSelectionList.MaxHeight = Program.config.height / 3;
 		List<TextBlock> contents = new List<TextBlock>();
 		foreach (CardStruct card in cards)
 		{
@@ -56,11 +56,11 @@ public partial class CustomSelectCardsWindow : Window
 			};
 			contents.Add(newBlock);
 		}
-		this.Closing += (sender, args) =>
+		this.Closing += (_, args) =>
 		{
 			args.Cancel = !reallyClose;
 		};
-		this.Find<ListBox>("CardSelectionList").Items = contents;
+		CardSelectionList.Items = contents;
 	}
 
 	public static int[] CardListBoxSelectionToUID(ListBox box)
@@ -77,7 +77,7 @@ public partial class CustomSelectCardsWindow : Window
 	{
 		List<byte> result = GeneratePayload<DuelPackets.CustomSelectCardsResponse>(new DuelPackets.CustomSelectCardsResponse
 		{
-			uids = CardListBoxSelectionToUID(this.Find<ListBox>("CardSelectionList")),
+			uids = CardListBoxSelectionToUID(CardSelectionList),
 		});
 		stream.Write(result.ToArray(), 0, result.Count);
 		reallyClose = true;
@@ -96,10 +96,11 @@ public partial class CustomSelectCardsWindow : Window
 }
 public class CustomSelectCardViewModel : INotifyPropertyChanged
 {
-	public CustomSelectCardViewModel(string message)
+	public CustomSelectCardViewModel(string message, bool initialState)
 	{
 		Message = message;
 		NotifyPropertyChanged("Message");
+		CanConfirm = initialState;
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;
