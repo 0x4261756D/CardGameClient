@@ -142,6 +142,12 @@ public partial class DuelWindow : Window
 					new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(payload)).Show();
 				}
 				break;
+			case NetworkingConstants.PacketType.DuelSelectCardsRequest:
+				{
+					DuelPackets.SelectCardsRequest request = DeserializeJson<DuelPackets.SelectCardsRequest>(payload);
+					new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, x => ShowCard(x)).Show();
+				}
+				break;
 			default:
 				Log($"Unimplemented: {type}");
 				throw new NotImplementedException($"{type}");
