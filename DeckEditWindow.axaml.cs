@@ -229,6 +229,7 @@ public partial class DeckEditWindow : Window
 			ClassQuestButton.Content = UIUtils.CreateGenericCard(response.quest);
 		}
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
+		ColorWrongThings(response.player_class);
 	}
 	public void ClassSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
