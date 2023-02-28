@@ -358,11 +358,13 @@ public partial class DuelWindow : Window
 			return;
 		}
 		closing = true;
+		Monitor.Enter(stream);
 		List<byte> payload = GeneratePayload<DuelPackets.SurrenderRequest>(new DuelPackets.SurrenderRequest { });
 		if (client.Connected)
 		{
 			stream.Write(payload.ToArray(), 0, payload.Count);
 		}
+		Monitor.Exit(stream);
 		networkingTask.Dispose();
 		client.Close();
 	}
