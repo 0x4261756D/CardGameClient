@@ -75,6 +75,11 @@ public partial class DuelWindow : Window
 		Cleanup();
 		this.Close();
 	}
+	private void PassClick(object? sender, RoutedEventArgs args)
+	{
+		List<byte> payload = GeneratePayload<DuelPackets.PassRequest>(new DuelPackets.PassRequest { });
+		stream.Write(payload.ToArray(), 0, payload.Count);
+	}
 	private async void HandleNetwork()
 	{
 		Log("Socketthread started");
