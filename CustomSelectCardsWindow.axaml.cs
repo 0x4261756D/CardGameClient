@@ -63,21 +63,11 @@ public partial class CustomSelectCardsWindow : Window
 		CardSelectionList.Items = contents;
 	}
 
-	public static int[] CardListBoxSelectionToUID(ListBox box)
-	{
-		int[] uids = new int[box.SelectedItems.Count];
-		for (int i = 0; i < box.SelectedItems.Count; i++)
-		{
-			uids[i] = ((CardStruct)((TextBlock)box.SelectedItems[i]!).DataContext!).uid;
-		}
-		return uids;
-	}
-
 	public void ConfirmClick(object? sender, RoutedEventArgs args)
 	{
 		List<byte> result = GeneratePayload<DuelPackets.CustomSelectCardsResponse>(new DuelPackets.CustomSelectCardsResponse
 		{
-			uids = CardListBoxSelectionToUID(CardSelectionList),
+			uids = UIUtils.CardListBoxSelectionToUID(CardSelectionList),
 		});
 		stream.Write(result.ToArray(), 0, result.Count);
 		reallyClose = true;
@@ -88,7 +78,7 @@ public partial class CustomSelectCardsWindow : Window
 	{
 		List<byte> payload = GeneratePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(new DuelPackets.CustomSelectCardsIntermediateRequest
 		{
-			uids = CardListBoxSelectionToUID((ListBox)sender),
+			uids = UIUtils.CardListBoxSelectionToUID((ListBox)sender),
 		});
 		stream.Write(payload.ToArray(), 0, payload.Count);
 		((CustomSelectCardViewModel)DataContext!).CanConfirm = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateResponse>(ReceiveRawPacket(stream)!).isValid;

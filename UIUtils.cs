@@ -66,4 +66,13 @@ public class UIUtils
 		box.DataContext = c;
 		return box;
 	}
+	public static int[] CardListBoxSelectionToUID(ListBox box)
+	{
+		int[] uids = new int[box.SelectedItems.Count];
+		for (int i = 0; i < box.SelectedItems.Count; i++)
+		{
+			uids[i] = ((CardStruct)((TextBlock)box.SelectedItems[i]!).DataContext!).uid;
+		}
+		return uids;
+	}
 }
