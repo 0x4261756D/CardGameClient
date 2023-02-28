@@ -252,6 +252,11 @@ public partial class DuelWindow : Window
 		{
 			OppHandPanel.Children.Add(CreateCardButton(request.oppField.hand[i]));
 		}
+		OppShowPanel.Children.Clear();
+		if (request.oppField.shownCard != null)
+		{
+			OppShowPanel.Children.Add(CreateCardButton(request.oppField.shownCard));
+		}
 
 		OwnNameBlock.Text = request.ownField.name;
 		OwnLifeBlock.Text = $"Life: {request.ownField.life}";
@@ -274,6 +279,11 @@ public partial class DuelWindow : Window
 		for (int i = 0; i < request.ownField.hand.Length; i++)
 		{
 			OwnHandPanel.Children.Add(CreateCardButton(request.ownField.hand[i]));
+		}
+		OwnShowPanel.Children.Clear();
+		if (request.ownField.shownCard != null)
+		{
+			OwnShowPanel.Children.Add(CreateCardButton(request.ownField.shownCard));
 		}
 	}
 

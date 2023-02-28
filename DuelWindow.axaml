@@ -37,6 +37,7 @@
 				</StackPanel>
 				<Panel x:Name="OppAbilityPanel"/>
 				<Panel x:Name="OppQuestPanel"/>
+				<Panel x:Name="OppShowPanel"/>
 			</StackPanel>
 		</Border>
 		<Border Grid.Column="2" Grid.Row="1">
@@ -83,6 +84,7 @@
 				</StackPanel>
 				<Panel x:Name="OwnAbilityPanel"/>
 				<Panel x:Name="OwnQuestPanel"/>
+				<Panel x:Name="OwnShowPanel"/>
 			</StackPanel>
 		</Border>
 	</Grid>
