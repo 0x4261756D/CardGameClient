@@ -250,7 +250,7 @@ public partial class DuelWindow : Window
 		}
 		else
 		{
-			throw new NotImplementedException($"Updating card options at {response.location}");
+			throw new NotImplementedException($"Updating card options at {Enum.GetName<GameConstants.Location>(response.location)}");
 		}
 	}
 
