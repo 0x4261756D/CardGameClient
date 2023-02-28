@@ -212,6 +212,42 @@ public partial class DuelWindow : Window
 				}
 			}
 		}
+		else if (response.location == GameConstants.Location.Quest)
+		{
+			StackPanel p = new StackPanel();
+			foreach (string text in response.options)
+			{
+				Button option = new Button
+				{
+					Content = new TextBlock
+					{
+						Text = text
+					}
+				};
+				option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+				p.Children.Add(option);
+			}
+			optionsFlyout.Content = p;
+			optionsFlyout.ShowAt(OwnQuestPanel, true);
+		}
+		else if (response.location == GameConstants.Location.Ability)
+		{
+			StackPanel p = new StackPanel();
+			foreach (string text in response.options)
+			{
+				Button option = new Button
+				{
+					Content = new TextBlock
+					{
+						Text = text
+					}
+				};
+				option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+				p.Children.Add(option);
+			}
+			optionsFlyout.Content = p;
+			optionsFlyout.ShowAt(OwnAbilityPanel, true);
+		}
 		else
 		{
 			throw new NotImplementedException($"Updating card options at {response.location}");
