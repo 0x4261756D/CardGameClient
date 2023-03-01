@@ -26,7 +26,11 @@ public partial class DuelWindow : Window
 	private NetworkStream stream;
 	private Task networkingTask;
 	private Flyout optionsFlyout = new Flyout();
-	private bool closing = false; public DuelWindow()
+	Queue<DuelPackets.FieldUpdateRequest> fieldUpdateQueue = new Queue<DuelPackets.FieldUpdateRequest>();
+	private Task? fieldUpdateTask = null;
+	private int animationDelayInMs = 250;
+	private bool closing = false; 
+	public DuelWindow()
 	{
 		InitializeComponent();
 		playerName = "THIS SHOULD NOT HAPPEN";
@@ -98,6 +102,10 @@ public partial class DuelWindow : Window
 						return;
 					}
 				}
+				if(fieldUpdateQueue.Count > 0 && (fieldUpdateTask == null || (fieldUpdateTask != null && fieldUpdateTask.IsCompleted)))
+				{
+					fieldUpdateTask = Task.Delay(animationDelayInMs).ContinueWith((_) => Dispatcher.UIThread.InvokeAsync(UpdateField));
+				}
 			}
 		}
 	}
@@ -117,7 +125,7 @@ public partial class DuelWindow : Window
 		{
 			case NetworkingConstants.PacketType.DuelFieldUpdateRequest:
 			{
-				UpdateField(DeserializeJson<DuelPackets.FieldUpdateRequest>(payload));
+				EnqueueFieldUpdate(DeserializeJson<DuelPackets.FieldUpdateRequest>(payload));
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelYesNoRequest:
@@ -268,8 +276,19 @@ public partial class DuelWindow : Window
 		stream.Write(payload.ToArray(), 0, payload.Count);
 	}
 
-	private void UpdateField(DuelPackets.FieldUpdateRequest request)
+	private void EnqueueFieldUpdate(DuelPackets.FieldUpdateRequest request)
 	{
+		fieldUpdateQueue.Enqueue(request);
+	}
+
+	private void UpdateField()
+	{
+		Log($"{fieldUpdateQueue.Count}");
+		if(fieldUpdateQueue.Count == 0)
+		{
+			return;
+		}
+		DuelPackets.FieldUpdateRequest request = fieldUpdateQueue.Dequeue();
 		TurnBlock.Text = $"Turn {request.turn}";
 		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
 		Background = request.hasInitiative ? Brushes.Green : Brushes.Black;
