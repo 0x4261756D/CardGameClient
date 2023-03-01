@@ -8,7 +8,7 @@
 		"height": 720,
 		"should_spawn_core": true,
 		"core_info": {
-			"FileName": "../../../../CardGameCore/bin/Debug/net6.0/CardGameCore.exe",
+			"FileName": "../../../../CardGameCore/bin/Debug/net7.0/CardGameCore.exe",
 			"Arguments": "--mode=client --config=../../../config/config.json",
 			"CreateNoWindow": false,
 			"Domain": null,
@@ -29,7 +29,7 @@
 		"height": 720,
 		"should_spawn_core": true,
 		"core_info": {
-			"FileName": "../../../../CardGameCore/bin/Debug/net6.0/CardGameCore",
+			"FileName": "../../../../CardGameCore/bin/Debug/net7.0/CardGameCore",
 			"Arguments": "--mode=client --config=../../../config/config.json",
 			"CreateNoWindow": false,
 			"Domain": null,
