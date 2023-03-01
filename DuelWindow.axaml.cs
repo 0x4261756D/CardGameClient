@@ -63,7 +63,6 @@ public partial class DuelWindow : Window
 			{
 				Width = (panel.Bounds.Width - 10) / GameConstants.FIELD_SIZE,
 				Height = panel.Bounds.Height - 10,
-				Background = Brushes.AliceBlue,
 			});
 		}
 		panel.LayoutUpdated -= FieldInitialized;
@@ -191,7 +190,11 @@ public partial class DuelWindow : Window
 		{
 			foreach(Button b in OwnField.Children)
 			{
-				if(((CardStruct)b.DataContext!).uid == response.uid)
+				if(b.DataContext == null || b.DataContext == this.DataContext)
+				{
+					continue;
+				}
+				if(((CardStruct)b.DataContext).uid == response.uid)
 				{
 					StackPanel p = new StackPanel();
 					foreach(string text in response.options)
