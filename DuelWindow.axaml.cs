@@ -287,6 +287,14 @@ public partial class DuelWindow : Window
 			{
 				OppField.Children[i] = CreateCardButton(c);
 			}
+			else
+			{
+				OppField.Children[i] = new Button
+				{
+					Width = (OppField.Bounds.Width - 10) / GameConstants.FIELD_SIZE,
+					Height = OppField.Bounds.Height - 10,
+				};
+			}
 		}
 		OppHandPanel.Children.Clear();
 		for(int i = 0; i < request.oppField.hand.Length; i++)
@@ -314,6 +322,15 @@ public partial class DuelWindow : Window
 			if(c != null)
 			{
 				OwnField.Children[i] = CreateCardButton(c);
+			}
+			else
+			{
+				OwnField.Children[i] = new Button
+				{
+					Width = (OppField.Bounds.Width - 10) / GameConstants.FIELD_SIZE,
+					Height = OppField.Bounds.Height - 10,
+				};
+
 			}
 		}
 		OwnHandPanel.Children.Clear();
