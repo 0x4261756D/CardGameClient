@@ -116,42 +116,42 @@ public partial class DuelWindow : Window
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DuelFieldUpdateRequest:
-				{
-					UpdateField(DeserializeJson<DuelPackets.FieldUpdateRequest>(payload));
-				}
-				break;
+			{
+				UpdateField(DeserializeJson<DuelPackets.FieldUpdateRequest>(payload));
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelYesNoRequest:
-				{
-					new YesNoWindow(DeserializeJson<DuelPackets.YesNoRequest>(payload).question, stream).Show();
-				}
-				break;
+			{
+				new YesNoWindow(DeserializeJson<DuelPackets.YesNoRequest>(payload).question, stream).Show();
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelCustomSelectCardsRequest:
-				{
-					DuelPackets.CustomSelectCardsRequest request = DeserializeJson<DuelPackets.CustomSelectCardsRequest>(payload);
-					new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, x => ShowCard(x)).Show();
-				}
-				break;
+			{
+				DuelPackets.CustomSelectCardsRequest request = DeserializeJson<DuelPackets.CustomSelectCardsRequest>(payload);
+				new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, x => ShowCard(x)).Show();
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelGetOptionsResponse:
-				{
-					UpdateCardOptions(DeserializeJson<DuelPackets.GetOptionsResponse>(payload));
-				}
-				break;
+			{
+				UpdateCardOptions(DeserializeJson<DuelPackets.GetOptionsResponse>(payload));
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelSelectZoneRequest:
-				{
-					new SelectZoneWindow(DeserializeJson<DuelPackets.SelectZoneRequest>(payload).options, stream).Show();
-				}
-				break;
+			{
+				new SelectZoneWindow(DeserializeJson<DuelPackets.SelectZoneRequest>(payload).options, stream).Show();
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelGameResultResponse:
-				{
-					new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(payload)).Show();
-				}
-				break;
+			{
+				new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(payload)).Show();
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelSelectCardsRequest:
-				{
-					DuelPackets.SelectCardsRequest request = DeserializeJson<DuelPackets.SelectCardsRequest>(payload);
-					new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, x => ShowCard(x)).Show();
-				}
-				break;
+			{
+				DuelPackets.SelectCardsRequest request = DeserializeJson<DuelPackets.SelectCardsRequest>(payload);
+				new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, x => ShowCard(x)).Show();
+			}
+			break;
 			default:
 				Log($"Unimplemented: {type}");
 				throw new NotImplementedException($"{type}");
@@ -309,7 +309,7 @@ public partial class DuelWindow : Window
 				{
 					b.BorderBrush = Brushes.Purple;
 					b.BorderThickness = oppBorderThickness;
-				}				
+				}
 				OppField.Children[i] = b;
 			}
 		}
@@ -358,7 +358,7 @@ public partial class DuelWindow : Window
 				{
 					b.BorderBrush = Brushes.Purple;
 					b.BorderThickness = ownBorderThickness;
-				}				
+				}
 				OwnField.Children[i] = b;
 			}
 		}
