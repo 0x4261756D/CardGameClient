@@ -3,7 +3,7 @@
 A client for a card game.
 
 ## Prerequisites
-* dotnet 6
+* dotnet 7
 
 ## Setup
 Follow the instructions for the [Core](https://github.com/0x4261756D/CardGameCore), then:
