@@ -31,6 +31,7 @@ public partial class GameResultWindow : Window
 		};
 		ResultBlock.Text = (response.result == GameConstants.GameResult.Draw) ?
 			"It was a draw" : $"You {response.result}";
+		this.Topmost = true;
 	}
 	public void BackClick(object? sender, RoutedEventArgs args)
 	{
