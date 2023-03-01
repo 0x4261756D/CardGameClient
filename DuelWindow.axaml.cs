@@ -273,6 +273,7 @@ public partial class DuelWindow : Window
 		TurnBlock.Text = $"Turn {request.turn}";
 		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
 		Background = request.hasInitiative ? Brushes.Green : Brushes.Black;
+		PassButton.IsEnabled = request.hasInitiative;
 
 		OppNameBlock.Text = request.oppField.name;
 		OppLifeBlock.Text = $"Life: {request.oppField.life}";
@@ -283,20 +284,33 @@ public partial class DuelWindow : Window
 		OppAbilityPanel.Children.Add(CreateCardButton(request.oppField.ability));
 		OppQuestPanel.Children.Clear();
 		OppQuestPanel.Children.Add(CreateCardButton(request.oppField.quest));
+		Avalonia.Thickness oppBorderThickness = new Avalonia.Thickness(2, 2, 2, 0);
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			CardStruct? c = request.oppField.field[GameConstants.FIELD_SIZE - i - 1];
 			if(c != null)
 			{
-				OppField.Children[i] = CreateCardButton(c);
+				Button b = CreateCardButton(c);
+				if(request.markedZone != null && i == request.markedZone)
+				{
+					b.BorderBrush = Brushes.Purple;
+					b.BorderThickness = oppBorderThickness;
+				}
+				OppField.Children[i] = b;
 			}
 			else
 			{
-				OppField.Children[i] = new Button
+				Button b = new Button
 				{
 					Width = (OppField.Bounds.Width - 10) / GameConstants.FIELD_SIZE,
 					Height = OppField.Bounds.Height - 10,
 				};
+				if(request.markedZone != null && i == request.markedZone)
+				{
+					b.BorderBrush = Brushes.Purple;
+					b.BorderThickness = oppBorderThickness;
+				}				
+				OppField.Children[i] = b;
 			}
 		}
 		OppHandPanel.Children.Clear();
@@ -319,21 +333,33 @@ public partial class DuelWindow : Window
 		OwnAbilityPanel.Children.Add(CreateCardButton(request.ownField.ability));
 		OwnQuestPanel.Children.Clear();
 		OwnQuestPanel.Children.Add(CreateCardButton(request.ownField.quest));
+		Avalonia.Thickness ownBorderThickness = new Avalonia.Thickness(2, 0, 2, 2);
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			CardStruct? c = request.ownField.field[i];
 			if(c != null)
 			{
-				OwnField.Children[i] = CreateCardButton(c);
+				Button b = CreateCardButton(c);
+				if(request.markedZone != null && i == request.markedZone)
+				{
+					b.BorderBrush = Brushes.Purple;
+					b.BorderThickness = ownBorderThickness;
+				}
+				OwnField.Children[i] = b;
 			}
 			else
 			{
-				OwnField.Children[i] = new Button
+				Button b = new Button
 				{
 					Width = (OppField.Bounds.Width - 10) / GameConstants.FIELD_SIZE,
 					Height = OppField.Bounds.Height - 10,
 				};
-
+				if(request.markedZone != null && i == request.markedZone)
+				{
+					b.BorderBrush = Brushes.Purple;
+					b.BorderThickness = ownBorderThickness;
+				}				
+				OwnField.Children[i] = b;
 			}
 		}
 		OwnHandPanel.Children.Clear();
