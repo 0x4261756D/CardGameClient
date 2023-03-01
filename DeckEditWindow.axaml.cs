@@ -23,7 +23,7 @@ public partial class DeckEditWindow : Window
 	{
 		InitializeComponent();
 		DataContext = new DeckEditWindowViewModel();
-		if (DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
+		if(DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
 		{
 			DeckSelectBox.SelectedIndex = 0;
 		}
@@ -52,7 +52,7 @@ public partial class DeckEditWindow : Window
 			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		cardpool = DeserializePayload<DeckPackets.SearchResponse>(payload).cards;
 		List<Control> items = new List<Control>();
-		foreach (CardStruct c in cardpool)
+		foreach(CardStruct c in cardpool)
 		{
 			Viewbox v = UIUtils.CreateGenericCard(c);
 			v.PointerEnter += CardHover;
@@ -75,8 +75,8 @@ public partial class DeckEditWindow : Window
 
 	private void CardHover(object? sender, PointerEventArgs args)
 	{
-		if (sender == null) return;
-		if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+		if(sender == null) return;
+		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
 		CardImagePanel.Children.Clear();
 		CardStruct c = ((CardStruct)(((Viewbox)sender).DataContext!));
 		Viewbox v = UIUtils.CreateGenericCard(c);
@@ -86,13 +86,13 @@ public partial class DeckEditWindow : Window
 
 	public void AddCardToDeckClick(object? sender, RoutedEventArgs args)
 	{
-		if (sender != null)
+		if(sender != null)
 		{
-			if (cardpool != null /* && args.AddedItems.Count > 0 */ &&
+			if(cardpool != null /* && args.AddedItems.Count > 0 */ &&
 				DecklistPanel.Children.Count < GameConstants.DECK_SIZE)
 			{
 				CardStruct c = (CardStruct)((Viewbox)(((Button)sender).Content)).DataContext!;
-				if (DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content)).DataContext!)).name == c.name) == GameConstants.MAX_CARD_MULTIPLICITY)
+				if(DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content)).DataContext!)).name == c.name) == GameConstants.MAX_CARD_MULTIPLICITY)
 				{
 					return;
 				}
@@ -135,7 +135,7 @@ public partial class DeckEditWindow : Window
 	}
 	private void RemoveCardClick(object? sender, RoutedEventArgs args)
 	{
-		if (sender == null) return;
+		if(sender == null) return;
 		DecklistPanel.Children.Remove((Button)sender);
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 	}
@@ -165,7 +165,7 @@ public partial class DeckEditWindow : Window
 		submitButton.Click += (_, _) =>
 		{
 			int newInd = (int)numeric.Value;
-			if (newInd < 0 || newInd > max) return;
+			if(newInd < 0 || newInd > max) return;
 			DecklistPanel.Children.RemoveAt(index);
 			DecklistPanel.Children.Insert(newInd, button);
 		};
@@ -192,7 +192,7 @@ public partial class DeckEditWindow : Window
 	}
 	public void DeckSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		if (args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null && !DecklistPanel.Bounds.IsEmpty)
+		if(args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null && !DecklistPanel.Bounds.IsEmpty)
 		{
 			LoadDeck(args.AddedItems[0]!.ToString()!);
 		}
@@ -242,7 +242,7 @@ public partial class DeckEditWindow : Window
 	{
 		foreach(Button child in DecklistPanel.Children)
 		{
-												// Oh boy, do I love GUI programming...
+			// Oh boy, do I love GUI programming...
 			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content).DataContext!).card_class;
 			if(cardClass != GameConstants.PlayerClass.All && playerClass != GameConstants.PlayerClass.All &&
 				cardClass != playerClass)
@@ -301,7 +301,7 @@ public partial class DeckEditWindow : Window
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
 		string newName = NewDeckName.Text;
-		if (newName == "") return;
+		if(newName == "") return;
 		Request(new DeckPackets.ListUpdateRequest
 		{
 			deck = new DeckPackets.Deck
@@ -373,7 +373,7 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 	{
 		List<byte> payload = Request(new DeckPackets.NamesRequest(), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		Decknames.Clear();
-		foreach (string name in DeserializePayload<DeckPackets.NamesResponse>(payload).names)
+		foreach(string name in DeserializePayload<DeckPackets.NamesResponse>(payload).names)
 		{
 			Decknames.Add(name);
 		}
@@ -399,7 +399,7 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 		get => decknames;
 		set
 		{
-			if (value != decknames)
+			if(value != decknames)
 			{
 				decknames = value;
 				NotifyPropertyChanged();

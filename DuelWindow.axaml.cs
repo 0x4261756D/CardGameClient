@@ -55,9 +55,9 @@ public partial class DuelWindow : Window
 
 	private void FieldInitialized(object? sender, EventArgs e)
 	{
-		if (sender == null) return;
+		if(sender == null) return;
 		WrapPanel panel = (WrapPanel)sender;
-		for (int i = 0; i < GameConstants.FIELD_SIZE; i++)
+		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			panel.Children.Add(new Button
 			{
@@ -83,18 +83,18 @@ public partial class DuelWindow : Window
 	private async void HandleNetwork()
 	{
 		Log("Socketthread started");
-		while (!closing)
+		while(!closing)
 		{
-			if (client.Connected)
+			if(client.Connected)
 			{
 				Monitor.Enter(stream);
 				Log("data available");
 				List<byte>? bytes = ReceiveRawPacket(stream, 1000);
 				Monitor.Exit(stream);
-				if (bytes != null && bytes.Count != 0)
+				if(bytes != null && bytes.Count != 0)
 				{
 					Log("Client received a request of length " + bytes.Count);
-					if (await Dispatcher.UIThread.InvokeAsync(() => HandlePacket(bytes)))
+					if(await Dispatcher.UIThread.InvokeAsync(() => HandlePacket(bytes)))
 					{
 						return;
 					}
@@ -105,7 +105,7 @@ public partial class DuelWindow : Window
 
 	private bool HandlePacket(List<byte> bytes)
 	{
-		if (bytes[0] >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		if(bytes[0] >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
 		{
 			Log($"Unrecognized packet type ({bytes[0]})");
 			throw new Exception($"Unrecognized packet type ({bytes[0]})");
@@ -114,7 +114,7 @@ public partial class DuelWindow : Window
 		bytes.RemoveAt(0);
 		string payload = Encoding.UTF8.GetString(bytes.ToArray());
 		Functions.Log(payload);
-		switch (type)
+		switch(type)
 		{
 			case NetworkingConstants.PacketType.DuelFieldUpdateRequest:
 				{
@@ -162,14 +162,14 @@ public partial class DuelWindow : Window
 
 	private void UpdateCardOptions(DuelPackets.GetOptionsResponse response)
 	{
-		if (response.location == GameConstants.Location.Hand)
+		if(response.location == GameConstants.Location.Hand)
 		{
-			foreach (Button b in OwnHandPanel.Children)
+			foreach(Button b in OwnHandPanel.Children)
 			{
-				if (((CardStruct)b.DataContext!).uid == response.uid)
+				if(((CardStruct)b.DataContext!).uid == response.uid)
 				{
 					StackPanel p = new StackPanel();
-					foreach (string text in response.options)
+					foreach(string text in response.options)
 					{
 						Button option = new Button
 						{
@@ -187,14 +187,14 @@ public partial class DuelWindow : Window
 				}
 			}
 		}
-		else if (response.location == GameConstants.Location.Field)
+		else if(response.location == GameConstants.Location.Field)
 		{
-			foreach (Button b in OwnField.Children)
+			foreach(Button b in OwnField.Children)
 			{
-				if (((CardStruct)b.DataContext!).uid == response.uid)
+				if(((CardStruct)b.DataContext!).uid == response.uid)
 				{
 					StackPanel p = new StackPanel();
-					foreach (string text in response.options)
+					foreach(string text in response.options)
 					{
 						Button option = new Button
 						{
@@ -212,10 +212,10 @@ public partial class DuelWindow : Window
 				}
 			}
 		}
-		else if (response.location == GameConstants.Location.Quest)
+		else if(response.location == GameConstants.Location.Quest)
 		{
 			StackPanel p = new StackPanel();
-			foreach (string text in response.options)
+			foreach(string text in response.options)
 			{
 				Button option = new Button
 				{
@@ -230,10 +230,10 @@ public partial class DuelWindow : Window
 			optionsFlyout.Content = p;
 			optionsFlyout.ShowAt(OwnQuestPanel, true);
 		}
-		else if (response.location == GameConstants.Location.Ability)
+		else if(response.location == GameConstants.Location.Ability)
 		{
 			StackPanel p = new StackPanel();
-			foreach (string text in response.options)
+			foreach(string text in response.options)
 			{
 				Button option = new Button
 				{
@@ -280,21 +280,21 @@ public partial class DuelWindow : Window
 		OppAbilityPanel.Children.Add(CreateCardButton(request.oppField.ability));
 		OppQuestPanel.Children.Clear();
 		OppQuestPanel.Children.Add(CreateCardButton(request.oppField.quest));
-		for (int i = 0; i < GameConstants.FIELD_SIZE; i++)
+		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			CardStruct? c = request.oppField.field[GameConstants.FIELD_SIZE - i - 1];
-			if (c != null)
+			if(c != null)
 			{
 				OppField.Children[i] = CreateCardButton(c);
 			}
 		}
 		OppHandPanel.Children.Clear();
-		for (int i = 0; i < request.oppField.hand.Length; i++)
+		for(int i = 0; i < request.oppField.hand.Length; i++)
 		{
 			OppHandPanel.Children.Add(CreateCardButton(request.oppField.hand[i]));
 		}
 		OppShowPanel.Children.Clear();
-		if (request.oppField.shownCard != null)
+		if(request.oppField.shownCard != null)
 		{
 			OppShowPanel.Children.Add(CreateCardButton(request.oppField.shownCard));
 		}
@@ -308,21 +308,21 @@ public partial class DuelWindow : Window
 		OwnAbilityPanel.Children.Add(CreateCardButton(request.ownField.ability));
 		OwnQuestPanel.Children.Clear();
 		OwnQuestPanel.Children.Add(CreateCardButton(request.ownField.quest));
-		for (int i = 0; i < GameConstants.FIELD_SIZE; i++)
+		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			CardStruct? c = request.ownField.field[i];
-			if (c != null)
+			if(c != null)
 			{
 				OwnField.Children[i] = CreateCardButton(c);
 			}
 		}
 		OwnHandPanel.Children.Clear();
-		for (int i = 0; i < request.ownField.hand.Length; i++)
+		for(int i = 0; i < request.ownField.hand.Length; i++)
 		{
 			OwnHandPanel.Children.Add(CreateCardButton(request.ownField.hand[i]));
 		}
 		OwnShowPanel.Children.Clear();
-		if (request.ownField.shownCard != null)
+		if(request.ownField.shownCard != null)
 		{
 			OwnShowPanel.Children.Add(CreateCardButton(request.ownField.shownCard));
 		}
@@ -336,11 +336,11 @@ public partial class DuelWindow : Window
 		};
 		b.PointerEnter += (sender, args) =>
 		{
-			if (sender == null) return;
-			if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+			if(sender == null) return;
+			if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
 			ShowCard(card);
 		};
-		if (card.controller == playerIndex)
+		if(card.controller == playerIndex)
 		{
 			b.Click += (sender, args) =>
 			{
@@ -348,17 +348,17 @@ public partial class DuelWindow : Window
 				OptionsRequest((Button)sender!, card.location, card.uid);
 			};
 		}
-		if (card.card_type != GameConstants.CardType.UNKNOWN)
+		if(card.card_type != GameConstants.CardType.UNKNOWN)
 		{
-			if (card.card_type == GameConstants.CardType.Creature)
+			if(card.card_type == GameConstants.CardType.Creature)
 			{
 				b.Background = Brushes.Orange;
 			}
-			else if (card.card_type == GameConstants.CardType.Spell)
+			else if(card.card_type == GameConstants.CardType.Spell)
 			{
 				b.Background = Brushes.Blue;
 			}
-			else if (card.card_type == GameConstants.CardType.Quest)
+			else if(card.card_type == GameConstants.CardType.Quest)
 			{
 				b.Background = Brushes.Green;
 			}
@@ -389,14 +389,14 @@ public partial class DuelWindow : Window
 
 	private void Cleanup()
 	{
-		if (closing)
+		if(closing)
 		{
 			return;
 		}
 		closing = true;
 		Monitor.Enter(stream);
 		List<byte> payload = GeneratePayload<DuelPackets.SurrenderRequest>(new DuelPackets.SurrenderRequest { });
-		if (client.Connected)
+		if(client.Connected)
 		{
 			stream.Write(payload.ToArray(), 0, payload.Count);
 		}

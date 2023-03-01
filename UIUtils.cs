@@ -17,9 +17,9 @@ public class UIUtils
 			payload = Functions.Request(request, address, port);
 			return true;
 		}
-		catch (System.Exception ex)
+		catch(System.Exception ex)
 		{
-			if (window != null && window.IsVisible)
+			if(window != null && window.IsVisible)
 			{
 				new ErrorPopup(ex.Message).ShowDialog(window);
 			}
@@ -69,7 +69,7 @@ public class UIUtils
 	public static int[] CardListBoxSelectionToUID(ListBox box)
 	{
 		int[] uids = new int[box.SelectedItems.Count];
-		for (int i = 0; i < box.SelectedItems.Count; i++)
+		for(int i = 0; i < box.SelectedItems.Count; i++)
 		{
 			uids[i] = ((CardStruct)((TextBlock)box.SelectedItems[i]!).DataContext!).uid;
 		}

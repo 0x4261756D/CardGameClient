@@ -35,7 +35,7 @@ public partial class RoomWindow : Window
 		DataContext = new RoomWindowViewModel(name);
 		this.Closed += (sender, args) => CloseRoom();
 		InitializeComponent();
-		if (DeckSelectBox.ItemCount <= 0)
+		if(DeckSelectBox.ItemCount <= 0)
 		{
 			CloseRoom();
 			new ServerWindow
@@ -44,7 +44,7 @@ public partial class RoomWindow : Window
 			}.Show();
 			this.Close();
 		}
-		if (DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
+		if(DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
 		{
 			DeckSelectBox.SelectedIndex = 0;
 		}
@@ -60,7 +60,7 @@ public partial class RoomWindow : Window
 	}
 	public void CloseRoom()
 	{
-		if (!closed)
+		if(!closed)
 		{
 			Functions.Request(new ServerPackets.LeaveRequest
 			{
@@ -72,13 +72,13 @@ public partial class RoomWindow : Window
 	private void TryStartClick(object? sender, RoutedEventArgs args)
 	{
 		string? deckname = DeckSelectBox.SelectedItem as string;
-		if (deckname == null || deckname == "")
+		if(deckname == null || deckname == "")
 		{
 			new ErrorPopup("No deck selected").ShowDialog(this);
 			return;
 		}
 		List<byte>? payload;
-		if (
+		if(
 			!UIUtils.TryRequest(new DeckPackets.ListRequest
 			{
 				name = deckname
@@ -89,12 +89,12 @@ public partial class RoomWindow : Window
 			return;
 		}
 		string[]? decklist = Functions.DeserializePayload<DeckPackets.ListResponse>(payload).deck.ToString()?.Split('\n');
-		if (decklist == null)
+		if(decklist == null)
 		{
 			new ErrorPopup("Deck list could not be loaded properly").ShowDialog(this);
 			return;
 		}
-		if (!UIUtils.TryRequest(new ServerPackets.StartRequest
+		if(!UIUtils.TryRequest(new ServerPackets.StartRequest
 		{
 			decklist = decklist,
 			name = ((RoomWindowViewModel)DataContext!).PlayerName,
@@ -104,7 +104,7 @@ public partial class RoomWindow : Window
 			return;
 		}
 		ServerPackets.StartResponse response = Functions.DeserializePayload<ServerPackets.StartResponse>(payload);
-		if (response.success)
+		if(response.success)
 		{
 			Dispatcher.UIThread.InvokeAsync(() =>
 			{
@@ -127,13 +127,13 @@ public partial class RoomWindow : Window
 	{
 		// AAAAAAAAAAAAAAAHHHHHHHHHH UGLY CODE....
 		// TODO: Rework Room to work with a listener instead
-		while (true)
+		while(true)
 		{
 			TcpClient c = new TcpClient();
 			try
 			{
 				c.Connect(address, gamePort);
-				if (c.Connected)
+				if(c.Connected)
 				{
 					byte[] idBytes = Encoding.UTF8.GetBytes(id);
 					c.GetStream().Write(idBytes, 0, idBytes.Length);
@@ -141,7 +141,7 @@ public partial class RoomWindow : Window
 					{
 						playerIndex = c.GetStream().ReadByte();
 					}
-					while (playerIndex == -1);
+					while(playerIndex == -1);
 					return c;
 				}
 				else
@@ -149,7 +149,7 @@ public partial class RoomWindow : Window
 					c.Close();
 				}
 			}
-			catch (SocketException)
+			catch(SocketException)
 			{
 				Thread.Sleep(100);
 			}
@@ -168,7 +168,7 @@ public class RoomWindowViewModel : INotifyPropertyChanged
 	public void LoadDecks()
 	{
 		List<byte>? payload;
-		if (!UIUtils.TryRequest(new DeckPackets.NamesRequest(), out payload, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, null) || payload == null)
+		if(!UIUtils.TryRequest(new DeckPackets.NamesRequest(), out payload, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, null) || payload == null)
 		{
 			return;
 		}
@@ -188,7 +188,7 @@ public class RoomWindowViewModel : INotifyPropertyChanged
 		get => playerName;
 		set
 		{
-			if (value != playerName)
+			if(value != playerName)
 			{
 				playerName = value;
 				NotifyPropertyChanged();
@@ -202,7 +202,7 @@ public class RoomWindowViewModel : INotifyPropertyChanged
 		get => decknames;
 		set
 		{
-			if (value != decknames)
+			if(value != decknames)
 			{
 				decknames = value;
 				NotifyPropertyChanged();

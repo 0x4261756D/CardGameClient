@@ -37,7 +37,7 @@ public partial class CustomSelectCardsWindow : Window
 		this.Height = Program.config.height / 2;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
 		List<TextBlock> contents = new List<TextBlock>();
-		foreach (CardStruct card in cards)
+		foreach(CardStruct card in cards)
 		{
 			// TODO: Make this nicer. e.g. group by stuff, etc.
 			TextBlock newBlock = new TextBlock
@@ -50,8 +50,8 @@ public partial class CustomSelectCardsWindow : Window
 			};
 			newBlock.PointerEnter += (sender, args) =>
 			{
-				if (sender == null) return;
-				if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+				if(sender == null) return;
+				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
 				showCardAction(card);
 			};
 			contents.Add(newBlock);
@@ -106,7 +106,7 @@ public class CustomSelectCardViewModel : INotifyPropertyChanged
 		get => canConfirm;
 		set
 		{
-			if (value != canConfirm)
+			if(value != canConfirm)
 			{
 				canConfirm = value;
 				NotifyPropertyChanged();

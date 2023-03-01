@@ -23,12 +23,12 @@ class Program
 	[STAThread]
 	public static void Main(string[] args)
 	{
-		for (int i = 0; i < args.Length; i++)
+		for(int i = 0; i < args.Length; i++)
 		{
 			string[] parts = args[i].Split('=');
-			if (parts.Length == 2)
+			if(parts.Length == 2)
 			{
-				switch (parts[0])
+				switch(parts[0])
 				{
 					case "--config":
 						configPath = Path.Combine(baseDir, parts[1]);
@@ -39,10 +39,10 @@ class Program
 				}
 			}
 		}
-		if (File.Exists(configPath))
+		if(File.Exists(configPath))
 		{
 			platformConfig = JsonSerializer.Deserialize<PlatformClientConfig>(File.ReadAllText(configPath), NetworkingConstants.jsonIncludeOption)!;
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			if(Environment.OSVersion.Platform == PlatformID.Unix)
 			{
 				config = platformConfig.linux!;
 			}
@@ -51,9 +51,9 @@ class Program
 				config = platformConfig.windows!;
 			}
 		}
-		if (config.should_spawn_core)
+		if(config.should_spawn_core)
 		{
-			if (config.core_info.FileName == null)
+			if(config.core_info.FileName == null)
 			{
 				throw new Exception("No Core file name provided");
 			}
@@ -66,12 +66,12 @@ class Program
 				UseShellExecute = config.core_info.UseShellExecute,
 				WorkingDirectory = Path.Combine(baseDir, config.core_info.WorkingDirectory),
 			};
-			if (!File.Exists(info.FileName))
+			if(!File.Exists(info.FileName))
 			{
 				throw new Exception($"No core found at {Path.GetFullPath(info.FileName)}");
 			}
 			core = Process.Start(info);
-			if (core == null)
+			if(core == null)
 			{
 				Functions.Log("Could not load the core", severity: Functions.LogSeverity.Error);
 			}
@@ -87,19 +87,19 @@ class Program
 			.LogToTrace();
 	public static void Cleanup(object? sender, EventArgs e)
 	{
-		if (core != null)
+		if(core != null)
 		{
-			if (!core.HasExited)
+			if(!core.HasExited)
 			{
 				Functions.Log("Closing the core");
 				core.Kill();
 			}
 		}
-		if (!config.should_save_player_name)
+		if(!config.should_save_player_name)
 		{
 			config.player_name = null;
 		}
-		if (Environment.OSVersion.Platform == PlatformID.Unix)
+		if(Environment.OSVersion.Platform == PlatformID.Unix)
 		{
 			platformConfig.linux = config;
 		}

@@ -31,14 +31,14 @@ public partial class ServerWindow : Window
 	private void UpdateRoomList()
 	{
 		List<byte>? payload;
-		if (!ServerTryRequest(new ServerPackets.RoomsRequest(), out payload) || payload == null) return;
+		if(!ServerTryRequest(new ServerPackets.RoomsRequest(), out payload) || payload == null) return;
 		((ServerWindowViewModel)DataContext!).ServerRooms = Functions.DeserializePayload<ServerPackets.RoomsResponse>(payload).rooms;
 	}
 	private void HostClick(object? sender, RoutedEventArgs args)
 	{
 		List<byte>? payload;
 		string playerName = ((ServerWindowViewModel)DataContext!).PlayerName;
-		if (!ServerTryRequest(new ServerPackets.CreateRequest
+		if(!ServerTryRequest(new ServerPackets.CreateRequest
 		{
 			name = playerName,
 		},
@@ -47,7 +47,7 @@ public partial class ServerWindow : Window
 			return;
 		}
 		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload);
-		if (response.success)
+		if(response.success)
 		{
 			new RoomWindow(ServerAddressBox.Text, 7043, playerName)
 			{
@@ -66,9 +66,9 @@ public partial class ServerWindow : Window
 	}
 	private void RoomClick(object sender, RoutedEventArgs args)
 	{
-		if (PlayerNameBox.Text == "") return;
+		if(PlayerNameBox.Text == "") return;
 		List<byte>? payload;
-		if (!ServerTryRequest(new ServerPackets.JoinRequest
+		if(!ServerTryRequest(new ServerPackets.JoinRequest
 		{
 			name = PlayerNameBox.Text,
 			targetName = (string)((Button)sender).Content
@@ -77,7 +77,7 @@ public partial class ServerWindow : Window
 			return;
 		}
 		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload);
-		if (response.success)
+		if(response.success)
 		{
 			new RoomWindow(ServerAddressBox.Text, 7043, ((ServerWindowViewModel)DataContext!).PlayerName)
 			{
@@ -99,11 +99,11 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 {
 	public ServerWindowViewModel()
 	{
-		if (PlayerName == null)
+		if(PlayerName == null)
 		{
 			PlayerName = Convert.ToBase64String(Encoding.UTF8.GetBytes(DateTime.Now.Millisecond + DateTime.Now.ToLongTimeString()));
 		}
-		if (Program.config.server_address == null)
+		if(Program.config.server_address == null)
 		{
 			Program.config.server_address = "127.0.0.1";
 		}
@@ -119,7 +119,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 	{
 		get
 		{
-			if (Program.config.server_address == null)
+			if(Program.config.server_address == null)
 			{
 				Program.config.server_address = "127.0.0.1";
 			}
@@ -127,7 +127,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 		}
 		set
 		{
-			if (value != Program.config.server_address)
+			if(value != Program.config.server_address)
 			{
 				Program.config.server_address = value;
 				NotifyPropertyChanged();
@@ -139,7 +139,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 	{
 		get
 		{
-			if (Program.config.player_name == null)
+			if(Program.config.player_name == null)
 			{
 				Program.config.player_name = Convert.ToBase64String(Encoding.UTF8.GetBytes(DateTime.Now.Millisecond + DateTime.Now.ToLongTimeString()));
 			}
@@ -147,7 +147,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 		}
 		set
 		{
-			if (value != Program.config.player_name)
+			if(value != Program.config.player_name)
 			{
 				Program.config.player_name = value;
 				NotifyPropertyChanged();
@@ -160,7 +160,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 		get => serverRooms;
 		set
 		{
-			if (value != serverRooms)
+			if(value != serverRooms)
 			{
 				serverRooms = value;
 				NotifyPropertyChanged();

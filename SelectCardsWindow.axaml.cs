@@ -28,7 +28,7 @@ public partial class SelectCardsWindow : Window
 
 	public SelectCardsWindow(string text, int amount, CardStruct[] cards, NetworkStream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
-		if (cards.Length < amount)
+		if(cards.Length < amount)
 		{
 			throw new Exception($"Tried to create a SelectCardWindow requiring to select more cards than possible: {cards.Length}/{amount}");
 		}
@@ -39,7 +39,7 @@ public partial class SelectCardsWindow : Window
 		this.Height = Program.config.height / 2;
 		this.Find<ListBox>("CardSelectionList").MaxHeight = Program.config.height / 3;
 		List<TextBlock> contents = new List<TextBlock>();
-		foreach (CardStruct card in cards)
+		foreach(CardStruct card in cards)
 		{
 			// TODO: Make this nicer. e.g. group by stuff, etc.
 			TextBlock newBlock = new TextBlock
@@ -52,8 +52,8 @@ public partial class SelectCardsWindow : Window
 			};
 			newBlock.PointerEnter += (sender, args) =>
 			{
-				if (sender == null) return;
-				if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+				if(sender == null) return;
+				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
 				showCardAction(card);
 			};
 			contents.Add(newBlock);
@@ -112,7 +112,7 @@ public class SelectedCardViewModel : INotifyPropertyChanged
 		get => selectedCount;
 		set
 		{
-			if (selectedCount != value)
+			if(selectedCount != value)
 			{
 				selectedCount = value;
 				NotifyPropertyChanged();

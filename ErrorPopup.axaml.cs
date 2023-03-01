@@ -43,7 +43,7 @@ public class ErrorPopupViewModel : INotifyPropertyChanged
 		get => message;
 		set
 		{
-			if (value != message)
+			if(value != message)
 			{
 				message = value;
 				NotifyPropertyChanged();
