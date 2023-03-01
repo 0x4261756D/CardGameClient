@@ -29,7 +29,7 @@ public partial class DuelWindow : Window
 	Queue<DuelPackets.FieldUpdateRequest> fieldUpdateQueue = new Queue<DuelPackets.FieldUpdateRequest>();
 	private Task? fieldUpdateTask = null;
 	private int animationDelayInMs = 250;
-	private bool closing = false; 
+	private bool closing = false;
 	public DuelWindow()
 	{
 		InitializeComponent();
@@ -397,8 +397,13 @@ public partial class DuelWindow : Window
 	{
 		Button b = new Button
 		{
-			DataContext = card
+			DataContext = card,
 		};
+		if(card.location == GameConstants.Location.Field)
+		{
+			b.Width = (OwnField.Bounds.Width - 10) / GameConstants.FIELD_SIZE;
+		}
+		b.Height = OwnField.Bounds.Height - 10;
 		b.PointerEnter += (sender, args) =>
 		{
 			if(sender == null) return;
