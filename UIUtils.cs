@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -10,14 +11,14 @@ namespace CardGameClient;
 
 public class UIUtils
 {
-	public static bool TryRequest(PacketContent request, out List<byte>? payload, string address, int port, Window? window)
+	public static bool TryRequest(PacketContent request, out List<byte>? payload, string address, int port, Window? window, int timeout = -1)
 	{
 		try
 		{
-			payload = Functions.Request(request, address, port);
+			payload = Functions.Request(request, address, port, timeout);
 			return true;
 		}
-		catch(System.Exception ex)
+		catch(Exception ex)
 		{
 			if(window != null && window.IsVisible)
 			{
