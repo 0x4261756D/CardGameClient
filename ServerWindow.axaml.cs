@@ -92,7 +92,7 @@ public partial class ServerWindow : Window
 	}
 	private bool ServerTryRequest(PacketContent request, out List<byte>? payload)
 	{
-		return UIUtils.TryRequest(request, out payload, ServerAddressBox.Text, 7043, this);
+		return UIUtils.TryRequest(request, out payload, ServerAddressBox.Text, 7043, this, 10000);
 	}
 }
 public class ServerWindowViewModel : INotifyPropertyChanged
