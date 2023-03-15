@@ -291,7 +291,7 @@ public partial class DuelWindow : Window
 		DuelPackets.FieldUpdateRequest request = fieldUpdateQueue.Dequeue();
 		TurnBlock.Text = $"Turn {request.turn}";
 		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
-		Background = request.hasInitiative ? Brushes.Green : Brushes.Black;
+		Background = request.hasInitiative ? Brushes.Purple : Brushes.Black;
 		PassButton.IsEnabled = request.hasInitiative;
 
 		OppNameBlock.Text = request.oppField.name;
