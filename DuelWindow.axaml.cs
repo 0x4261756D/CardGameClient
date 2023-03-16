@@ -312,7 +312,7 @@ public partial class DuelWindow : Window
 				Button b = CreateCardButton(c);
 				if(request.markedZone != null && i == request.markedZone)
 				{
-					b.BorderBrush = Brushes.Purple;
+					b.BorderBrush = Brushes.Yellow;
 					b.BorderThickness = oppBorderThickness;
 				}
 				OppField.Children[i] = b;
@@ -326,7 +326,7 @@ public partial class DuelWindow : Window
 				};
 				if(request.markedZone != null && i == request.markedZone)
 				{
-					b.BorderBrush = Brushes.Purple;
+					b.BorderBrush = Brushes.Yellow;
 					b.BorderThickness = oppBorderThickness;
 				}
 				OppField.Children[i] = b;
@@ -361,7 +361,7 @@ public partial class DuelWindow : Window
 				Button b = CreateCardButton(c);
 				if(request.markedZone != null && i == request.markedZone)
 				{
-					b.BorderBrush = Brushes.Purple;
+					b.BorderBrush = Brushes.Yellow;
 					b.BorderThickness = ownBorderThickness;
 				}
 				OwnField.Children[i] = b;
@@ -375,7 +375,7 @@ public partial class DuelWindow : Window
 				};
 				if(request.markedZone != null && i == request.markedZone)
 				{
-					b.BorderBrush = Brushes.Purple;
+					b.BorderBrush = Brushes.Yellow;
 					b.BorderThickness = ownBorderThickness;
 				}
 				OwnField.Children[i] = b;
