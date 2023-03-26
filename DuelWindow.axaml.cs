@@ -131,6 +131,7 @@ public partial class DuelWindow : Window
 			break;
 			case NetworkingConstants.PacketType.DuelYesNoRequest:
 			{
+				Log("Received a yesno requets", severity: LogSeverity.Error);
 				new YesNoWindow(DeserializeJson<DuelPackets.YesNoRequest>(payload).question, stream).Show();
 			}
 			break;
