@@ -41,7 +41,7 @@
 			</StackPanel>
 		</Border>
 		<Border Grid.Column="2" Grid.Row="1">
-			<ScrollViewer>
+			<ScrollViewer HorizontalScrollBarVisibility="Visible">
 				<StackPanel x:Name="OppHandPanel" Orientation="Horizontal"/>
 			</ScrollViewer>
 		</Border>
@@ -68,7 +68,7 @@
 			Grave
 		</Button>
 		<Border Grid.Column="2" Grid.Row="5">
-			<ScrollViewer>
+			<ScrollViewer HorizontalScrollBarVisibility="Visible">
 				<StackPanel x:Name="OwnHandPanel" Orientation="Horizontal"/>
 			</ScrollViewer>
 		</Border>
