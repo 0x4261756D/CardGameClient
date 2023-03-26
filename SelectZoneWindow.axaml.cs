@@ -20,6 +20,8 @@ public partial class SelectZoneWindow : Window
 	public SelectZoneWindow(bool[] options, NetworkStream stream)
 	{
 		InitializeComponent();
+		this.Width = Program.config.width / 2;
+		this.Height = Program.config.height / 2;
 		for(int i = 0; i < options.Length; i++)
 		{
 			Button b = new Button
