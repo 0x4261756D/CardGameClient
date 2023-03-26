@@ -416,6 +416,7 @@ public partial class DuelWindow : Window
 		{
 			DataContext = card,
 		};
+		b.MinWidth = OwnField.Bounds.Width / GameConstants.FIELD_SIZE;
 		if(card.location == GameConstants.Location.Field)
 		{
 			b.Width = (OwnField.Bounds.Width - 10) / GameConstants.FIELD_SIZE;
