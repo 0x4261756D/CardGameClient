@@ -37,7 +37,7 @@ public partial class SelectCardsWindow : Window
 		InitializeComponent();
 		this.Width = Program.config.width / 2;
 		this.Height = Program.config.height / 2;
-		this.Find<ListBox>("CardSelectionList").MaxHeight = Program.config.height / 3;
+		CardSelectionList.MaxHeight = Program.config.height / 3;
 		List<TextBlock> contents = new List<TextBlock>();
 		foreach(CardStruct card in cards)
 		{
@@ -58,9 +58,9 @@ public partial class SelectCardsWindow : Window
 			};
 			contents.Add(newBlock);
 		}
-		this.Find<ListBox>("CardSelectionList").Items = contents;
-		this.Find<TextBlock>("Message").Text = text;
-		this.Find<TextBlock>("Amount").Text = $"/ {amount}";
+		CardSelectionList.Items = contents;
+		Message.Text = text;
+		Amount.Text = $"/ {amount}";
 		this.Closing += (sender, args) =>
 		{
 			args.Cancel = !reallyClose;
@@ -77,7 +77,7 @@ public partial class SelectCardsWindow : Window
 	{
 		List<byte> payload = GeneratePayload<DuelPackets.SelectCardsResponse>(new DuelPackets.SelectCardsResponse
 		{
-			uids = UIUtils.CardListBoxSelectionToUID(this.Find<ListBox>("CardSelectionList"))
+			uids = UIUtils.CardListBoxSelectionToUID(CardSelectionList)
 		});
 		stream.Write(payload.ToArray(), 0, payload.Count);
 		reallyClose = true;

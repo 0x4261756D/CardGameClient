@@ -18,8 +18,6 @@ namespace CardGameClient;
 
 public partial class DuelWindow : Window
 {
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
 	private string playerName;
 	private int playerIndex;
 	private TcpClient client;
@@ -30,6 +28,9 @@ public partial class DuelWindow : Window
 	private Task? fieldUpdateTask = null;
 	private int animationDelayInMs = 250;
 	private bool closing = false;
+
+	// DONT USE THIS
+	// This only exists because Avalonia requires it
 	public DuelWindow()
 	{
 		InitializeComponent();
@@ -136,7 +137,7 @@ public partial class DuelWindow : Window
 			case NetworkingConstants.PacketType.DuelCustomSelectCardsRequest:
 			{
 				DuelPackets.CustomSelectCardsRequest request = DeserializeJson<DuelPackets.CustomSelectCardsRequest>(payload);
-				new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, x => ShowCard(x)).Show();
+				new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, ShowCard).Show();
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelGetOptionsResponse:
@@ -157,7 +158,13 @@ public partial class DuelWindow : Window
 			case NetworkingConstants.PacketType.DuelSelectCardsRequest:
 			{
 				DuelPackets.SelectCardsRequest request = DeserializeJson<DuelPackets.SelectCardsRequest>(payload);
-				new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, x => ShowCard(x)).Show();
+				new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, ShowCard).Show();
+			}
+			break;
+			case NetworkingConstants.PacketType.DuelViewCardsResponse:
+			{
+				DuelPackets.ViewCardsResponse request = DeserializeJson<DuelPackets.ViewCardsResponse>(payload);
+				new ViewCardsWindow(cards: request.cards, message: request.message, playerIndex: playerIndex, showCardAction: ShowCard).Show();
 			}
 			break;
 			default:
@@ -265,6 +272,16 @@ public partial class DuelWindow : Window
 		}
 	}
 
+	public void OppGraveClick(object? sender, RoutedEventArgs args)
+	{
+		List<byte> payload = GeneratePayload<DuelPackets.ViewGraveRequest>(new DuelPackets.ViewGraveRequest { opponent = true });
+		stream.Write(payload.ToArray(), 0, payload.Count);
+	}
+	public void OwnGraveClick(object? sender, RoutedEventArgs args)
+	{
+		List<byte> payload = GeneratePayload<DuelPackets.ViewGraveRequest>(new DuelPackets.ViewGraveRequest { opponent = false });
+		stream.Write(payload.ToArray(), 0, payload.Count);
+	}
 	private void SendCardOption(string option, int uid, GameConstants.Location location)
 	{
 		List<byte> payload = GeneratePayload<DuelPackets.SelectOptionRequest>(new DuelPackets.SelectOptionRequest
