@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 
 namespace CardGameClient;
@@ -9,5 +11,21 @@ public partial class SettingsWindow : Window
 	public SettingsWindow()
 	{
 		InitializeComponent();
+		WidthInput.Value = Program.config.width;
+		HeightInput.Value = Program.config.height;
+		ShouldSpawnCoreInput.IsChecked = Program.config.should_spawn_core;
+		ShouldSavePlayerNameInput.IsChecked = Program.config.should_save_player_name;
+	}
+	public void BackClick(object sender, RoutedEventArgs args)
+	{
+		new MainWindow
+		{
+			WindowState = this.WindowState,
+		}.Show();
+		Program.config.width = (int)WidthInput.Value;
+		Program.config.height = (int)HeightInput.Value;
+		Program.config.should_spawn_core = ShouldSpawnCoreInput.IsChecked ?? false;
+		Program.config.should_save_player_name = ShouldSavePlayerNameInput.IsChecked ?? false;
+		this.Close();
 	}
 }

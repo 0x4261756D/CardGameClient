@@ -5,5 +5,26 @@
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="CardGameClient.SettingsWindow"
 		Title="Settings">
-Welcome to Avalonia!
+	<StackPanel>
+		<Button Click="BackClick">
+			Back
+		</Button>
+		<StackPanel Orientation="Vertical">
+			<TextBlock>Width</TextBlock>
+			<NumericUpDown x:Name="WidthInput" AllowSpin="False" ShowButtonSpinner="False"/>
+		</StackPanel>
+		<StackPanel Orientation="Vertical">
+			<TextBlock>Height</TextBlock>
+			<NumericUpDown x:Name="HeightInput" AllowSpin="False" ShowButtonSpinner="False"/>
+		</StackPanel>
+		<StackPanel Orientation="Vertical">
+			<TextBlock>Should spawn Core?</TextBlock>
+			<CheckBox x:Name="ShouldSpawnCoreInput"/>
+		</StackPanel>
+		<StackPanel Orientation="Vertical">
+			<TextBlock>Should save player name?</TextBlock>
+			<CheckBox x:Name="ShouldSavePlayerNameInput"/>
+		</StackPanel>
+
+	</StackPanel>
 </Window>
