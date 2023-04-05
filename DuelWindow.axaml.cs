@@ -28,6 +28,7 @@ public partial class DuelWindow : Window
 	private Task? fieldUpdateTask = null;
 	private int animationDelayInMs = 250;
 	private bool closing = false;
+	private bool shouldEnablePassButtonAfterUpdate = false;
 
 	// DONT USE THIS
 	// This only exists because Avalonia requires it
@@ -105,7 +106,19 @@ public partial class DuelWindow : Window
 				}
 				if(fieldUpdateQueue.Count > 0 && (fieldUpdateTask == null || (fieldUpdateTask != null && fieldUpdateTask.IsCompleted)))
 				{
+					await Dispatcher.UIThread.InvokeAsync(() => 
+					{
+						optionsFlyout.Hide();
+						PassButton.IsEnabled = false;
+					});
 					fieldUpdateTask = Task.Delay(animationDelayInMs).ContinueWith((_) => Dispatcher.UIThread.InvokeAsync(UpdateField));
+				}
+				else if(shouldEnablePassButtonAfterUpdate)
+				{
+					await Dispatcher.UIThread.InvokeAsync(() => 
+					{
+						PassButton.IsEnabled = true;
+					});					
 				}
 			}
 		}
@@ -310,7 +323,7 @@ public partial class DuelWindow : Window
 		TurnBlock.Text = $"Turn {request.turn}";
 		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
 		Background = request.hasInitiative ? Brushes.Purple : Brushes.Black;
-		PassButton.IsEnabled = request.hasInitiative;
+		shouldEnablePassButtonAfterUpdate = request.hasInitiative;
 
 		OppNameBlock.Text = request.oppField.name;
 		OppLifeBlock.Text = $"Life: {request.oppField.life}";
