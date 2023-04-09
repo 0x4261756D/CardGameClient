@@ -21,7 +21,7 @@ public partial class ReplaysWindow : Window
 {
 	private DuelWindow? window;
 	private Replay? replay;
-	private int playerIndex, actionIndex;
+	private int actionIndex;
 
 	public ReplaysWindow()
 	{
@@ -59,7 +59,6 @@ public partial class ReplaysWindow : Window
 			new ErrorPopup($"Could not open replay {FilePathBox.Text}");
 			return;
 		}
-		playerIndex = (FirstPlayerBox.IsChecked ?? false) ? 0 : 1;
 		actionIndex = 0;
 		((ReplaysViewModel)DataContext!).ActionList.Clear();
 		window = new DuelWindow();
@@ -73,6 +72,7 @@ public partial class ReplaysWindow : Window
 			return;
 		}
 		Replay.GameAction action = replay.actions[actionIndex];
+		int playerIndex = ((ReplaysViewModel)DataContext!).IsFirstPlayer ? 0 : 1;
 		while(action.player != playerIndex || action.clientToServer || action.packet[0] != (byte)NetworkingConstants.PacketType.DuelFieldUpdateRequest)
 		{
 			if(action.packet[0] == (byte)NetworkingConstants.PacketType.DuelGameResultResponse)
@@ -107,6 +107,20 @@ public class ReplaysViewModel : INotifyPropertyChanged
 	private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 	{
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	private bool isFirstPlayer = true;
+	public bool IsFirstPlayer
+	{
+		get => isFirstPlayer;
+		set
+		{
+			if(isFirstPlayer != value)
+			{
+				isFirstPlayer = value;
+				NotifyPropertyChanged();
+			}
+		}
 	}
 
 	private ObservableCollection<string> actionList = new ObservableCollection<string>();

@@ -13,7 +13,7 @@
 		<Button Click="SelectFileClick" Grid.Column="0" Grid.Row="2">
 			Select File
 		</Button>
-		<CheckBox x:Name="FirstPlayerBox" Grid.Column="0" Grid.Row="3"/>
+		<CheckBox x:Name="FirstPlayerBox" IsChecked="{Binding IsFirstPlayer}" Grid.Column="0" Grid.Row="3"/>
 		<Button Click="StartClick" Grid.Column="0" Grid.Row="4">
 			Start
 		</Button>
