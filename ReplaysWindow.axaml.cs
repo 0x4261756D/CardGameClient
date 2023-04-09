@@ -1,5 +1,9 @@
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
@@ -22,6 +26,7 @@ public partial class ReplaysWindow : Window
 	public ReplaysWindow()
 	{
 		InitializeComponent();
+		DataContext = new ReplaysViewModel();
 		this.Width = Program.config.width / 5;
 		this.Topmost = true;
 	}
@@ -56,6 +61,7 @@ public partial class ReplaysWindow : Window
 		}
 		playerIndex = (FirstPlayerBox.IsChecked ?? false) ? 0 : 1;
 		actionIndex = 0;
+		((ReplaysViewModel)DataContext!).ActionList.Clear();
 		window = new DuelWindow();
 		window.Show(this);
 		Next();
@@ -81,6 +87,7 @@ public partial class ReplaysWindow : Window
 				return;
 			}
 			action = replay.actions[actionIndex];
+			((ReplaysViewModel)DataContext!).ActionList.Insert(0, $"{actionIndex}: Player {action.player}: {Enum.GetName<NetworkingConstants.PacketType>((NetworkingConstants.PacketType)action.packet[0]) ?? "UNKNOWN"}");
 		}
 		window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(replay.actions[actionIndex].packet.GetRange(0, replay.actions[actionIndex].packet.Count - Packet.ENDING.Length)));
 		window.UpdateField();
@@ -90,5 +97,21 @@ public partial class ReplaysWindow : Window
 	public void NextClick(object sender, RoutedEventArgs args)
 	{
 		Next();
+	}
+}
+
+public class ReplaysViewModel : INotifyPropertyChanged
+{
+	public event PropertyChangedEventHandler? PropertyChanged;
+
+	private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	private ObservableCollection<string> actionList = new ObservableCollection<string>();
+	public ObservableCollection<string> ActionList
+	{
+		get => actionList;
 	}
 }

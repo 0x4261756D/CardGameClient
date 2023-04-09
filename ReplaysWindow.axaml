@@ -5,18 +5,21 @@
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="CardGameClient.ReplaysWindow"
 		Title="Replays">
-	<StackPanel>
-		<Button Click="BackClick">
+	<Grid ColumnDefinitions="*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*">
+		<Button Click="BackClick" Grid.Column="0" Grid.Row="0">
 			Back
 		</Button>
-		<TextBox x:Name="FilePathBox"/>
-		<Button Click="SelectFileClick">
+		<TextBox x:Name="FilePathBox" Grid.Column="0" Grid.Row="1"/>
+		<Button Click="SelectFileClick" Grid.Column="0" Grid.Row="2">
 			Select File
 		</Button>
-		<CheckBox x:Name="FirstPlayerBox"/>
-		<Button Click="StartClick">
+		<CheckBox x:Name="FirstPlayerBox" Grid.Column="0" Grid.Row="3"/>
+		<Button Click="StartClick" Grid.Column="0" Grid.Row="4">
 			Start
 		</Button>
-		<Button Click="NextClick">Next</Button>
-	</StackPanel>
+		<Button Click="NextClick" Grid.Column="0" Grid.Row="5">Next</Button>
+		<ScrollViewer Grid.Column="0" Grid.Row="6">
+			<ListBox Items="{Binding ActionList}"/>
+		</ScrollViewer>
+	</Grid>
 </Window>
