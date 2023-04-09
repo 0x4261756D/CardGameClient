@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using CardGameUtils;
 using CardGameUtils.Structs;
@@ -18,10 +21,9 @@ namespace CardGameClient;
 
 public partial class DuelWindow : Window
 {
-	private string playerName;
 	private int playerIndex;
 	private TcpClient client;
-	private NetworkStream stream;
+	private Stream stream;
 	private Task networkingTask;
 	private Flyout optionsFlyout = new Flyout();
 	Queue<DuelPackets.FieldUpdateRequest> fieldUpdateQueue = new Queue<DuelPackets.FieldUpdateRequest>();
@@ -30,21 +32,18 @@ public partial class DuelWindow : Window
 	private bool closing = false;
 	private bool shouldEnablePassButtonAfterUpdate = false;
 
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
+	// This constructor creates a completely empty duel window with no interaction possibility
 	public DuelWindow()
 	{
 		InitializeComponent();
-		playerName = "THIS SHOULD NOT HAPPEN";
 		client = new TcpClient();
-		stream = client.GetStream();
+		stream = new MemoryStream();
 		networkingTask = new Task(() => { });
 		OppField.LayoutUpdated += FieldInitialized;
 		OwnField.LayoutUpdated += FieldInitialized;
 	}
-	public DuelWindow(string name, int playerIndex, TcpClient client)
+	public DuelWindow(int playerIndex, TcpClient client)
 	{
-		this.playerName = name;
 		this.playerIndex = playerIndex;
 		InitializeComponent();
 		this.client = client;
@@ -94,7 +93,7 @@ public partial class DuelWindow : Window
 			{
 				Monitor.Enter(stream);
 				Log("data available");
-				List<byte>? bytes = ReceiveRawPacket(stream, 1000);
+				List<byte>? bytes = ReceiveRawPacket((NetworkStream)stream, 1000);
 				Monitor.Exit(stream);
 				if(bytes != null && bytes.Count != 0)
 				{
@@ -307,12 +306,12 @@ public partial class DuelWindow : Window
 		stream.Write(payload.ToArray(), 0, payload.Count);
 	}
 
-	private void EnqueueFieldUpdate(DuelPackets.FieldUpdateRequest request)
+	public void EnqueueFieldUpdate(DuelPackets.FieldUpdateRequest request)
 	{
 		fieldUpdateQueue.Enqueue(request);
 	}
 
-	private void UpdateField()
+	public void UpdateField()
 	{
 		Log($"{fieldUpdateQueue.Count}");
 		if(fieldUpdateQueue.Count == 0)

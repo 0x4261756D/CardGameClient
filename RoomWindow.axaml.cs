@@ -110,7 +110,7 @@ public partial class RoomWindow : Window
 			{
 				int playerIndex = -1;
 				TcpClient client = CheckForReady(response.id!, response.port, out playerIndex);
-				new DuelWindow(((RoomWindowViewModel)DataContext!).PlayerName, playerIndex, client)
+				new DuelWindow(playerIndex, client)
 				{
 					WindowState = this.WindowState,
 				}.Show();

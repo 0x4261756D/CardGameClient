@@ -11,12 +11,12 @@ namespace CardGameClient;
 
 public class UIUtils
 {
-	public static bool TryRequest(PacketContent request, out List<byte>? payload, string address, int port, Window? window, int timeout = -1)
+	public static bool TryRequest(PacketContent request, out List<byte> payload, string address, int port, Window? window, int timeout = -1)
 	{
 		try
 		{
 			payload = Functions.Request(request, address, port, timeout);
-			return true;
+			return payload != null;
 		}
 		catch(Exception ex)
 		{
@@ -28,7 +28,7 @@ public class UIUtils
 			{
 				new ErrorPopup(ex.Message).Show();
 			}
-			payload = null;
+			payload = new List<byte>();
 			return false;
 		}
 	}

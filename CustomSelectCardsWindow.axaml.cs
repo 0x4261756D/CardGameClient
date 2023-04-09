@@ -12,6 +12,7 @@ using static CardGameUtils.Functions;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System;
+using System.IO;
 
 namespace CardGameClient;
 
@@ -24,9 +25,9 @@ public partial class CustomSelectCardsWindow : Window
 		InitializeComponent();
 		stream = new TcpClient().GetStream();
 	}
-	private NetworkStream stream;
+	private Stream stream;
 	private bool reallyClose = false;
-	public CustomSelectCardsWindow(string text, CardStruct[] cards, bool initialState, NetworkStream stream, int playerIndex, Action<CardStruct> showCardAction)
+	public CustomSelectCardsWindow(string text, CardStruct[] cards, bool initialState, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
 		this.stream = stream;
 		Monitor.Enter(stream);
@@ -81,7 +82,7 @@ public partial class CustomSelectCardsWindow : Window
 			uids = UIUtils.CardListBoxSelectionToUID((ListBox)sender),
 		});
 		stream.Write(payload.ToArray(), 0, payload.Count);
-		((CustomSelectCardViewModel)DataContext!).CanConfirm = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateResponse>(ReceiveRawPacket(stream)!).isValid;
+		((CustomSelectCardViewModel)DataContext!).CanConfirm = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateResponse>(ReceiveRawPacket((NetworkStream)stream)!).isValid;
 	}
 }
 public class CustomSelectCardViewModel : INotifyPropertyChanged

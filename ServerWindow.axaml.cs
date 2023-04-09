@@ -42,8 +42,13 @@ public partial class ServerWindow : Window
 		{
 			name = playerName,
 		},
-			out payload) || payload == null)
+			out payload))
 		{
+			return;
+		}
+		if(payload == null)
+		{
+			new ErrorPopup("Could not get a request from the server");
 			return;
 		}
 		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload);

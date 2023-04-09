@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using Avalonia;
 using Avalonia.Controls;
@@ -17,7 +18,7 @@ public partial class SelectZoneWindow : Window
 		InitializeComponent();
 	}
 
-	public SelectZoneWindow(bool[] options, NetworkStream stream)
+	public SelectZoneWindow(bool[] options, Stream stream)
 	{
 		InitializeComponent();
 		this.Width = Program.config.width / 2;

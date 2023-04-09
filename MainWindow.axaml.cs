@@ -1,4 +1,3 @@
-using System.IO;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -25,6 +24,15 @@ public partial class MainWindow : Window
 	private void ToDeckEditClick(object sender, RoutedEventArgs e)
 	{
 		new DeckEditWindow
+		{
+			WindowState = this.WindowState,
+		}.Show();
+		this.Close();
+	}
+
+	private void ToReplaysClick(object sender, RoutedEventArgs e)
+	{
+		new ReplaysWindow
 		{
 			WindowState = this.WindowState,
 		}.Show();

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -16,9 +17,9 @@ public partial class YesNoWindow : Window
 		InitializeComponent();
 		stream = new TcpClient().GetStream();
 	}
-	NetworkStream stream;
+	Stream stream;
 	private bool reallyClose = true;
-	public YesNoWindow(string description, NetworkStream stream)
+	public YesNoWindow(string description, Stream stream)
 	{
 		InitializeComponent();
 		MessageBlock.Text = description;

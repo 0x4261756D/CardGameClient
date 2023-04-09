@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="CardGameClient.ReplaysWindow"
+		Title="Replays">
+	<StackPanel>
+		<Button Click="BackClick">
+			Back
+		</Button>
+		<TextBox x:Name="FilePathBox"/>
+		<Button Click="SelectFileClick">
+			Select File
+		</Button>
+		<CheckBox x:Name="FirstPlayerBox"/>
+		<Button Click="StartClick">
+			Start
+		</Button>
+		<Button Click="NextClick">Next</Button>
+	</StackPanel>
+</Window>

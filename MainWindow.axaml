@@ -16,6 +16,11 @@
 				VerticalAlignment="Center">
 			Deck Edit
 		</Button>
+		<Button Click="ToReplaysClick"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center">
+			Replays
+		</Button>
 		<Button Click="ToSettingsClick"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center">

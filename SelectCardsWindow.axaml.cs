@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using Avalonia;
@@ -23,10 +24,10 @@ public partial class SelectCardsWindow : Window
 		stream = new TcpClient().GetStream();
 		InitializeComponent();
 	}
-	private NetworkStream stream;
+	private Stream stream;
 	private bool reallyClose = false;
 
-	public SelectCardsWindow(string text, int amount, CardStruct[] cards, NetworkStream stream, int playerIndex, Action<CardStruct> showCardAction)
+	public SelectCardsWindow(string text, int amount, CardStruct[] cards, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
 		if(cards.Length < amount)
 		{
