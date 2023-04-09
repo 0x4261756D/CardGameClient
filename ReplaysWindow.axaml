@@ -17,7 +17,10 @@
 		<Button Click="StartClick" Grid.Column="0" Grid.Row="4">
 			Start
 		</Button>
-		<Button Click="NextClick" Grid.Column="0" Grid.Row="5">Next</Button>
+		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="5">
+			<Button Click="PrevClick">Previous</Button>
+			<Button Click="NextClick">Next</Button>
+		</StackPanel>
 		<ScrollViewer Grid.Column="0" Grid.Row="6">
 			<ListBox Items="{Binding ActionList}"/>
 		</ScrollViewer>

@@ -100,6 +100,38 @@ public partial class ReplaysWindow : Window
 	{
 		Next();
 	}
+
+	public void PrevClick(object sender, RoutedEventArgs args)
+	{
+		if(replay == null || window == null || actionIndex < 2)
+		{
+			return;
+		}
+		actionIndex -= 2;
+		((ReplaysViewModel)DataContext!).ActionList.RemoveAt(0);
+		Replay.GameAction action = replay.actions[actionIndex];
+		int playerIndex = ((ReplaysViewModel)DataContext!).IsFirstPlayer ? 0 : 1;
+		while(action.player != playerIndex || action.clientToServer || action.packet[0] != (byte)NetworkingConstants.PacketType.DuelFieldUpdateRequest)
+		{
+			((ReplaysViewModel)DataContext!).ActionList.RemoveAt(0);
+			if(action.packet[0] == (byte)NetworkingConstants.PacketType.DuelGameResultResponse)
+			{
+				window.Close();
+				return;
+			}
+			actionIndex--;
+			if(actionIndex < 0)
+			{
+				actionIndex = 0;
+				window.Close();
+				return;
+			}
+			action = replay.actions[actionIndex];
+		}
+		window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(replay.actions[actionIndex].packet.GetRange(0, replay.actions[actionIndex].packet.Count - Packet.ENDING.Length)));
+		window.UpdateField();
+		actionIndex++;
+	}
 }
 
 public class ReplaysViewModel : INotifyPropertyChanged
