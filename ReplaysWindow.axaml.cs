@@ -61,6 +61,7 @@ public partial class ReplaysWindow : Window
 		}
 		actionIndex = 0;
 		((ReplaysViewModel)DataContext!).ActionList.Clear();
+		window?.Close();
 		window = new DuelWindow();
 		window.Show(this);
 		Next();
