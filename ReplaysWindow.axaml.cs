@@ -39,11 +39,10 @@ public partial class ReplaysWindow : Window
 		this.Close();
 	}
 
-	public void SelectFileClick(object sender, RoutedEventArgs args)
+	public async void SelectFileClick(object sender, RoutedEventArgs args)
 	{
-		Task<string[]?> t = new OpenFileDialog() { AllowMultiple = false }.ShowAsync(this);
-		t.Wait();
-		FilePathBox.Text = t.Result?[0];
+		string[]? result = await new OpenFileDialog() { AllowMultiple = false }.ShowAsync(this);
+		FilePathBox.Text = result?[0];
 	}
 
 	public void StartClick(object sender, RoutedEventArgs args)
