@@ -67,7 +67,7 @@ public partial class ReplaysWindow : Window
 	}
 	public void Next()
 	{
-		if(replay == null || window == null || actionIndex > replay.actions.Count)
+		if(replay == null || window == null || actionIndex >= replay.actions.Count - 1)
 		{
 			return;
 		}
@@ -78,13 +78,11 @@ public partial class ReplaysWindow : Window
 			((ReplaysViewModel)DataContext!).ActionList.Insert(0, $"{actionIndex}: Player {action.player}: {(action.clientToServer ? "<-" : "->")} {Enum.GetName<NetworkingConstants.PacketType>((NetworkingConstants.PacketType)action.packet[0]) ?? "UNKNOWN"}");
 			if(action.packet[0] == (byte)NetworkingConstants.PacketType.DuelGameResultResponse)
 			{
-				window.Close();
 				return;
 			}
 			actionIndex++;
-			if(actionIndex > replay.actions.Count)
+			if(actionIndex >= replay.actions.Count - 1)
 			{
-				window.Close();
 				return;
 			}
 			action = replay.actions[actionIndex];
