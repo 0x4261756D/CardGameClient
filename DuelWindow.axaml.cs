@@ -131,8 +131,7 @@ public partial class DuelWindow : Window
 			throw new Exception($"Unrecognized packet type ({bytes[0]})");
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)bytes[0];
-		bytes.RemoveAt(0);
-		string payload = Encoding.UTF8.GetString(bytes.ToArray());
+		string payload = Encoding.UTF8.GetString(bytes.GetRange(1, bytes.Count - 1).ToArray());
 		Functions.Log(payload);
 		switch(type)
 		{
