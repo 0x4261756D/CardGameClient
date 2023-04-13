@@ -58,7 +58,8 @@
 			<WrapPanel>
 				<Button x:Name="PassButton" Click="PassClick" Margin="0,0,100,0">Pass</Button>
 				<TextBlock x:Name="TurnBlock" Margin="0,0,100,0"/>
-				<TextBlock x:Name="InitBlock"/>
+				<TextBlock x:Name="InitBlock" Margin="0,0,100,0"/>
+				<TextBlock x:Name="DirectionBlock"/>
 			</WrapPanel>
 		</Border>
 		<Border Grid.Column="2" Grid.Row="4">

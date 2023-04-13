@@ -5,12 +5,10 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using CardGameUtils;
 using CardGameUtils.Structs;
@@ -320,6 +318,7 @@ public partial class DuelWindow : Window
 		DuelPackets.FieldUpdateRequest request = fieldUpdateQueue.Dequeue();
 		TurnBlock.Text = $"Turn {request.turn}";
 		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
+		DirectionBlock.Text = "Battle direction: " + (request.battleDirectionLeftToRight ? "->" : "<-");
 		Background = request.hasInitiative ? Brushes.Purple : Brushes.Black;
 		shouldEnablePassButtonAfterUpdate = request.hasInitiative;
 
