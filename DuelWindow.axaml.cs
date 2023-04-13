@@ -463,6 +463,10 @@ public partial class DuelWindow : Window
 			}
 			StackPanel contentPanel = new StackPanel();
 			contentPanel.Children.Add(new TextBlock { Text = card.name });
+			if(card.card_type == GameConstants.CardType.Creature && card.location == GameConstants.Location.Field)
+			{
+				contentPanel.Children.Add(new TextBlock {Text = $"Power: {card.power} / Life: {card.life}"});
+			}
 			b.Content = contentPanel;
 		}
 		return b;
