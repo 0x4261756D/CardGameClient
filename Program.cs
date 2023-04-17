@@ -16,6 +16,7 @@ class Program
 	public static ClientConfig config = new ClientConfig(new URL("127.0.0.1", 7042),
 		width: 1080, height: 720, core_info: new CoreInfo(), should_spawn_core: false, should_save_player_name: true, server_address: "127.0.0.1");
 	private static Process? core;
+	private static bool couldReadConfig = false;
 
 	// Initialization code. Don't use any Avalonia, third-party APIs or any
 	// SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -41,6 +42,7 @@ class Program
 		}
 		if(File.Exists(configPath))
 		{
+			couldReadConfig = true;
 			platformConfig = JsonSerializer.Deserialize<PlatformClientConfig>(File.ReadAllText(configPath), NetworkingConstants.jsonIncludeOption)!;
 			if(Environment.OSVersion.Platform == PlatformID.Unix)
 			{
@@ -99,18 +101,21 @@ class Program
 		{
 			config.player_name = null;
 		}
-		if(Environment.OSVersion.Platform == PlatformID.Unix)
+		if(couldReadConfig)
 		{
-			platformConfig.linux = config;
+			if(Environment.OSVersion.Platform == PlatformID.Unix)
+			{
+				platformConfig.linux = config;
+			}
+			else
+			{
+				platformConfig.windows = config;
+			}
+			File.WriteAllText(configPath, JsonSerializer.Serialize(platformConfig, options: new JsonSerializerOptions
+			{
+				WriteIndented = true,
+				IncludeFields = true,
+			}).Replace("  ", "\t"));
 		}
-		else
-		{
-			platformConfig.windows = config;
-		}
-		File.WriteAllText(configPath, JsonSerializer.Serialize(platformConfig, options: new JsonSerializerOptions
-		{
-			WriteIndented = true,
-			IncludeFields = true,
-		}).Replace("  ", "\t"));
 	}
 }
