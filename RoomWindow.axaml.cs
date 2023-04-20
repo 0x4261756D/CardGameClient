@@ -20,7 +20,7 @@ public partial class RoomWindow : Window
 	private string address;
 	private int port;
 	private string name;
-	private bool closed = false;
+	public bool closed = false;
 	public RoomWindow()
 	{
 		InitializeComponent();
@@ -38,15 +38,13 @@ public partial class RoomWindow : Window
 		if(DeckSelectBox.ItemCount <= 0)
 		{
 			CloseRoom();
-			new ServerWindow
-			{
-				WindowState = this.WindowState,
-			}.Show();
-			this.Close();
 		}
-		if(DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
-		{
-			DeckSelectBox.SelectedIndex = 0;
+		else
+		{			
+			if(DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
+			{
+				DeckSelectBox.SelectedIndex = 0;
+			}
 		}
 	}
 	public void BackClick(object? sender, RoutedEventArgs? args)

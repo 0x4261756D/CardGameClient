@@ -48,17 +48,21 @@ public partial class ServerWindow : Window
 		}
 		if(payload == null)
 		{
-			new ErrorPopup("Could not get a request from the server");
+			new ErrorPopup("Could not get a request from the server").ShowDialog(this);
 			return;
 		}
 		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload);
 		if(response.success)
 		{
-			new RoomWindow(ServerAddressBox.Text, 7043, playerName)
+			RoomWindow w = new RoomWindow(ServerAddressBox.Text, 7043, playerName)
 			{
 				WindowState = this.WindowState,
-			}.Show();
-			this.Close();
+			};
+			if(!w.closed)
+			{
+				w.Show();
+				this.Close();
+			}
 		}
 		else
 		{
