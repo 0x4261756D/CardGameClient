@@ -90,7 +90,6 @@ public partial class DuelWindow : Window
 			if(client.Connected)
 			{
 				Monitor.Enter(stream);
-				Log("data available");
 				List<byte>? bytes = ReceiveRawPacket((NetworkStream)stream, 1000);
 				Monitor.Exit(stream);
 				if(bytes != null && bytes.Count != 0)
@@ -103,7 +102,7 @@ public partial class DuelWindow : Window
 				}
 				if(fieldUpdateQueue.Count > 0 && (fieldUpdateTask == null || (fieldUpdateTask != null && fieldUpdateTask.IsCompleted)))
 				{
-					await Dispatcher.UIThread.InvokeAsync(() => 
+					await Dispatcher.UIThread.InvokeAsync(() =>
 					{
 						optionsFlyout.Hide();
 						PassButton.IsEnabled = false;
@@ -112,10 +111,10 @@ public partial class DuelWindow : Window
 				}
 				else if(shouldEnablePassButtonAfterUpdate)
 				{
-					await Dispatcher.UIThread.InvokeAsync(() => 
+					await Dispatcher.UIThread.InvokeAsync(() =>
 					{
 						PassButton.IsEnabled = true;
-					});					
+					});
 				}
 			}
 		}
@@ -459,6 +458,10 @@ public partial class DuelWindow : Window
 			}
 			else if(card.card_type == GameConstants.CardType.Quest)
 			{
+				if(card.text.Contains("REWARD CLAIMED"))
+				{
+					b.Foreground = Brushes.Red;
+				}
 				b.Background = Brushes.Green;
 			}
 			StackPanel contentPanel = new StackPanel();
