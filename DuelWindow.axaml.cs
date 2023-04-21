@@ -460,9 +460,12 @@ public partial class DuelWindow : Window
 			{
 				if(card.text.Contains("REWARD CLAIMED"))
 				{
-					b.Foreground = Brushes.Red;
+					b.Background = Brushes.Green;
 				}
-				b.Background = Brushes.Green;
+				else
+				{
+					b.Background = Brushes.Gray;
+				}
 			}
 			StackPanel contentPanel = new StackPanel();
 			contentPanel.Children.Add(new TextBlock { Text = card.name });
