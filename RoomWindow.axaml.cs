@@ -40,12 +40,30 @@ public partial class RoomWindow : Window
 			CloseRoom();
 		}
 		else
-		{			
+		{
 			if(DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
 			{
-				DeckSelectBox.SelectedIndex = 0;
+				if(Program.config.last_deck_name != null)
+				{
+					foreach(var item in DeckSelectBox.Items)
+					{
+						if((string)item == Program.config.last_deck_name)
+						{
+							DeckSelectBox.SelectedItem = item;
+						}
+					}
+				}
+				else
+				{
+					DeckSelectBox.SelectedIndex = 0;
+				}
 			}
 		}
+	}
+
+	public void DeckSelectionChanged(object sender, SelectionChangedEventArgs args)
+	{
+		Program.config.last_deck_name = args.AddedItems[0]?.ToString();
 	}
 	public void BackClick(object? sender, RoutedEventArgs? args)
 	{

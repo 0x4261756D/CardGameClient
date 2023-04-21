@@ -18,7 +18,8 @@
 		},
 		"player_name": null,
 		"should_save_player_name": false,
-		"server_address": "h2871632.stratoserver.net"
+		"server_address": "h2871632.stratoserver.net",
+		"last_deck_name": null
 	},
 	"linux": {
 		"deck_edit_url": {
@@ -39,6 +40,6 @@
 		},
 		"player_name": null,
 		"should_save_player_name": false,
-		"server_address": "localhost"
+		"server_address": "h2871632.stratoserver.net"
 	}
 }

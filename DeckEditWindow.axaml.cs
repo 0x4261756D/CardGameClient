@@ -25,7 +25,25 @@ public partial class DeckEditWindow : Window
 		DataContext = new DeckEditWindowViewModel();
 		if(DeckSelectBox.SelectedItem == null && DeckSelectBox.ItemCount > 0)
 		{
-			DeckSelectBox.SelectedIndex = 0;
+			if(Program.config.last_deck_name != null)
+			{
+				foreach (var item in DeckSelectBox.Items)
+				{
+					if((string)item == Program.config.last_deck_name)
+					{
+						DeckSelectBox.SelectedItem = item;
+						break;
+					}
+				}
+				if(DeckSelectBox.SelectedItem == null)
+				{
+					DeckSelectBox.SelectedIndex = 0;
+				}
+			}
+			else
+			{
+				DeckSelectBox.SelectedIndex = 0;
+			}
 		}
 		LoadSidebar("");
 		DecklistPanel.LayoutUpdated += DecklistPanelInitialized;
@@ -106,6 +124,7 @@ public partial class DeckEditWindow : Window
 		if(sender != null)
 		{
 			Viewbox v = UIUtils.CreateGenericCard((CardStruct)((Viewbox)((Button)sender).Content).DataContext!);
+			v.PointerEnter += CardHover;
 			ClassQuestButton.Content = v;
 			ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 		}
@@ -181,7 +200,9 @@ public partial class DeckEditWindow : Window
 			};
 			setAbilityButton.Click += (_, _) =>
 			{
-				ClassAbilityButton.Content = UIUtils.CreateGenericCard(c);
+				Viewbox v = UIUtils.CreateGenericCard(c);
+				v.PointerEnter += CardHover;
+				ClassAbilityButton.Content = v;
 				ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 			};
 			panel.Children.Add(setAbilityButton);
@@ -194,6 +215,7 @@ public partial class DeckEditWindow : Window
 	{
 		if(args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null && !DecklistPanel.Bounds.IsEmpty)
 		{
+			Program.config.last_deck_name = args.AddedItems[0]?.ToString();
 			LoadDeck(args.AddedItems[0]!.ToString()!);
 		}
 	}
@@ -372,8 +394,10 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 	public void LoadDecks()
 	{
 		List<byte> payload = Request(new DeckPackets.NamesRequest(), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		string[] names = DeserializePayload<DeckPackets.NamesResponse>(payload).names;
+		Array.Sort(names);
 		Decknames.Clear();
-		foreach(string name in DeserializePayload<DeckPackets.NamesResponse>(payload).names)
+		foreach(string name in names)
 		{
 			Decknames.Add(name);
 		}
