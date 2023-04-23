@@ -27,7 +27,7 @@ public partial class DeckEditWindow : Window
 		{
 			if(Program.config.last_deck_name != null)
 			{
-				foreach (var item in DeckSelectBox.Items)
+				foreach(var item in DeckSelectBox.Items)
 				{
 					if((string)item == Program.config.last_deck_name)
 					{
@@ -243,12 +243,16 @@ public partial class DeckEditWindow : Window
 		ClassAbilityButton.Content = null;
 		if(response.ability != null)
 		{
-			ClassAbilityButton.Content = UIUtils.CreateGenericCard(response.ability);
+			Viewbox v = UIUtils.CreateGenericCard(response.ability);
+			v.PointerEnter += CardHover;
+			ClassAbilityButton.Content = v;
 		}
 		ClassQuestButton.Content = null;
 		if(response.quest != null)
 		{
-			ClassQuestButton.Content = UIUtils.CreateGenericCard(response.quest);
+			Viewbox v = UIUtils.CreateGenericCard(response.quest);
+			v.PointerEnter += CardHover;
+			ClassQuestButton.Content = v;
 		}
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 		ColorWrongThings(response.player_class);
