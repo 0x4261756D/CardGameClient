@@ -31,7 +31,11 @@ public partial class ServerWindow : Window
 	private void UpdateRoomList()
 	{
 		List<byte>? payload;
-		if(!ServerTryRequest(new ServerPackets.RoomsRequest(), out payload) || payload == null) return;
+		if(!ServerTryRequest(new ServerPackets.RoomsRequest(), out payload) || payload == null)
+		{
+			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
+			return;
+		}
 		((ServerWindowViewModel)DataContext!).ServerRooms = Functions.DeserializePayload<ServerPackets.RoomsResponse>(payload).rooms;
 	}
 	private void HostClick(object? sender, RoutedEventArgs args)
@@ -44,6 +48,7 @@ public partial class ServerWindow : Window
 		},
 			out payload))
 		{
+			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
 			return;
 		}
 		if(payload == null)
@@ -83,6 +88,7 @@ public partial class ServerWindow : Window
 			targetName = (string)((Button)sender).Content
 		}, out payload) || payload == null)
 		{
+			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
 			return;
 		}
 		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload);
