@@ -26,7 +26,7 @@ public partial class DuelWindow : Window
 	private Flyout optionsFlyout = new Flyout();
 	Queue<DuelPackets.FieldUpdateRequest> fieldUpdateQueue = new Queue<DuelPackets.FieldUpdateRequest>();
 	private Task? fieldUpdateTask = null;
-	private int animationDelayInMs = 250;
+	private int animationDelayInMs = 120;
 	private bool closing = false;
 	private bool shouldEnablePassButtonAfterUpdate = false;
 	private Window? windowToShowAfterUpdate = null;
