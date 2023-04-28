@@ -29,6 +29,7 @@ public partial class DuelWindow : Window
 	private int animationDelayInMs = 250;
 	private bool closing = false;
 	private bool shouldEnablePassButtonAfterUpdate = false;
+	private Window? windowToShowAfterUpdate = null;
 
 	// This constructor creates a completely empty duel window with no interaction possibility
 	public DuelWindow()
@@ -100,21 +101,35 @@ public partial class DuelWindow : Window
 						return;
 					}
 				}
-				if(fieldUpdateQueue.Count > 0 && (fieldUpdateTask == null || (fieldUpdateTask != null && fieldUpdateTask.IsCompleted)))
+				if(fieldUpdateQueue.Count > 0)
 				{
-					await Dispatcher.UIThread.InvokeAsync(() =>
+					if((fieldUpdateTask == null || (fieldUpdateTask != null && fieldUpdateTask.IsCompleted)))
 					{
-						optionsFlyout.Hide();
-						PassButton.IsEnabled = false;
-					});
-					fieldUpdateTask = Task.Delay(animationDelayInMs).ContinueWith((_) => Dispatcher.UIThread.InvokeAsync(UpdateField));
+						await Dispatcher.UIThread.InvokeAsync(() =>
+						{
+							optionsFlyout.Hide();
+							PassButton.IsEnabled = false;
+						});
+						fieldUpdateTask = Task.Delay(animationDelayInMs).ContinueWith((_) => Dispatcher.UIThread.InvokeAsync(UpdateField));
+					}
 				}
-				else if(shouldEnablePassButtonAfterUpdate)
+				else
 				{
-					await Dispatcher.UIThread.InvokeAsync(() =>
+					if(shouldEnablePassButtonAfterUpdate)
 					{
-						PassButton.IsEnabled = true;
-					});
+						await Dispatcher.UIThread.InvokeAsync(() =>
+						{
+							PassButton.IsEnabled = true;
+						});
+					}
+					if(windowToShowAfterUpdate != null)
+					{
+						await Dispatcher.UIThread.InvokeAsync(() =>
+						{
+							windowToShowAfterUpdate.Show();
+							windowToShowAfterUpdate = null;
+						});
+					}
 				}
 			}
 		}
@@ -140,13 +155,13 @@ public partial class DuelWindow : Window
 			case NetworkingConstants.PacketType.DuelYesNoRequest:
 			{
 				Log("Received a yesno requets", severity: LogSeverity.Error);
-				new YesNoWindow(DeserializeJson<DuelPackets.YesNoRequest>(payload).question, stream).Show();
+				windowToShowAfterUpdate = new YesNoWindow(DeserializeJson<DuelPackets.YesNoRequest>(payload).question, stream);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelCustomSelectCardsRequest:
 			{
 				DuelPackets.CustomSelectCardsRequest request = DeserializeJson<DuelPackets.CustomSelectCardsRequest>(payload);
-				new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, ShowCard).Show();
+				windowToShowAfterUpdate = new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, ShowCard);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelGetOptionsResponse:
@@ -156,24 +171,24 @@ public partial class DuelWindow : Window
 			break;
 			case NetworkingConstants.PacketType.DuelSelectZoneRequest:
 			{
-				new SelectZoneWindow(DeserializeJson<DuelPackets.SelectZoneRequest>(payload).options, stream).Show();
+				windowToShowAfterUpdate = new SelectZoneWindow(DeserializeJson<DuelPackets.SelectZoneRequest>(payload).options, stream);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelGameResultResponse:
 			{
-				new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(payload)).Show();
+				windowToShowAfterUpdate = new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(payload));
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelSelectCardsRequest:
 			{
 				DuelPackets.SelectCardsRequest request = DeserializeJson<DuelPackets.SelectCardsRequest>(payload);
-				new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, ShowCard).Show();
+				windowToShowAfterUpdate = new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, ShowCard);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelViewCardsResponse:
 			{
 				DuelPackets.ViewCardsResponse request = DeserializeJson<DuelPackets.ViewCardsResponse>(payload);
-				new ViewCardsWindow(cards: request.cards, message: request.message, playerIndex: playerIndex, showCardAction: ShowCard).Show();
+				windowToShowAfterUpdate = new ViewCardsWindow(cards: request.cards, message: request.message, playerIndex: playerIndex, showCardAction: ShowCard);
 			}
 			break;
 			default:
