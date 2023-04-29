@@ -116,10 +116,17 @@ public partial class DuelWindow : Window
 				{
 					if(shouldEnablePassButtonAfterUpdate)
 					{
-						await Dispatcher.UIThread.InvokeAsync(() =>
+						if(KeepPassingBox.IsChecked ?? false)
 						{
-							PassButton.IsEnabled = true;
-						});
+							PassClick(null, new RoutedEventArgs());
+						}
+						else
+						{							
+							await Dispatcher.UIThread.InvokeAsync(() =>
+							{
+								PassButton.IsEnabled = true;
+							});
+						}
 					}
 					if(windowToShowAfterUpdate != null)
 					{
