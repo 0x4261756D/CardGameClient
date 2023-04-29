@@ -26,7 +26,6 @@ public partial class DuelWindow : Window
 	private Flyout optionsFlyout = new Flyout();
 	Queue<DuelPackets.FieldUpdateRequest> fieldUpdateQueue = new Queue<DuelPackets.FieldUpdateRequest>();
 	private Task? fieldUpdateTask = null;
-	private int animationDelayInMs = 120;
 	private bool closing = false;
 	private bool shouldEnablePassButtonAfterUpdate = false;
 	private Window? windowToShowAfterUpdate = null;
@@ -110,7 +109,7 @@ public partial class DuelWindow : Window
 							optionsFlyout.Hide();
 							PassButton.IsEnabled = false;
 						});
-						fieldUpdateTask = Task.Delay(animationDelayInMs).ContinueWith((_) => Dispatcher.UIThread.InvokeAsync(UpdateField));
+						fieldUpdateTask = Task.Delay(Program.config.animation_delay_in_ms).ContinueWith((_) => Dispatcher.UIThread.InvokeAsync(UpdateField));
 					}
 				}
 				else

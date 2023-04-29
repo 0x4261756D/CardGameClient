@@ -12,6 +12,7 @@ public partial class SettingsWindow : Window
 		HeightInput.Value = Program.config.height;
 		ShouldSpawnCoreInput.IsChecked = Program.config.should_spawn_core;
 		ShouldSavePlayerNameInput.IsChecked = Program.config.should_save_player_name;
+		AnimationDelayInput.Value = Program.config.animation_delay_in_ms;
 	}
 	public void BackClick(object sender, RoutedEventArgs args)
 	{
@@ -23,6 +24,7 @@ public partial class SettingsWindow : Window
 		Program.config.height = (int)HeightInput.Value;
 		Program.config.should_spawn_core = ShouldSpawnCoreInput.IsChecked ?? false;
 		Program.config.should_save_player_name = ShouldSavePlayerNameInput.IsChecked ?? false;
+		Program.config.animation_delay_in_ms = (int)AnimationDelayInput.Value;
 		this.Close();
 	}
 }

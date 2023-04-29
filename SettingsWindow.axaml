@@ -25,6 +25,10 @@
 			<TextBlock>Should save player name?</TextBlock>
 			<CheckBox x:Name="ShouldSavePlayerNameInput"/>
 		</StackPanel>
+		<StackPanel Orientation="Vertical">
+			<TextBlock>Animation delay in ms</TextBlock>
+			<NumericUpDown x:Name="AnimationDelayInput" AllowSpin="False" ShowButtonSpinner="False"/>
+		</StackPanel>
 
 	</StackPanel>
 </Window>

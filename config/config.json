@@ -19,7 +19,8 @@
 		"player_name": null,
 		"should_save_player_name": false,
 		"server_address": "h2871632.stratoserver.net",
-		"last_deck_name": null
+		"last_deck_name": null,
+		"animation_delay_in_ms": 120
 	},
 	"linux": {
 		"deck_edit_url": {
@@ -41,6 +42,7 @@
 		"player_name": null,
 		"should_save_player_name": false,
 		"server_address": "h2871632.stratoserver.net",
-		"last_deck_name": null
+		"last_deck_name": null,
+		"animation_delay_in_ms": 120
 	}
 }
