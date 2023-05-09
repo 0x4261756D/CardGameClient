@@ -9,8 +9,8 @@ A client for a card game.
 Follow the instructions for the [Core](https://github.com/0x4261756D/CardGameCore), then:
 ```bash
 git clone https://github.com/0x4261756D/CardGameClient
-git submodule update --init --remote
 cd CardGameClient
+git submodule update --init --remote
 dotnet run
 ```
 Should be working with [VSCode](https://vscodium.com/) out of the box.
