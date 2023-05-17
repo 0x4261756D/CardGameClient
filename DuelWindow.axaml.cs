@@ -121,7 +121,7 @@ public partial class DuelWindow : Window
 							PassClick(null, new RoutedEventArgs());
 						}
 						else
-						{							
+						{
 							await Dispatcher.UIThread.InvokeAsync(() =>
 							{
 								PassButton.IsEnabled = true;
@@ -492,7 +492,7 @@ public partial class DuelWindow : Window
 			contentPanel.Children.Add(new TextBlock { Text = card.name });
 			if(card.card_type == GameConstants.CardType.Creature && card.location == GameConstants.Location.Field)
 			{
-				contentPanel.Children.Add(new TextBlock {Text = $"Power: {card.power} / Life: {card.life}"});
+				contentPanel.Children.Add(new TextBlock { Text = $"Power: {card.power} / Life: {card.life}" });
 			}
 			b.Content = contentPanel;
 		}

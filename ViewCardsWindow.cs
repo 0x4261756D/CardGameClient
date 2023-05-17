@@ -49,7 +49,7 @@ public partial class ViewCardsWindow : Window
 		{
 			Message.Text = message;
 		}
-		
+
 	}
 	public void CloseClick(object? sender, RoutedEventArgs args)
 	{
