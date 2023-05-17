@@ -33,7 +33,7 @@ public partial class ServerWindow : Window
 		List<byte>? payload;
 		if(!ServerTryRequest(new ServerPackets.RoomsRequest(), out payload) || payload == null)
 		{
-			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
+			new ErrorPopup("Connection to the server timed out").Show();
 			return;
 		}
 		((ServerWindowViewModel)DataContext!).ServerRooms = Functions.DeserializePayload<ServerPackets.RoomsResponse>(payload).rooms;
