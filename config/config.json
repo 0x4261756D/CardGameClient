@@ -32,7 +32,7 @@
 		"should_spawn_core": true,
 		"core_info": {
 			"FileName": "../../../../CardGameCore/bin/Debug/net7.0/CardGameCore",
-			"Arguments": "--mode=client --config=../../../config/config.json",
+			"Arguments": "--mode=client --config=../../../config/config.json --additional_cards_url=h2871632.stratoserver.net",
 			"CreateNoWindow": false,
 			"Domain": null,
 			"ErrorDialog": false,

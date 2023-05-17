@@ -29,6 +29,10 @@
 			<TextBlock>Animation delay in ms</TextBlock>
 			<NumericUpDown x:Name="AnimationDelayInput" AllowSpin="False" ShowButtonSpinner="False"/>
 		</StackPanel>
+		<StackPanel Orientation="Vertical">
+			<TextBlock>Core Arguments</TextBlock>
+			<TextBox x:Name="CoreArgsInput"/>
+		</StackPanel>
 
 	</StackPanel>
 </Window>

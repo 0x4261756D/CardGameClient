@@ -13,6 +13,7 @@ public partial class SettingsWindow : Window
 		ShouldSpawnCoreInput.IsChecked = Program.config.should_spawn_core;
 		ShouldSavePlayerNameInput.IsChecked = Program.config.should_save_player_name;
 		AnimationDelayInput.Value = Program.config.animation_delay_in_ms;
+		CoreArgsInput.Text = Program.config.core_info.Arguments;
 	}
 	public void BackClick(object sender, RoutedEventArgs args)
 	{
@@ -25,6 +26,7 @@ public partial class SettingsWindow : Window
 		Program.config.should_spawn_core = ShouldSpawnCoreInput.IsChecked ?? false;
 		Program.config.should_save_player_name = ShouldSavePlayerNameInput.IsChecked ?? false;
 		Program.config.animation_delay_in_ms = (int)AnimationDelayInput.Value;
+		Program.config.core_info.Arguments = CoreArgsInput.Text;
 		this.Close();
 	}
 }
