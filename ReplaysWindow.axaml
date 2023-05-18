@@ -13,16 +13,19 @@
 		<Button Click="SelectFileClick" Grid.Column="0" Grid.Row="2">
 			Select File
 		</Button>
-		<CheckBox x:Name="FirstPlayerBox" IsChecked="{Binding IsFirstPlayer}" Grid.Column="0" Grid.Row="3"/>
+		<CheckBox x:Name="FirstPlayerBox" IsChecked="{Binding IsFirstPlayer}" Grid.Column="0" Grid.Row="3">
+			First Player?
+		</CheckBox>
 		<Button Click="StartClick" Grid.Column="0" Grid.Row="4">
 			Start
 		</Button>
 		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="5">
 			<Button Click="PrevClick">Previous</Button>
 			<Button Click="NextClick">Next</Button>
+			<Button Click="ToEndClick">Go to end</Button>
 		</StackPanel>
 		<ScrollViewer Grid.Column="0" Grid.Row="6">
-			<ListBox Items="{Binding ActionList}"/>
+			<ListBox Items="{Binding ActionList}" x:Name="ActionListBox"/>
 		</ScrollViewer>
 	</Grid>
 </Window>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -40,6 +41,26 @@ public partial class ReplaysWindow : Window
 		FilePathBox.Text = result?[0];
 	}
 
+	public void ToEndClick(object sender, RoutedEventArgs args)
+	{
+		if(replay != null && window != null)
+		{
+			for(; actionIndex < replay.actions.Count; actionIndex++)
+			{
+				Replay.GameAction action = replay.actions[actionIndex];
+				((ReplaysViewModel)DataContext!).ActionList.Insert(0, $"{(IsFieldUpdateForCurrentPlayer(action) ? "*" : "")}{actionIndex}: Player {action.player}: {(action.clientToServer ? "<-" : "->")} {Enum.GetName<NetworkingConstants.PacketType>((NetworkingConstants.PacketType)action.packet[0]) ?? "UNKNOWN"}");
+			}
+			List<byte> packet = replay.actions.FindLast(IsFieldUpdateForCurrentPlayer)!.packet;
+			window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(packet.GetRange(0, packet.Count)));
+			window.UpdateField();
+		}
+	}
+
+	private bool IsFieldUpdateForCurrentPlayer(Replay.GameAction action)
+	{
+		return action.player == (((ReplaysViewModel)DataContext!).IsFirstPlayer ? 0 : 1) && action.packet[0] == (byte)NetworkingConstants.PacketType.DuelFieldUpdateRequest;
+	}
+
 	public void StartClick(object sender, RoutedEventArgs args)
 	{
 		if(!File.Exists(FilePathBox.Text))
@@ -71,10 +92,6 @@ public partial class ReplaysWindow : Window
 		while(action.player != playerIndex || action.clientToServer || action.packet[0] != (byte)NetworkingConstants.PacketType.DuelFieldUpdateRequest)
 		{
 			((ReplaysViewModel)DataContext!).ActionList.Insert(0, $"{actionIndex}: Player {action.player}: {(action.clientToServer ? "<-" : "->")} {Enum.GetName<NetworkingConstants.PacketType>((NetworkingConstants.PacketType)action.packet[0]) ?? "UNKNOWN"}");
-			if(action.packet[0] == (byte)NetworkingConstants.PacketType.DuelGameResultResponse)
-			{
-				return;
-			}
 			actionIndex++;
 			if(actionIndex >= replay.actions.Count - 1)
 			{
@@ -88,12 +105,7 @@ public partial class ReplaysWindow : Window
 		actionIndex++;
 	}
 
-	public void NextClick(object sender, RoutedEventArgs args)
-	{
-		Next();
-	}
-
-	public void PrevClick(object sender, RoutedEventArgs args)
+	public void Prev()
 	{
 		if(replay == null || window == null || actionIndex < 2)
 		{
@@ -123,6 +135,16 @@ public partial class ReplaysWindow : Window
 		window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(replay.actions[actionIndex].packet.GetRange(0, replay.actions[actionIndex].packet.Count)));
 		window.UpdateField();
 		actionIndex++;
+	}
+
+	public void NextClick(object sender, RoutedEventArgs args)
+	{
+		Next();
+	}
+
+	public void PrevClick(object sender, RoutedEventArgs args)
+	{
+		Prev();
 	}
 }
 
