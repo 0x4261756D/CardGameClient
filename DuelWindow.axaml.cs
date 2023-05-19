@@ -118,7 +118,7 @@ public partial class DuelWindow : Window
 					{
 						if(KeepPassingBox.IsChecked ?? false)
 						{
-							if(!stream.CanWrite)
+							if(stream.CanWrite)
 							{
 								PassClick(null, new RoutedEventArgs());
 							}
