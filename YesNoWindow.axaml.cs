@@ -18,7 +18,7 @@ public partial class YesNoWindow : Window
 		stream = new TcpClient().GetStream();
 	}
 	Stream stream;
-	private bool reallyClose = true;
+	private bool reallyClose = false;
 	public YesNoWindow(string description, Stream stream)
 	{
 		InitializeComponent();
