@@ -355,6 +355,7 @@ public partial class DuelWindow : Window
 		OppQuestPanel.Children.Clear();
 		OppQuestPanel.Children.Add(CreateCardButton(request.oppField.quest));
 		Avalonia.Thickness oppBorderThickness = new Avalonia.Thickness(2, 2, 2, 0);
+		PhaseBlock.Text = (request.markedZone != null) ? "Battle Phase" : "Main Phase";
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			CardStruct? c = request.oppField.field[GameConstants.FIELD_SIZE - i - 1];
