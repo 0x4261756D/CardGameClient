@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using CardGameUtils.Structs;
 using static CardGameUtils.Structs.NetworkingStructs;
 using static CardGameUtils.Functions;

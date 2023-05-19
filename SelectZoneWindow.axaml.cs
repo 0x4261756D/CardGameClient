@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Sockets;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using static CardGameUtils.Functions;
 using static CardGameUtils.Structs.NetworkingStructs;
 

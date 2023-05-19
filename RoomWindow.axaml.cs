@@ -3,14 +3,10 @@ using System.ComponentModel;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using CardGameUtils;
-using CardGameUtils.Structs;
 using static CardGameUtils.Structs.NetworkingStructs;
 
 namespace CardGameClient;
