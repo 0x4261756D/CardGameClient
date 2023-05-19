@@ -23,7 +23,7 @@ public partial class SelectCardsWindow : Window
 		InitializeComponent();
 	}
 	private Stream stream;
-	private bool reallyClose = false;
+	private bool shouldReallyClose = false;
 
 	public SelectCardsWindow(string text, int amount, CardStruct[] cards, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
@@ -62,7 +62,7 @@ public partial class SelectCardsWindow : Window
 		Amount.Text = $"/ {amount}";
 		this.Closing += (sender, args) =>
 		{
-			args.Cancel = !reallyClose;
+			args.Cancel = !shouldReallyClose;
 		};
 	}
 
@@ -79,7 +79,7 @@ public partial class SelectCardsWindow : Window
 			uids = UIUtils.CardListBoxSelectionToUID(CardSelectionList)
 		});
 		stream.Write(payload.ToArray(), 0, payload.Count);
-		reallyClose = true;
+		shouldReallyClose = true;
 		this.Close();
 	}
 }

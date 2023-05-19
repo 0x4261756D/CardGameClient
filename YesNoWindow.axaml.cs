@@ -18,7 +18,7 @@ public partial class YesNoWindow : Window
 		stream = new TcpClient().GetStream();
 	}
 	Stream stream;
-	private bool reallyClose = false;
+	private bool shouldReallyClose = false;
 	public YesNoWindow(string description, Stream stream)
 	{
 		InitializeComponent();
@@ -28,7 +28,7 @@ public partial class YesNoWindow : Window
 		this.Height = Program.config.height / 2;
 		this.Closing += (sender, args) =>
 		{
-			args.Cancel = !reallyClose;
+			args.Cancel = !shouldReallyClose;
 		};
 	}
 
@@ -39,7 +39,7 @@ public partial class YesNoWindow : Window
 			result = true
 		});
 		stream.Write(payload.ToArray(), 0, payload.Count);
-		reallyClose = true;
+		shouldReallyClose = true;
 		Close();
 	}
 
@@ -50,7 +50,7 @@ public partial class YesNoWindow : Window
 			result = false
 		});
 		stream.Write(payload.ToArray(), 0, payload.Count);
-		reallyClose = true;
+		shouldReallyClose = true;
 		Close();
 	}
 }

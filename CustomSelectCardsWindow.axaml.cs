@@ -24,7 +24,7 @@ public partial class CustomSelectCardsWindow : Window
 		stream = new TcpClient().GetStream();
 	}
 	private Stream stream;
-	private bool reallyClose = false;
+	private bool shouldReallyClose = false;
 	public CustomSelectCardsWindow(string text, CardStruct[] cards, bool initialState, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
 		this.stream = stream;
@@ -57,7 +57,7 @@ public partial class CustomSelectCardsWindow : Window
 		}
 		this.Closing += (_, args) =>
 		{
-			args.Cancel = !reallyClose;
+			args.Cancel = !shouldReallyClose;
 		};
 		CardSelectionList.Items = contents;
 	}
@@ -69,7 +69,7 @@ public partial class CustomSelectCardsWindow : Window
 			uids = UIUtils.CardListBoxSelectionToUID(CardSelectionList),
 		});
 		stream.Write(result.ToArray(), 0, result.Count);
-		reallyClose = true;
+		shouldReallyClose = true;
 		this.Close();
 	}
 
