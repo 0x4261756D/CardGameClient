@@ -15,6 +15,8 @@ public partial class SelectZoneWindow : Window
 		InitializeComponent();
 	}
 
+	private bool shouldReallyClose = false;
+
 	public SelectZoneWindow(bool[] options, Stream stream)
 	{
 		InitializeComponent();
@@ -34,10 +36,15 @@ public partial class SelectZoneWindow : Window
 					zone = zone
 				});
 				stream.Write(payload.ToArray(), 0, payload.Count);
+				shouldReallyClose = true;
 				this.Close();
 			};
 			b.IsEnabled = options[i];
 			OptionsPanel.Children.Add(b);
 		}
+		this.Closing += (_, args) =>
+		{
+			args.Cancel = !shouldReallyClose;
+		};
 	}
 }
