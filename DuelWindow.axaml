@@ -12,7 +12,7 @@
 			<Setter Property="BorderBrush" Value="White"/>
 		</Style>
 	</Window.Styles>
-	<Grid	ColumnDefinitions="100,1*,6*,2*"
+	<Grid	ColumnDefinitions="100,1*,6*,50,*"
 			RowDefinitions="2*,2*,2*,*,2*,2*,2*"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch">
@@ -55,16 +55,18 @@
 			Grave
 		</Button>
 		<Border Grid.Column="2" Grid.Row="3">
-			<WrapPanel>
-				<Button x:Name="PassButton" Click="PassClick">Pass</Button>
-				<CheckBox x:Name="KeepPassingBox" Margin="0,0,100,0">
+			<Grid ColumnDefinitions="*,*,*,*,*,*" RowDefinitions="*">
+				<Button x:Name="PassButton" Click="PassClick" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center">
+					Pass
+				</Button>
+				<CheckBox x:Name="KeepPassingBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">
 					Keep passing
 				</CheckBox>
-				<TextBlock x:Name="TurnBlock" Margin="0,0,100,0"/>
-				<TextBlock x:Name="InitBlock" Margin="0,0,100,0"/>
-				<TextBlock x:Name="DirectionBlock"/>
-				<TextBlock x:Name="PhaseBlock"/>
-			</WrapPanel>
+				<TextBlock x:Name="TurnBlock" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center"/>
+				<TextBlock x:Name="InitBlock" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center"/>
+				<TextBlock x:Name="DirectionBlock" Grid.Column="4" Grid.Row="0" HorizontalAlignment="Center"/>
+				<TextBlock x:Name="PhaseBlock" Grid.Column="5" Grid.Row="0" HorizontalAlignment="Center"/>
+			</Grid>
 		</Border>
 		<Border Grid.Column="2" Grid.Row="4">
 			<WrapPanel x:Name="OwnField" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
@@ -92,5 +94,8 @@
 				<Panel x:Name="OwnShowPanel"/>
 			</StackPanel>
 		</Border>
+		<ScrollViewer Background="DarkGray" Grid.Column="4" Grid.Row="0" Grid.RowSpan="7" HorizontalScrollBarVisibility="Auto">
+			<ItemsRepeater x:Name="ActivityLogList"/>
+		</ScrollViewer>
 	</Grid>
 </Window>

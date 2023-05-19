@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -29,6 +30,7 @@ public partial class DuelWindow : Window
 	private bool closing = false;
 	private bool shouldEnablePassButtonAfterUpdate = false;
 	private Window? windowToShowAfterUpdate = null;
+	private ObservableCollection<TextBlock> activities = new ObservableCollection<TextBlock>();
 
 	// This constructor creates a completely empty duel window with no interaction possibility
 	public DuelWindow()
@@ -215,6 +217,10 @@ public partial class DuelWindow : Window
 			{
 				if(((CardStruct)b.DataContext!).uid == response.uid)
 				{
+					if(response.options.Length == 0)
+					{
+						return;
+					}
 					StackPanel p = new StackPanel();
 					foreach(string text in response.options)
 					{
@@ -356,6 +362,14 @@ public partial class DuelWindow : Window
 		OppQuestPanel.Children.Add(CreateCardButton(request.oppField.quest));
 		Avalonia.Thickness oppBorderThickness = new Avalonia.Thickness(2, 2, 2, 0);
 		PhaseBlock.Text = (request.markedZone != null) ? "Battle Phase" : "Main Phase";
+		if(request.ownField.shownCard != null)
+		{
+			activities.Insert(0, new TextBlock { Text = $"You: {request.ownField.shownCard.name}: {request.ownField.shownReason}" });
+		}
+		if(request.oppField.shownCard != null)
+		{
+			activities.Insert(0, new TextBlock { Text = $"Opponent: {request.oppField.shownCard.name}: {request.ownField.shownReason}" });
+		}
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			CardStruct? c = request.oppField.field[GameConstants.FIELD_SIZE - i - 1];
@@ -443,6 +457,7 @@ public partial class DuelWindow : Window
 		{
 			OwnShowPanel.Children.Add(CreateCardButton(request.ownField.shownCard));
 		}
+		ActivityLogList.Items = activities;
 	}
 
 	private Button CreateCardButton(CardStruct card)
