@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
@@ -81,12 +83,12 @@ public partial class RoomWindow : Window
 			closed = true;
 		}
 	}
-	private void TryStartClick(object? sender, RoutedEventArgs args)
+	private async void TryStartClick(object? sender, RoutedEventArgs args)
 	{
 		string? deckname = DeckSelectBox.SelectedItem as string;
 		if(deckname == null || deckname == "")
 		{
-			new ErrorPopup("No deck selected").ShowDialog(this);
+			await new ErrorPopup("No deck selected").ShowDialog(this);
 			return;
 		}
 		List<byte>? payload;
@@ -103,71 +105,78 @@ public partial class RoomWindow : Window
 		string[]? decklist = Functions.DeserializePayload<DeckPackets.ListResponse>(payload).deck.ToString()?.Split('\n');
 		if(decklist == null)
 		{
-			new ErrorPopup("Deck list could not be loaded properly").ShowDialog(this);
+			await new ErrorPopup("Deck list could not be loaded properly").ShowDialog(this);
 			return;
 		}
-		if(!UIUtils.TryRequest(new ServerPackets.StartRequest
+		try
 		{
-			decklist = decklist,
-			name = ((RoomWindowViewModel)DataContext!).PlayerName,
-			noshuffle = NoShuffleBox.IsChecked ?? false
-		}, out payload, address, port, this) || payload == null)
-		{
-			return;
-		}
-		ServerPackets.StartResponse response = Functions.DeserializePayload<ServerPackets.StartResponse>(payload);
-		if(response.success)
-		{
-			Dispatcher.UIThread.InvokeAsync(() =>
+
+			using(TcpClient client = new TcpClient(address, port))
 			{
-				int playerIndex = -1;
-				TcpClient client = CheckForReady(response.id!, response.port, out playerIndex);
-				new DuelWindow(playerIndex, client)
+				using(NetworkStream stream = client.GetStream())
 				{
-					WindowState = this.WindowState,
-				}.Show();
-				this.Close();
-			}, priority: DispatcherPriority.Background);
-			((Button)sender!).IsEnabled = false;
-		}
-		else
-		{
-			new ErrorPopup(response.reason!).ShowDialog(this);
-		}
-	}
-	private TcpClient CheckForReady(string id, int gamePort, out int playerIndex)
-	{
-		// AAAAAAAAAAAAAAAHHHHHHHHHH UGLY CODE....
-		// TODO: Rework Room to work with a listener instead
-		while(true)
-		{
-			TcpClient c = new TcpClient();
-			try
-			{
-				c.Connect(address, gamePort);
-				if(c.Connected)
-				{
-					byte[] idBytes = Encoding.UTF8.GetBytes(id);
-					c.GetStream().Write(idBytes, 0, idBytes.Length);
-					do
+					payload = Functions.GeneratePayload<ServerPackets.StartRequest>(new ServerPackets.StartRequest
 					{
-						playerIndex = c.GetStream().ReadByte();
+						decklist = decklist,
+						name = ((RoomWindowViewModel)DataContext!).PlayerName,
+						noshuffle = NoShuffleBox.IsChecked ?? false
+					});
+					stream.Write(payload.ToArray(), 0, payload.Count);
+					ServerPackets.StartResponse response = Functions.DeserializePayload<ServerPackets.StartResponse>(Functions.ReceivePacket<ServerPackets.StartResponse>(stream)!);
+					if(response.success == ServerPackets.StartResponse.Result.Failure)
+					{
+						new ErrorPopup(response.reason!).Show();
+						return;
 					}
-					while(playerIndex == -1);
-					return c;
-				}
-				else
-				{
-					c.Close();
+					else
+					{
+						((Button)sender!).IsEnabled = false;
+						if(response.success == ServerPackets.StartResponse.Result.Success)
+						{
+							StartGame(response.port, response.id!);
+						}
+						else
+						{
+							await Task.Run(() =>
+							{
+								response = Functions.DeserializePayload<ServerPackets.StartResponse>(Functions.ReceivePacket<ServerPackets.StartResponse>(stream)!);
+								if(response.success != ServerPackets.StartResponse.Result.Success)
+								{
+									new ErrorPopup(response.reason ?? "Duel creation failed for unknown reason");
+								}
+								else
+								{
+									StartGame(response.port, response.id!);
+								}
+							});
+						}
+					}
 				}
 			}
-			catch(SocketException)
-			{
-				Thread.Sleep(100);
-			}
+		}
+		catch(Exception ex)
+		{
+			new ErrorPopup(ex.Message).Show();
 		}
 	}
 
+	public async void StartGame(int port, string id)
+	{
+		TcpClient client = new TcpClient();
+		await client.ConnectAsync(address, port);
+		byte[] idBytes = Encoding.UTF8.GetBytes(id);
+		await client.GetStream().WriteAsync(idBytes, 0, idBytes.Length);
+		byte[] playerIndex = new byte[1];
+		await client.GetStream().ReadExactlyAsync(playerIndex, 0, 1);
+		await Dispatcher.UIThread.InvokeAsync(() =>
+		{
+			new DuelWindow(playerIndex[0], client)
+			{
+				WindowState = this.WindowState,
+			}.Show();
+			this.Close();
+		}, priority: DispatcherPriority.Background);
+	}
 }
 public class RoomWindowViewModel : INotifyPropertyChanged
 {
