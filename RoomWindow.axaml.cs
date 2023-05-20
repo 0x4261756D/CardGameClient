@@ -119,7 +119,8 @@ public partial class RoomWindow : Window
 						noshuffle = NoShuffleBox.IsChecked ?? false
 					});
 					stream.Write(payload.ToArray(), 0, payload.Count);
-					ServerPackets.StartResponse response = Functions.DeserializePayload<ServerPackets.StartResponse>(Functions.ReceivePacket<ServerPackets.StartResponse>(stream)!);
+					byte[]? bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
+					ServerPackets.StartResponse response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(Encoding.UTF8.GetString(bytes));
 					if(response.success == ServerPackets.StartResponse.Result.Failure)
 					{
 						new ErrorPopup(response.reason!).Show();
@@ -136,7 +137,8 @@ public partial class RoomWindow : Window
 						{
 							await Task.Run(() =>
 							{
-								response = Functions.DeserializePayload<ServerPackets.StartResponse>(Functions.ReceivePacket<ServerPackets.StartResponse>(stream)!);
+								bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
+								response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(Encoding.UTF8.GetString(bytes));
 								if(response.success != ServerPackets.StartResponse.Result.Success)
 								{
 									new ErrorPopup(response.reason ?? "Duel creation failed for unknown reason");
