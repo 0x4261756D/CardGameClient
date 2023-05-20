@@ -91,18 +91,15 @@ public partial class RoomWindow : Window
 			await new ErrorPopup("No deck selected").ShowDialog(this);
 			return;
 		}
-		List<byte>? payload;
-		if(
-			!UIUtils.TryRequest(new DeckPackets.ListRequest
-			{
-				name = deckname
-			}, out payload, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, this)
-			||
-			payload == null)
+		(byte, byte[]?)? responseBytes = UIUtils.TryRequest(new DeckPackets.ListRequest
+		{
+			name = deckname,
+		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, this);
+		if(responseBytes == null)
 		{
 			return;
 		}
-		string[]? decklist = Functions.DeserializePayload<DeckPackets.ListResponse>(payload).deck.ToString()?.Split('\n');
+		string[]? decklist = Functions.DeserializePayload<DeckPackets.ListResponse>(responseBytes.Value).deck.ToString()?.Split('\n');
 		if(decklist == null)
 		{
 			await new ErrorPopup("Deck list could not be loaded properly").ShowDialog(this);
@@ -115,7 +112,7 @@ public partial class RoomWindow : Window
 			{
 				using(NetworkStream stream = client.GetStream())
 				{
-					payload = Functions.GeneratePayload<ServerPackets.StartRequest>(new ServerPackets.StartRequest
+					List<byte> payload = Functions.GeneratePayload<ServerPackets.StartRequest>(new ServerPackets.StartRequest
 					{
 						decklist = decklist,
 						name = ((RoomWindowViewModel)DataContext!).PlayerName,
@@ -188,13 +185,13 @@ public class RoomWindowViewModel : INotifyPropertyChanged
 
 	public void LoadDecks()
 	{
-		List<byte>? payload;
-		if(!UIUtils.TryRequest(new DeckPackets.NamesRequest(), out payload, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, null) || payload == null)
+		(byte, byte[]?)? payload = UIUtils.TryRequest(new DeckPackets.NamesRequest(), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, null);
+		if(payload == null)
 		{
 			return;
 		}
 		Decknames.Clear();
-		Decknames.AddRange(Functions.DeserializePayload<DeckPackets.NamesResponse>(payload).names);
+		Decknames.AddRange(Functions.DeserializePayload<DeckPackets.NamesResponse>(payload.Value).names);
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;

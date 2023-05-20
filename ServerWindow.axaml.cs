@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -28,33 +27,26 @@ public partial class ServerWindow : Window
 	}
 	private void UpdateRoomList()
 	{
-		List<byte>? payload;
-		if(!ServerTryRequest(new ServerPackets.RoomsRequest(), out payload) || payload == null)
+		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.RoomsRequest());
+		if(payload == null)
 		{
 			new ErrorPopup("Connection to the server timed out").Show();
 			return;
 		}
-		((ServerWindowViewModel)DataContext!).ServerRooms = Functions.DeserializePayload<ServerPackets.RoomsResponse>(payload).rooms;
+		((ServerWindowViewModel)DataContext!).ServerRooms = Functions.DeserializePayload<ServerPackets.RoomsResponse>(payload.Value).rooms;
 	}
 	private void HostClick(object? sender, RoutedEventArgs args)
 	{
-		List<byte>? payload;
 		string playerName = ((ServerWindowViewModel)DataContext!).PlayerName;
-		if(!ServerTryRequest(new ServerPackets.CreateRequest
+		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.CreateRequest
 		{
 			name = playerName,
-		},
-			out payload))
-		{
-			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
-			return;
-		}
+		});
 		if(payload == null)
 		{
-			new ErrorPopup("Could not get a request from the server").ShowDialog(this);
 			return;
 		}
-		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload);
+		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload.Value);
 		if(response.success)
 		{
 			RoomWindow w = new RoomWindow(ServerAddressBox.Text, 7043, playerName)
@@ -79,17 +71,17 @@ public partial class ServerWindow : Window
 	private void RoomClick(object sender, RoutedEventArgs args)
 	{
 		if(PlayerNameBox.Text == "") return;
-		List<byte>? payload;
-		if(!ServerTryRequest(new ServerPackets.JoinRequest
+		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.JoinRequest
 		{
 			name = PlayerNameBox.Text,
 			targetName = (string)((Button)sender).Content
-		}, out payload) || payload == null)
+		});
+		if(payload == null)
 		{
 			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
 			return;
 		}
-		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload);
+		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload.Value);
 		if(response.success)
 		{
 			new RoomWindow(ServerAddressBox.Text, 7043, ((ServerWindowViewModel)DataContext!).PlayerName)
@@ -103,9 +95,9 @@ public partial class ServerWindow : Window
 			new ErrorPopup(response.reason!).ShowDialog(this);
 		}
 	}
-	private bool ServerTryRequest(PacketContent request, out List<byte>? payload)
+	private (byte, byte[]?)? ServerTryRequest(PacketContent request)
 	{
-		return UIUtils.TryRequest(request, out payload, ServerAddressBox.Text, 7043, this, 10000);
+		return UIUtils.TryRequest(request, ServerAddressBox.Text, 7043, this);
 	}
 }
 public class ServerWindowViewModel : INotifyPropertyChanged

@@ -66,7 +66,7 @@ public partial class DeckEditWindow : Window
 	public void LoadSidebar(string fil)
 	{
 		GameConstants.PlayerClass playerClass = (GameConstants.PlayerClass?)ClassSelectBox.SelectedItem ?? GameConstants.PlayerClass.All;
-		List<byte> payload = Request(new DeckPackets.SearchRequest() { filter = fil, playerClass = playerClass },
+		(byte, byte[]?) payload = Request(new DeckPackets.SearchRequest() { filter = fil, playerClass = playerClass },
 			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		cardpool = DeserializePayload<DeckPackets.SearchResponse>(payload).cards;
 		List<Control> items = new List<Control>();
@@ -221,7 +221,7 @@ public partial class DeckEditWindow : Window
 	}
 	public void LoadDeck(string deckName)
 	{
-		List<byte> payload = Request(new DeckPackets.ListRequest
+		(byte, byte[]?) payload = Request(new DeckPackets.ListRequest
 		{
 			name = deckName
 		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
@@ -397,7 +397,7 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 
 	public void LoadDecks()
 	{
-		List<byte> payload = Request(new DeckPackets.NamesRequest(), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		(byte, byte[]?) payload = Request(new DeckPackets.NamesRequest(), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		string[] names = DeserializePayload<DeckPackets.NamesResponse>(payload).names;
 		Array.Sort(names);
 		Decknames.Clear();

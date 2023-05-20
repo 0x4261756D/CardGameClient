@@ -91,16 +91,10 @@ public partial class DuelWindow : Window
 		{
 			if(client.Connected)
 			{
-				Monitor.Enter(stream);
-				List<byte>? bytes = ReceiveRawPacket((NetworkStream)stream, 1000);
-				Monitor.Exit(stream);
-				if(bytes != null && bytes.Count != 0)
+				(byte, byte[]?)? payload = await Task.Run(() => TryReceiveRawPacket((NetworkStream)stream, 100));
+				if(payload != null && await Dispatcher.UIThread.InvokeAsync(() => HandlePacket(payload.Value)))
 				{
-					Log("Client received a request of length " + bytes.Count);
-					if(await Dispatcher.UIThread.InvokeAsync(() => HandlePacket(bytes)))
-					{
-						return;
-					}
+					return;
 				}
 				if(fieldUpdateQueue.Count > 0)
 				{
@@ -146,15 +140,15 @@ public partial class DuelWindow : Window
 		}
 	}
 
-	private bool HandlePacket(List<byte> bytes)
+	private bool HandlePacket((byte type, byte[]? bytes) packet)
 	{
-		if(bytes[0] >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		if(packet.type >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
 		{
-			Log($"Unrecognized packet type ({bytes[0]})");
-			throw new Exception($"Unrecognized packet type ({bytes[0]})");
+			Log($"Unrecognized packet type ({packet.type})");
+			throw new Exception($"Unrecognized packet type ({packet.type})");
 		}
-		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)bytes[0];
-		string payload = Encoding.UTF8.GetString(bytes.GetRange(1, bytes.Count - 1).ToArray());
+		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)packet.type;
+		string payload = (packet.bytes == null) ? "{}" : Encoding.UTF8.GetString(packet.bytes);
 		Functions.Log(payload);
 		switch(type)
 		{

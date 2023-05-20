@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -11,12 +10,11 @@ namespace CardGameClient;
 
 public class UIUtils
 {
-	public static bool TryRequest(PacketContent request, out List<byte> payload, string address, int port, Window? window, int timeout = -1)
+	public static (byte, byte[]?)? TryRequest(PacketContent request, string address, int port, Window? window)
 	{
 		try
 		{
-			payload = Functions.Request(request, address, port, timeout);
-			return payload != null;
+			return Functions.Request(request, address, port);
 		}
 		catch(Exception ex)
 		{
@@ -28,8 +26,7 @@ public class UIUtils
 			{
 				new ErrorPopup(ex.Message).Show();
 			}
-			payload = new List<byte>();
-			return false;
+			return null;
 		}
 	}
 
