@@ -510,6 +510,10 @@ public partial class DuelWindow : Window
 			{
 				contentPanel.Children.Add(new TextBlock { Text = $"Power: {card.power} / Life: {card.life}" });
 			}
+			else if(card.card_type == GameConstants.CardType.Quest)
+			{
+				contentPanel.Children.Add(new TextBlock { Text = card.text.Contains("REWARD CLAIMED") ? "REWARD CLAIMED" : $"Progress: {card.position}/{card.cost}" });
+			}
 			b.Content = contentPanel;
 		}
 		return b;
