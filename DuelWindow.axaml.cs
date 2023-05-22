@@ -337,7 +337,12 @@ public partial class DuelWindow : Window
 			return;
 		}
 		DuelPackets.FieldUpdateRequest request = fieldUpdateQueue.Dequeue();
-		TurnBlock.Text = $"Turn {request.turn}";
+		string turnText = $"Turn {request.turn}";
+		if(TurnBlock.Text != turnText)
+		{
+			KeepPassingBox.IsChecked = false;
+		}
+		TurnBlock.Text = turnText;
 		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
 		DirectionBlock.Text = "Battle direction: " + (request.battleDirectionLeftToRight ? "->" : "<-");
 		Background = request.hasInitiative ? Brushes.Purple : Brushes.Black;
