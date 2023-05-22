@@ -362,7 +362,7 @@ public partial class DuelWindow : Window
 		}
 		if(request.oppField.shownCard != null)
 		{
-			activities.Insert(0, new TextBlock { Text = $"Opponent: {request.oppField.shownCard.name}: {request.ownField.shownReason}" });
+			activities.Insert(0, new TextBlock { Text = $"Opponent: {request.oppField.shownCard.name}: {request.oppField.shownReason}" });
 		}
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
