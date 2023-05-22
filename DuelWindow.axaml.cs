@@ -148,51 +148,49 @@ public partial class DuelWindow : Window
 			throw new Exception($"Unrecognized packet type ({packet.type})");
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)packet.type;
-		string payload = (packet.bytes == null) ? "{}" : Encoding.UTF8.GetString(packet.bytes);
-		Functions.Log(payload);
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DuelFieldUpdateRequest:
 			{
-				EnqueueFieldUpdate(DeserializeJson<DuelPackets.FieldUpdateRequest>(payload));
+				EnqueueFieldUpdate(DeserializeJson<DuelPackets.FieldUpdateRequest>(packet.bytes!));
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelYesNoRequest:
 			{
 				Log("Received a yesno requets", severity: LogSeverity.Error);
-				windowToShowAfterUpdate = new YesNoWindow(DeserializeJson<DuelPackets.YesNoRequest>(payload).question, stream);
+				windowToShowAfterUpdate = new YesNoWindow(DeserializeJson<DuelPackets.YesNoRequest>(packet.bytes!).question, stream);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelCustomSelectCardsRequest:
 			{
-				DuelPackets.CustomSelectCardsRequest request = DeserializeJson<DuelPackets.CustomSelectCardsRequest>(payload);
+				DuelPackets.CustomSelectCardsRequest request = DeserializeJson<DuelPackets.CustomSelectCardsRequest>(packet.bytes!);
 				windowToShowAfterUpdate = new CustomSelectCardsWindow(request.desc!, request.cards, request.initialState, stream, playerIndex, ShowCard);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelGetOptionsResponse:
 			{
-				UpdateCardOptions(DeserializeJson<DuelPackets.GetOptionsResponse>(payload));
+				UpdateCardOptions(DeserializeJson<DuelPackets.GetOptionsResponse>(packet.bytes!));
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelSelectZoneRequest:
 			{
-				windowToShowAfterUpdate = new SelectZoneWindow(DeserializeJson<DuelPackets.SelectZoneRequest>(payload).options, stream);
+				windowToShowAfterUpdate = new SelectZoneWindow(DeserializeJson<DuelPackets.SelectZoneRequest>(packet.bytes!).options, stream);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelGameResultResponse:
 			{
-				windowToShowAfterUpdate = new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(payload));
+				windowToShowAfterUpdate = new GameResultWindow(this, DeserializeJson<DuelPackets.GameResultResponse>(packet.bytes!));
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelSelectCardsRequest:
 			{
-				DuelPackets.SelectCardsRequest request = DeserializeJson<DuelPackets.SelectCardsRequest>(payload);
+				DuelPackets.SelectCardsRequest request = DeserializeJson<DuelPackets.SelectCardsRequest>(packet.bytes!);
 				windowToShowAfterUpdate = new SelectCardsWindow(request.desc!, request.amount, request.cards, stream, playerIndex, ShowCard);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelViewCardsResponse:
 			{
-				DuelPackets.ViewCardsResponse request = DeserializeJson<DuelPackets.ViewCardsResponse>(payload);
+				DuelPackets.ViewCardsResponse request = DeserializeJson<DuelPackets.ViewCardsResponse>(packet.bytes!);
 				windowToShowAfterUpdate = new ViewCardsWindow(cards: request.cards, message: request.message, playerIndex: playerIndex, showCardAction: ShowCard);
 			}
 			break;
