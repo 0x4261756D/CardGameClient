@@ -361,11 +361,25 @@ public partial class DuelWindow : Window
 		PhaseBlock.Text = (request.markedZone != null) ? "Battle Phase" : "Main Phase";
 		if(request.ownField.shownCard != null)
 		{
-			activities.Insert(0, new TextBlock { Text = $"You: {request.ownField.shownCard.name}: {request.ownField.shownReason}" });
+			TextBlock text = new TextBlock { Text = $"You: {request.ownField.shownCard.name}: {request.ownField.shownReason}" };
+			text.PointerEnter += (sender, args) =>
+			{
+				if(sender == null) return;
+				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+				ShowCard(request.ownField.shownCard);
+			};
+			activities.Insert(0, text);
 		}
 		if(request.oppField.shownCard != null)
 		{
-			activities.Insert(0, new TextBlock { Text = $"Opponent: {request.oppField.shownCard.name}: {request.oppField.shownReason}" });
+			TextBlock text = new TextBlock { Text = $"Opp: {request.oppField.shownCard.name}: {request.oppField.shownReason}" };
+			text.PointerEnter += (sender, args) =>
+			{
+				if(sender == null) return;
+				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+				ShowCard(request.oppField.shownCard);
+			};
+			activities.Insert(0, text);
 		}
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
