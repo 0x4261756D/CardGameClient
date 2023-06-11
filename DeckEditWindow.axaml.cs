@@ -95,11 +95,8 @@ public partial class DeckEditWindow : Window
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-		CardImagePanel.Children.Clear();
 		CardStruct c = ((CardStruct)(((Viewbox)sender).DataContext!));
-		Viewbox v = UIUtils.CreateGenericCard(c);
-		CardImagePanel.Children.Add(v);
-		CardTextBlock.Text = c.Format(inDeckEdit: true);
+		UIUtils.CardHover(CardImagePanel, CardTextBlock, c, true);
 	}
 
 	public void AddCardToDeckClick(object? sender, RoutedEventArgs args)

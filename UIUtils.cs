@@ -1,7 +1,10 @@
 using System;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using CardGameUtils;
 using CardGameUtils.Structs;
 using static CardGameUtils.Structs.NetworkingStructs;
@@ -72,5 +75,54 @@ public class UIUtils
 			uids[i] = ((CardStruct)((TextBlock)box.SelectedItems[i]!).DataContext!).uid;
 		}
 		return uids;
+	}
+
+	public static void CardHover(Panel CardImagePanel, TextBlock CardTextBlock, CardStruct c, bool inDeckEdit)
+	{
+		CardImagePanel.Children.Clear();
+		Viewbox v = UIUtils.CreateGenericCard(c);
+		CardImagePanel.Children.Add(v);
+
+		CardTextBlock.Text = c.Format();
+		CardTextBlock.PointerMoved += CardTextHover;
+	}
+	private static void CardTextHover(object? sender, PointerEventArgs e)
+	{
+		if(sender == null) return;
+		TextBlock block = (TextBlock)sender;
+		TextLayout layout = block.TextLayout;
+		Point pointerPoint = e.GetPosition(block);
+		double height = 0;
+		foreach(var line in layout.TextLines)
+		{
+			height += line.LineMetrics.Size.Height;
+			if(height >= pointerPoint.Y)
+			{
+				int x = line.GetCharacterHitFromDistance(pointerPoint.X).FirstCharacterIndex;
+				if(block.Text[x] == ' ') return;
+				int end = x;
+				for(; end < line.TextRange.End; end++)
+				{
+					if(block.Text[end] == ' ') return;
+					if(block.Text[end] == ']') break;
+				}
+				if(end <= 0) return;
+				for(; x >= line.TextRange.Start; x--)
+				{
+					if(block.Text[x] == ' ') return;
+					if(block.Text[x] == '[')
+					{
+						string keyword = block.Text.Substring(x + 1, end - x - 1);
+						if(ClientConstants.KeywordDescriptions.ContainsKey(keyword))
+						{
+							string description = ClientConstants.KeywordDescriptions[keyword];
+							ToolTip.SetTip(block, description);
+						}
+						return;
+					}
+				}
+				break;
+			}
+		}
 	}
 }

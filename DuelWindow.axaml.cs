@@ -201,6 +201,11 @@ public partial class DuelWindow : Window
 		return false;
 	}
 
+	private void ShowCard(CardStruct c)
+	{
+		UIUtils.CardHover(CardImagePanel, CardTextBlock, c, false);
+	}
+
 	private void UpdateCardOptions(DuelPackets.GetOptionsResponse response)
 	{
 		if(response.location == GameConstants.Location.Hand)
@@ -366,7 +371,7 @@ public partial class DuelWindow : Window
 			{
 				if(sender == null) return;
 				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-				ShowCard(request.ownField.shownCard);
+				UIUtils.CardHover(CardImagePanel, CardTextBlock, request.ownField.shownCard, false);
 			};
 			activities.Insert(0, text);
 		}
@@ -377,7 +382,7 @@ public partial class DuelWindow : Window
 			{
 				if(sender == null) return;
 				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-				ShowCard(request.oppField.shownCard);
+				UIUtils.CardHover(CardImagePanel, CardTextBlock, request.oppField.shownCard, false);
 			};
 			activities.Insert(0, text);
 		}
@@ -487,7 +492,7 @@ public partial class DuelWindow : Window
 		{
 			if(sender == null) return;
 			if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-			ShowCard(card);
+			UIUtils.CardHover(CardImagePanel, CardTextBlock, card, false);
 		};
 		if(card.controller == playerIndex)
 		{
@@ -541,14 +546,6 @@ public partial class DuelWindow : Window
 			uid = uid
 		});
 		stream.Write(payload.ToArray(), 0, payload.Count);
-	}
-
-	public void ShowCard(CardStruct c)
-	{
-		CardImagePanel.Children.Clear();
-		Viewbox v = UIUtils.CreateGenericCard(c);
-		CardImagePanel.Children.Add(v);
-		CardTextBlock.Text = c.Format();
 	}
 
 	private void Cleanup()
