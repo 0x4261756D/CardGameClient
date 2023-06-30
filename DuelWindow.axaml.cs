@@ -87,6 +87,7 @@ public partial class DuelWindow : Window
 	private async void HandleNetwork()
 	{
 		Log("Socketthread started");
+		bool hasPassed = false;
 		while(!closing)
 		{
 			if(client.Connected)
@@ -98,6 +99,7 @@ public partial class DuelWindow : Window
 				}
 				if(fieldUpdateQueue.Count > 0)
 				{
+					hasPassed = false;
 					if((fieldUpdateTask == null || (fieldUpdateTask != null && fieldUpdateTask.IsCompleted)))
 					{
 						await Dispatcher.UIThread.InvokeAsync(() =>
@@ -112,11 +114,12 @@ public partial class DuelWindow : Window
 				{
 					if(shouldEnablePassButtonAfterUpdate)
 					{
-						if(KeepPassingBox.IsChecked ?? false)
+						if(!hasPassed && (KeepPassingBox.IsChecked ?? false))
 						{
 							if(stream.CanWrite)
 							{
 								PassClick(null, new RoutedEventArgs());
+								hasPassed = true;
 							}
 						}
 						else
