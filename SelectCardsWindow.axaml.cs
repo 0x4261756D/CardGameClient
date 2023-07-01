@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CardGameUtils.Structs;
@@ -20,10 +21,12 @@ public partial class SelectCardsWindow : Window
 	public SelectCardsWindow()
 	{
 		stream = new TcpClient().GetStream();
+		showCardAction = (_) => { };
 		InitializeComponent();
 	}
 	private Stream stream;
 	private bool shouldReallyClose = false;
+	private Action<CardStruct> showCardAction;
 
 	public SelectCardsWindow(string text, int amount, CardStruct[] cards, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
@@ -31,39 +34,40 @@ public partial class SelectCardsWindow : Window
 		{
 			throw new Exception($"Tried to create a SelectCardWindow requiring to select more cards than possible: {cards.Length}/{amount}");
 		}
+		this.showCardAction = showCardAction;
 		this.stream = stream;
 		DataContext = new SelectedCardViewModel(amount);
 		InitializeComponent();
 		this.Width = Program.config.width / 2;
 		this.Height = Program.config.height / 2;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
-		List<TextBlock> contents = new List<TextBlock>();
-		foreach(CardStruct card in cards)
+		CardSelectionList.DataContext = cards;
+		CardSelectionList.Items = cards;
+		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
 		{
-			// TODO: Make this nicer. e.g. group by stuff, etc.
-			TextBlock newBlock = new TextBlock
+			TextBlock block = new TextBlock
 			{
-				DataContext = card,
-				Text = card.name,
+				Text = value.name,
 				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
-				TextAlignment = (card.controller == playerIndex) ? Avalonia.Media.TextAlignment.Left : Avalonia.Media.TextAlignment.Right,
 			};
-			newBlock.PointerEnter += (sender, args) =>
-			{
-				if(sender == null) return;
-				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-				showCardAction(card);
-			};
-			contents.Add(newBlock);
+			block.PointerEnter += CardPointerEnter;
+			return block;
 		}
-		CardSelectionList.Items = contents;
+		);
 		Message.Text = text;
 		Amount.Text = $"/ {amount}";
 		this.Closing += (sender, args) =>
 		{
 			args.Cancel = !shouldReallyClose;
 		};
+	}
+
+	private void CardPointerEnter(object? sender, PointerEventArgs args)
+	{
+		if(sender == null) return;
+		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+		showCardAction((CardStruct)((Control)(sender)).DataContext!);
 	}
 
 	public void CardSelectionChanged(object sender, SelectionChangedEventArgs args)
