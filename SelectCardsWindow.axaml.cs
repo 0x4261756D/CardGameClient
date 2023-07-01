@@ -48,13 +48,15 @@ public partial class SelectCardsWindow : Window
 			TextBlock block = new TextBlock
 			{
 				Text = value.name,
-				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
 			};
-			block.PointerEnter += CardPointerEnter;
-			return block;
-		}
-		);
+			Border border = new Border
+			{
+				Child = block,
+				Background = Avalonia.Media.Brushes.Transparent,
+			};
+			border.PointerEnter += CardPointerEnter;
+			return border;
+		});
 		Message.Text = text;
 		Amount.Text = $"/ {amount}";
 		this.Closing += (sender, args) =>

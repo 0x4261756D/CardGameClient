@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System;
 using System.IO;
+using Avalonia.Controls.Templates;
 
 namespace CardGameClient;
 
@@ -22,12 +23,16 @@ public partial class CustomSelectCardsWindow : Window
 	{
 		InitializeComponent();
 		stream = new TcpClient().GetStream();
+		showCardAction = (_) => {};
 	}
 	private Stream stream;
 	private bool shouldReallyClose = false;
+	private Action<CardStruct> showCardAction;
+
 	public CustomSelectCardsWindow(string text, CardStruct[] cards, bool initialState, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
 		this.stream = stream;
+		this.showCardAction = showCardAction;
 		Monitor.Enter(stream);
 		DataContext = new CustomSelectCardViewModel(text, initialState);
 		InitializeComponent();
@@ -35,31 +40,32 @@ public partial class CustomSelectCardsWindow : Window
 		this.Width = Program.config.width / 2;
 		this.Height = Program.config.height / 2;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
-		List<TextBlock> contents = new List<TextBlock>();
-		foreach(CardStruct card in cards)
+		CardSelectionList.DataContext = cards;
+		CardSelectionList.Items = cards;
+		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
 		{
-			// TODO: Make this nicer. e.g. group by stuff, etc.
-			TextBlock newBlock = new TextBlock
+			TextBlock block = new TextBlock
 			{
-				DataContext = card,
-				Text = card.name,
-				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
-				TextAlignment = (card.controller == playerIndex) ? Avalonia.Media.TextAlignment.Left : Avalonia.Media.TextAlignment.Right,
+				Text = value.name,
 			};
-			newBlock.PointerEnter += (sender, args) =>
+			Border border = new Border
 			{
-				if(sender == null) return;
-				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-				showCardAction(card);
+				Child = block,
+				Background = Avalonia.Media.Brushes.Transparent,
 			};
-			contents.Add(newBlock);
-		}
+			border.PointerEnter += CardPointerEnter;
+			return border;
+		});
 		this.Closing += (_, args) =>
 		{
 			args.Cancel = !shouldReallyClose;
 		};
-		CardSelectionList.Items = contents;
+	}
+	private void CardPointerEnter(object? sender, PointerEventArgs args)
+	{
+		if(sender == null) return;
+		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+		showCardAction((CardStruct)((Control)(sender)).DataContext!);
 	}
 
 	public void ConfirmClick(object? sender, RoutedEventArgs args)
