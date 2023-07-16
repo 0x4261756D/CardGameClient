@@ -21,12 +21,12 @@ public partial class SettingsWindow : Window
 		{
 			WindowState = this.WindowState,
 		}.Show();
-		Program.config.width = (int)WidthInput.Value;
-		Program.config.height = (int)HeightInput.Value;
+		Program.config.width = (int?)WidthInput.Value ?? 1080;
+		Program.config.height = (int?)HeightInput.Value ?? 720;
 		Program.config.should_spawn_core = ShouldSpawnCoreInput.IsChecked ?? false;
 		Program.config.should_save_player_name = ShouldSavePlayerNameInput.IsChecked ?? false;
-		Program.config.animation_delay_in_ms = (int)AnimationDelayInput.Value;
-		Program.config.core_info.Arguments = CoreArgsInput.Text;
+		Program.config.animation_delay_in_ms = (int?)AnimationDelayInput.Value ?? 120;
+		Program.config.core_info.Arguments = CoreArgsInput.Text ?? "--mode=client --config=../../../config/config.json --additional_cards_url=h2871632.stratoserver.net";
 		this.Close();
 	}
 }

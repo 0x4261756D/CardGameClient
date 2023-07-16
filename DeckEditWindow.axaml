@@ -15,7 +15,7 @@
 					Grid.Column="1"
 					Grid.ColumnSpan="2"
 					Name="DeckSelectBox"
-					Items="{Binding Decknames}"
+					ItemsSource="{Binding Decknames}"
 					SelectionChanged="DeckSelectionChanged"
 					HorizontalAlignment="Stretch">
 			<ComboBox.ItemTemplate>
@@ -47,7 +47,7 @@
 		<ComboBox 	Grid.Row="3"
 					Grid.Column="3"
 					Name="ClassSelectBox"
-					Items="{Binding Classes}"
+					ItemsSource="{Binding Classes}"
 					SelectionChanged="ClassSelectionChanged"
 					HorizontalAlignment="Stretch">
 			<ComboBox.ItemTemplate>
@@ -70,7 +70,7 @@
 		</Border>
 		<TextBox Grid.Row="2" Grid.Column="8" x:Name="SidebarTextBox" KeyUp="SidebarTextInput" Watermark="Search"/>
 		<ScrollViewer Grid.Row="3" Grid.Column="8" Grid.RowSpan="2">
-			<ItemsRepeater x:Name="SidebarList"/>
+			<ListBox x:Name="SidebarList"/>
 		</ScrollViewer>
 	</Grid>
 </Window>

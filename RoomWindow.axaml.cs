@@ -45,7 +45,7 @@ public partial class RoomWindow : Window
 				{
 					foreach(var item in DeckSelectBox.Items)
 					{
-						if((string)item == Program.config.last_deck_name)
+						if((string?)item == Program.config.last_deck_name)
 						{
 							DeckSelectBox.SelectedItem = item;
 						}

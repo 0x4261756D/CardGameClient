@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
@@ -27,7 +26,7 @@ public partial class ViewCardsWindow : Window
 		this.showCardAction = showCardAction;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
 		CardSelectionList.DataContext = cards;
-		CardSelectionList.Items = cards;
+		CardSelectionList.ItemsSource = cards;
 		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
 		{
 			TextBlock block = new TextBlock
@@ -39,7 +38,7 @@ public partial class ViewCardsWindow : Window
 				Child = block,
 				Background = Avalonia.Media.Brushes.Transparent,
 			};
-			border.PointerEnter += CardPointerEnter;
+			border.PointerEntered += CardPointerEntered;
 			return border;
 		});
 		if(message != null)
@@ -48,7 +47,7 @@ public partial class ViewCardsWindow : Window
 		}
 
 	}
-	private void CardPointerEnter(object? sender, PointerEventArgs args)
+	private void CardPointerEntered(object? sender, PointerEventArgs args)
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;

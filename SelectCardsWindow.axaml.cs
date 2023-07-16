@@ -42,7 +42,7 @@ public partial class SelectCardsWindow : Window
 		this.Height = Program.config.height / 2;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
 		CardSelectionList.DataContext = cards;
-		CardSelectionList.Items = cards;
+		CardSelectionList.ItemsSource = cards;
 		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
 		{
 			TextBlock block = new TextBlock
@@ -54,7 +54,7 @@ public partial class SelectCardsWindow : Window
 				Child = block,
 				Background = Avalonia.Media.Brushes.Transparent,
 			};
-			border.PointerEnter += CardPointerEnter;
+			border.PointerEntered += CardPointerEntered;
 			return border;
 		});
 		Message.Text = text;
@@ -65,16 +65,17 @@ public partial class SelectCardsWindow : Window
 		};
 	}
 
-	private void CardPointerEnter(object? sender, PointerEventArgs args)
+	private void CardPointerEntered(object? sender, PointerEventArgs args)
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
 		showCardAction((CardStruct)((Control)(sender)).DataContext!);
 	}
 
-	public void CardSelectionChanged(object sender, SelectionChangedEventArgs args)
+	public void CardSelectionChanged(object? sender, SelectionChangedEventArgs args)
 	{
-		int newCount = ((ListBox)sender).SelectedItems.Count;
+		if(sender == null) return;
+		int newCount = ((ListBox)sender).SelectedItems?.Count ?? 0;
 		((SelectedCardViewModel)DataContext!).SelectedCount = newCount;
 	}
 

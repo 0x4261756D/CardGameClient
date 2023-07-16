@@ -12,7 +12,7 @@
 			<TextBlock x:Name="SelectedCount" Text="{Binding SelectedCount}"/>
 			<TextBlock x:Name="Amount"/>
 		</StackPanel>
-		<ListBox Grid.Column="0" Grid.Row="1" VirtualizationMode="None" SelectionMode="Multiple,Toggle" x:Name="CardSelectionList" SelectionChanged="CardSelectionChanged"/>
+		<ListBox Grid.Column="0" Grid.Row="1" SelectionMode="Multiple,Toggle" x:Name="CardSelectionList" SelectionChanged="CardSelectionChanged"/>
 		<Button Grid.Column="0" Grid.Row="2" IsEnabled="{Binding CanConfirm}" Click="ConfirmClick">
 			Confirm
 		</Button>

@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
+using Avalonia.Platform.Storage;
 using CardGameUtils;
 using CardGameUtils.Structs;
 using static CardGameUtils.Structs.NetworkingStructs;
@@ -31,6 +35,24 @@ public class UIUtils
 			}
 			return null;
 		}
+	}
+
+	public static async Task<string?> SelectAndReadFileAsync(Window window, string title = "Select file", bool allowMultiple = false)
+	{
+		TopLevel? topLevel = TopLevel.GetTopLevel(window);
+		if(topLevel == null) return null;
+		IReadOnlyList<IStorageFile> files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+		{
+			Title = title,
+			AllowMultiple = allowMultiple,
+		});
+		if(files.Count > 0)
+		{
+			await using Stream stream = await files[0].OpenReadAsync();
+			using StreamReader reader = new StreamReader(stream);
+			return await reader.ReadToEndAsync();
+		}
+		return null;
 	}
 
 	public static Viewbox CreateGenericCard(CardStruct c)
@@ -69,10 +91,10 @@ public class UIUtils
 	}
 	public static int[] CardListBoxSelectionToUID(ListBox box)
 	{
-		int[] uids = new int[box.SelectedItems.Count];
-		for(int i = 0; i < box.SelectedItems.Count; i++)
+		int[] uids = new int[box.SelectedItems?.Count ?? 0];
+		for(int i = 0; i < (box.SelectedItems?.Count ?? 0); i++)
 		{
-			uids[i] = ((CardStruct)((TextBlock)box.SelectedItems[i]!).DataContext!).uid;
+			uids[i] = ((CardStruct)((TextBlock)box.SelectedItems?[i]!).DataContext!).uid;
 		}
 		return uids;
 	}
@@ -90,39 +112,24 @@ public class UIUtils
 	{
 		if(sender == null) return;
 		TextBlock block = (TextBlock)sender;
+		string? current = ToolTip.GetTip(block)?.ToString();
+		block.ClearValue(ToolTip.TipProperty);
+		if(block.Text == null) return;
 		TextLayout layout = block.TextLayout;
 		Point pointerPoint = e.GetPosition(block);
-		double height = 0;
-		foreach(var line in layout.TextLines)
+		TextHitTestResult hitTestResult = layout.HitTestPoint(pointerPoint);
+		int position = hitTestResult.TextPosition;
+		if(position < 0 || position >= block.Text.Length) return;
+		int start = block.Text.LastIndexOf('[', position);
+		int end = block.Text.IndexOf(']', position);
+		if(start < 0 || end < 0 || end >= block.Text.Length || start == end) return;
+		string possibleKeyword = block.Text.Substring(start + 1, end - start - 1);
+		if(possibleKeyword.Contains(' ')) return;
+		if(ClientConstants.KeywordDescriptions.ContainsKey(possibleKeyword))
 		{
-			height += line.LineMetrics.Size.Height;
-			if(height >= pointerPoint.Y)
-			{
-				int x = line.GetCharacterHitFromDistance(pointerPoint.X).FirstCharacterIndex;
-				if(block.Text[x] == ' ') return;
-				int end = x;
-				for(; end < line.TextRange.End; end++)
-				{
-					if(block.Text[end] == ' ') return;
-					if(block.Text[end] == ']') break;
-				}
-				if(end <= 0) return;
-				for(; x >= line.TextRange.Start; x--)
-				{
-					if(block.Text[x] == ' ') return;
-					if(block.Text[x] == '[')
-					{
-						string keyword = block.Text.Substring(x + 1, end - x - 1);
-						if(ClientConstants.KeywordDescriptions.ContainsKey(keyword))
-						{
-							string description = ClientConstants.KeywordDescriptions[keyword];
-							ToolTip.SetTip(block, description);
-						}
-						return;
-					}
-				}
-				break;
-			}
+			string description = ClientConstants.KeywordDescriptions[possibleKeyword];
+			ToolTip.SetTip(block, description);
+			ToolTip.SetIsOpen(block, true);
 		}
 	}
 }

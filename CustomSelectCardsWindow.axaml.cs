@@ -41,7 +41,7 @@ public partial class CustomSelectCardsWindow : Window
 		this.Height = Program.config.height / 2;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
 		CardSelectionList.DataContext = cards;
-		CardSelectionList.Items = cards;
+		CardSelectionList.ItemsSource = cards;
 		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
 		{
 			TextBlock block = new TextBlock
@@ -53,7 +53,7 @@ public partial class CustomSelectCardsWindow : Window
 				Child = block,
 				Background = Avalonia.Media.Brushes.Transparent,
 			};
-			border.PointerEnter += CardPointerEnter;
+			border.PointerEntered += CardPointerEntered;
 			return border;
 		});
 		this.Closing += (_, args) =>
@@ -61,7 +61,7 @@ public partial class CustomSelectCardsWindow : Window
 			args.Cancel = !shouldReallyClose;
 		};
 	}
-	private void CardPointerEnter(object? sender, PointerEventArgs args)
+	private void CardPointerEntered(object? sender, PointerEventArgs args)
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;

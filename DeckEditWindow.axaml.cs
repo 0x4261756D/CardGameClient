@@ -29,7 +29,7 @@ public partial class DeckEditWindow : Window
 			{
 				foreach(var item in DeckSelectBox.Items)
 				{
-					if((string)item == Program.config.last_deck_name)
+					if((string?)item == Program.config.last_deck_name)
 					{
 						DeckSelectBox.SelectedItem = item;
 						break;
@@ -73,7 +73,7 @@ public partial class DeckEditWindow : Window
 		foreach(CardStruct c in cardpool)
 		{
 			Viewbox v = UIUtils.CreateGenericCard(c);
-			v.PointerEnter += CardHover;
+			v.PointerEntered += CardHover;
 			Button b = new Button
 			{
 				Content = v,
@@ -88,7 +88,7 @@ public partial class DeckEditWindow : Window
 			}
 			items.Add(b);
 		}
-		SidebarList.Items = items;
+		SidebarList.ItemsSource = items;
 	}
 
 	private void CardHover(object? sender, PointerEventArgs args)
@@ -106,8 +106,8 @@ public partial class DeckEditWindow : Window
 			if(cardpool != null /* && args.AddedItems.Count > 0 */ &&
 				DecklistPanel.Children.Count < GameConstants.DECK_SIZE)
 			{
-				CardStruct c = (CardStruct)((Viewbox)(((Button)sender).Content)).DataContext!;
-				if(DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content)).DataContext!)).name == c.name) == GameConstants.MAX_CARD_MULTIPLICITY)
+				CardStruct c = (CardStruct?)((Viewbox)(((Button)sender).Content!)).DataContext!;
+				if(DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content!)).DataContext!)).name == c.name) == GameConstants.MAX_CARD_MULTIPLICITY)
 				{
 					return;
 				}
@@ -120,8 +120,8 @@ public partial class DeckEditWindow : Window
 	{
 		if(sender != null)
 		{
-			Viewbox v = UIUtils.CreateGenericCard((CardStruct)((Viewbox)((Button)sender).Content).DataContext!);
-			v.PointerEnter += CardHover;
+			Viewbox v = UIUtils.CreateGenericCard((CardStruct)((Viewbox)((Button)sender).Content!).DataContext!);
+			v.PointerEntered += CardHover;
 			ClassQuestButton.Content = v;
 			ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 		}
@@ -142,10 +142,10 @@ public partial class DeckEditWindow : Window
 		};
 		b.Padding = new Avalonia.Thickness(0, 0, 0, 0);
 		Viewbox v = UIUtils.CreateGenericCard(c);
-		v.PointerEnter += CardHover;
+		v.PointerEntered += CardHover;
 		b.Content = v;
 		b.PointerPressed += RemoveCardClick;
-		/* b.PointerEnter += CardHover; */
+		/* b.PointerEntered += CardHover; */
 		b.Click += MoveClick;
 		return b;
 	}
@@ -185,7 +185,7 @@ public partial class DeckEditWindow : Window
 			DecklistPanel.Children.RemoveAt(index);
 			DecklistPanel.Children.Insert(newInd, button);
 		};
-		CardStruct c = ((CardStruct)((Viewbox)button.Content).DataContext!);
+		CardStruct c = ((CardStruct)((Viewbox)button.Content!).DataContext!);
 		if(c.can_be_class_ability)
 		{
 			Button setAbilityButton = new Button
@@ -198,7 +198,7 @@ public partial class DeckEditWindow : Window
 			setAbilityButton.Click += (_, _) =>
 			{
 				Viewbox v = UIUtils.CreateGenericCard(c);
-				v.PointerEnter += CardHover;
+				v.PointerEntered += CardHover;
 				ClassAbilityButton.Content = v;
 				ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 			};
@@ -210,10 +210,10 @@ public partial class DeckEditWindow : Window
 	}
 	public void DeckSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		if(args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null && !DecklistPanel.Bounds.IsEmpty)
+		if(args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null && DecklistPanel.Bounds.Width > 0 && DecklistPanel.Bounds.Height > 0)
 		{
-			Program.config.last_deck_name = args.AddedItems[0]?.ToString();
-			LoadDeck(args.AddedItems[0]!.ToString()!);
+			Program.config.last_deck_name = args?.AddedItems[0]?.ToString();
+			LoadDeck(args?.AddedItems[0]!.ToString()!);
 		}
 	}
 	public void LoadDeck(string deckName)
@@ -241,14 +241,14 @@ public partial class DeckEditWindow : Window
 		if(response.ability != null)
 		{
 			Viewbox v = UIUtils.CreateGenericCard(response.ability);
-			v.PointerEnter += CardHover;
+			v.PointerEntered += CardHover;
 			ClassAbilityButton.Content = v;
 		}
 		ClassQuestButton.Content = null;
 		if(response.quest != null)
 		{
 			Viewbox v = UIUtils.CreateGenericCard(response.quest);
-			v.PointerEnter += CardHover;
+			v.PointerEntered += CardHover;
 			ClassQuestButton.Content = v;
 		}
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
@@ -266,7 +266,7 @@ public partial class DeckEditWindow : Window
 		foreach(Button child in DecklistPanel.Children)
 		{
 			// Oh boy, do I love GUI programming...
-			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content).DataContext!).card_class;
+			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content!).DataContext!).card_class;
 			if(cardClass != GameConstants.PlayerClass.All && playerClass != GameConstants.PlayerClass.All &&
 				cardClass != playerClass)
 			{
@@ -323,8 +323,8 @@ public partial class DeckEditWindow : Window
 
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
-		string newName = NewDeckName.Text;
-		if(newName == "") return;
+		string? newName = NewDeckName.Text;
+		if(newName == null || newName == "") return;
 		Request(new DeckPackets.ListUpdateRequest
 		{
 			deck = new DeckPackets.Deck
@@ -349,15 +349,15 @@ public partial class DeckEditWindow : Window
 		{
 			playerClass = GameConstants.PlayerClass.UNKNOWN;
 		}
-		Viewbox? abilityBox = (Viewbox)ClassAbilityButton.Content;
+		Viewbox? abilityBox = (Viewbox?)ClassAbilityButton.Content;
 		CardStruct? ability = abilityBox == null ? null : (CardStruct?)(abilityBox).DataContext;
-		Viewbox? questBox = (Viewbox)ClassQuestButton.Content;
+		Viewbox? questBox = (Viewbox?)ClassQuestButton.Content;
 		CardStruct? quest = questBox == null ? null : (CardStruct?)(questBox).DataContext;
 		Request(new DeckPackets.ListUpdateRequest
 		{
 			deck = new DeckPackets.Deck
 			{
-				cards = DecklistPanel.Children.ToList().ConvertAll(x => (CardStruct)((Viewbox)((Button)x).Content).DataContext!).ToArray(),
+				cards = DecklistPanel.Children.ToList().ConvertAll(x => (CardStruct)((Viewbox)((Button)x).Content!).DataContext!).ToArray(),
 				ability = ability,
 				quest = quest,
 				player_class = playerClass,

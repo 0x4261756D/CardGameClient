@@ -37,6 +37,7 @@ public partial class ServerWindow : Window
 	}
 	private void HostClick(object? sender, RoutedEventArgs args)
 	{
+		if(ServerAddressBox.Text == null) return;
 		string playerName = ((ServerWindowViewModel)DataContext!).PlayerName;
 		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.CreateRequest
 		{
@@ -71,10 +72,13 @@ public partial class ServerWindow : Window
 	private void RoomClick(object sender, RoutedEventArgs args)
 	{
 		if(PlayerNameBox.Text == "") return;
+		if(ServerAddressBox.Text == null) return;
+		string? targetNameText = (string?)((Button)sender).Content;
+		if(targetNameText == null) return;
 		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.JoinRequest
 		{
 			name = PlayerNameBox.Text,
-			targetName = (string)((Button)sender).Content
+			targetName = targetNameText
 		});
 		if(payload == null)
 		{
@@ -97,6 +101,7 @@ public partial class ServerWindow : Window
 	}
 	private (byte, byte[]?)? ServerTryRequest(PacketContent request)
 	{
+		if(ServerAddressBox.Text == null) return null;
 		return UIUtils.TryRequest(request, ServerAddressBox.Text, 7043, this);
 	}
 }

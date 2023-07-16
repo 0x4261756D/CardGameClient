@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -370,7 +369,7 @@ public partial class DuelWindow : Window
 		if(request.ownField.shownCard != null)
 		{
 			TextBlock text = new TextBlock { Text = $"You: {request.ownField.shownCard.name}: {request.ownField.shownReason}" };
-			text.PointerEnter += (sender, args) =>
+			text.PointerEntered += (sender, args) =>
 			{
 				if(sender == null) return;
 				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
@@ -381,7 +380,7 @@ public partial class DuelWindow : Window
 		if(request.oppField.shownCard != null)
 		{
 			TextBlock text = new TextBlock { Text = $"Opp: {request.oppField.shownCard.name}: {request.oppField.shownReason}" };
-			text.PointerEnter += (sender, args) =>
+			text.PointerEntered += (sender, args) =>
 			{
 				if(sender == null) return;
 				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
@@ -476,7 +475,7 @@ public partial class DuelWindow : Window
 		{
 			OwnShowPanel.Children.Add(CreateCardButton(request.ownField.shownCard));
 		}
-		ActivityLogList.Items = activities;
+		ActivityLogList.ItemsSource = activities;
 	}
 
 	private Button CreateCardButton(CardStruct card)
@@ -491,7 +490,7 @@ public partial class DuelWindow : Window
 			b.Width = (OwnField.Bounds.Width - 10) / GameConstants.FIELD_SIZE;
 		}
 		b.Height = OwnField.Bounds.Height - 10;
-		b.PointerEnter += (sender, args) =>
+		b.PointerEntered += (sender, args) =>
 		{
 			if(sender == null) return;
 			if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;

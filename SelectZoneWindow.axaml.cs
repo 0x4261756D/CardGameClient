@@ -30,7 +30,7 @@ public partial class SelectZoneWindow : Window
 			};
 			b.Click += (sender, _) =>
 			{
-				int zone = (int)((Button)sender!).Content;
+				int zone = (int)((Button)sender!).Content!;
 				List<byte> payload = GeneratePayload<DuelPackets.SelectZoneResponse>(new DuelPackets.SelectZoneResponse
 				{
 					zone = zone

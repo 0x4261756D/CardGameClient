@@ -25,7 +25,7 @@
 			<Button Click="ToEndClick">Go to end</Button>
 		</StackPanel>
 		<ScrollViewer Grid.Column="0" Grid.Row="6">
-			<ListBox Items="{Binding ActionList}" x:Name="ActionListBox"/>
+			<ListBox ItemsSource="{Binding ActionList}" x:Name="ActionListBox"/>
 		</ScrollViewer>
 	</Grid>
 </Window>

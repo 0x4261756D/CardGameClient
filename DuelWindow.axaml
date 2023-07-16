@@ -95,7 +95,7 @@
 			</StackPanel>
 		</Border>
 		<ScrollViewer Background="DarkGray" Grid.Column="4" Grid.Row="0" Grid.RowSpan="7" HorizontalScrollBarVisibility="Auto">
-			<ItemsRepeater x:Name="ActivityLogList"/>
+			<ListBox x:Name="ActivityLogList"/>
 		</ScrollViewer>
 	</Grid>
 </Window>
