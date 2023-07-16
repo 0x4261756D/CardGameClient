@@ -96,7 +96,7 @@ public partial class DeckEditWindow : Window
 		CardStruct card = (CardStruct)v.DataContext!;
 		if(card.card_type == GameConstants.CardType.Quest)
 		{
-			ClassQuestButton.Content = v;
+			ClassQuestButton.Content = UIUtils.CreateGenericCard(card);
 			ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 		}
 		else
