@@ -94,7 +94,7 @@ public class UIUtils
 		int[] uids = new int[box.SelectedItems?.Count ?? 0];
 		for(int i = 0; i < (box.SelectedItems?.Count ?? 0); i++)
 		{
-			uids[i] = ((CardStruct)((TextBlock)box.SelectedItems?[i]!).DataContext!).uid;
+			uids[i] = ((CardStruct)box.SelectedItems?[i]!).uid;
 		}
 		return uids;
 	}
