@@ -65,7 +65,7 @@
 			Your quest:
 		</TextBlock>
 		<Button x:Name="ClassQuestButton" Grid.Row="3" Grid.Column="7" Click="ContentRemoveClick"/>
-		<Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="6" BorderThickness="2" BorderBrush="White">
+		<Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="6" BorderThickness="2" BorderBrush="White" x:Name="DecklistBorder">
 			<WrapPanel x:Name="DecklistPanel">
 			</WrapPanel>
 		</Border>

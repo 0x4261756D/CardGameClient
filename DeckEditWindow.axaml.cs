@@ -4,10 +4,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Reactive;
 using CardGameUtils;
 using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
@@ -19,6 +22,7 @@ public partial class DeckEditWindow : Window
 {
 	private Flyout moveFlyout = new Flyout();
 	private CardStruct[]? cardpool;
+
 	public DeckEditWindow()
 	{
 		InitializeComponent();
@@ -118,15 +122,21 @@ public partial class DeckEditWindow : Window
 	{
 		Button b = new Button()
 		{
-			Width = (DecklistPanel.Bounds.Width - 5) / 10,
-			Height = (DecklistPanel.Bounds.Height / 4 - 5) - 1,
+			DataContext = c,
+			Padding = new Avalonia.Thickness(0, 0, 0, 0),
 		};
-		b.Padding = new Avalonia.Thickness(0, 0, 0, 0);
+		int xAmount = 10;
+		int yAmount = (int)Math.Ceiling((double)GameConstants.DECK_SIZE / (double)xAmount);
+		int borderThickness = 5;
+		DecklistBorder.GetObservable(Layoutable.BoundsProperty).Subscribe(new AnonymousObserver<Rect>((a) =>
+		{
+			b.Width = (a.Width - borderThickness) / xAmount;
+			b.Height = (a.Height - borderThickness) / yAmount;
+		}));
 		Viewbox v = UIUtils.CreateGenericCard(c);
 		b.Content = v;
 		b.PointerPressed += RemoveCardClick;
 		b.Click += MoveClick;
-		b.DataContext = c;
 		b.PointerEntered += CardHover;
 		return b;
 	}
