@@ -5,7 +5,7 @@
 	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 	x:Class="CardGameClient.SelectZoneWindow"
 	Title="Select a zone"
-	>
+	FontFamily="Noto Sans">
 	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 		<StackPanel Orientation="Horizontal" x:Name="OptionsPanel"/>
 	</StackPanel>

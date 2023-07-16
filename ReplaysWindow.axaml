@@ -4,7 +4,8 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="CardGameClient.ReplaysWindow"
-		Title="Replays">
+		Title="Replays"
+		FontFamily="Noto Sans">
 	<Grid ColumnDefinitions="*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*">
 		<Button Click="BackClick" Grid.Column="0" Grid.Row="0">
 			Back

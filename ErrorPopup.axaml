@@ -5,7 +5,8 @@
 		mc:Ignorable="d"
 		Background="DarkRed"
 		x:Class="CardGameClient.ErrorPopup"
-		Title="Error">
+		Title="Error"
+		FontFamily="Noto Sans">
 	<WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 		<TextBlock Text="{Binding Message}" TextWrapping="Wrap"/>
 		<Button Click="CloseClick">

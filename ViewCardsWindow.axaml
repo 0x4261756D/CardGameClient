@@ -4,7 +4,8 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="CardGameClient.ViewCardsWindow"
-		Title="View Cards">
+		Title="View Cards"
+		FontFamily="Noto Sans">
 	<Grid ColumnDefinitions="*" RowDefinitions="Auto,Auto,*">
 		<TextBlock x:Name="Message" Grid.Column="0" Grid.Row="0"/>
 		<ListBox Grid.Column="0" Grid.Row="1" x:Name="CardSelectionList"/>
