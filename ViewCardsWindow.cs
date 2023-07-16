@@ -13,7 +13,7 @@ public partial class ViewCardsWindow : Window
 	// This only exists because Avalonia requires it
 	public ViewCardsWindow()
 	{
-		this.showCardAction = (_) => {};
+		this.showCardAction = (_) => { };
 		InitializeComponent();
 	}
 	private Action<CardStruct> showCardAction;

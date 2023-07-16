@@ -23,7 +23,7 @@ public partial class CustomSelectCardsWindow : Window
 	{
 		InitializeComponent();
 		stream = new TcpClient().GetStream();
-		showCardAction = (_) => {};
+		showCardAction = (_) => { };
 	}
 	private Stream stream;
 	private bool shouldReallyClose = false;
