@@ -69,8 +69,6 @@
 			</WrapPanel>
 		</Border>
 		<TextBox Grid.Row="2" Grid.Column="8" x:Name="SidebarTextBox" KeyUp="SidebarTextInput" Watermark="Search"/>
-		<ScrollViewer Grid.Row="3" Grid.Column="8" Grid.RowSpan="2">
-			<ListBox x:Name="SidebarList"/>
-		</ScrollViewer>
+		<ListBox Grid.Row="3" Grid.Column="8" Grid.RowSpan="2" x:Name="SidebarList" SelectionChanged="SidebarSelectionChanged"/>
 	</Grid>
 </Window>

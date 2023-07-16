@@ -45,13 +45,13 @@ public partial class DeckEditWindow : Window
 				DeckSelectBox.SelectedIndex = 0;
 			}
 		}
-		LoadSidebar("");
 		DecklistPanel.LayoutUpdated += DecklistPanelInitialized;
 	}
 
 	private void DecklistPanelInitialized(object? sender, EventArgs e)
 	{
 		LoadDeck(DeckSelectBox.SelectedItem!.ToString()!);
+		LoadSidebar("");
 		DecklistPanel.LayoutUpdated -= DecklistPanelInitialized;
 	}
 
@@ -74,19 +74,7 @@ public partial class DeckEditWindow : Window
 		{
 			Viewbox v = UIUtils.CreateGenericCard(c);
 			v.PointerEntered += CardHover;
-			Button b = new Button
-			{
-				Content = v,
-			};
-			if(c.card_type == GameConstants.CardType.Quest)
-			{
-				b.Click += SetCardAsQuestClick;
-			}
-			else
-			{
-				b.Click += AddCardToDeckClick;
-			}
-			items.Add(b);
+			items.Add(v);
 		}
 		SidebarList.ItemsSource = items;
 	}
@@ -95,36 +83,29 @@ public partial class DeckEditWindow : Window
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-		CardStruct c = ((CardStruct)(((Viewbox)sender).DataContext!));
+		CardStruct c = ((CardStruct)(((Control)sender).DataContext!));
 		UIUtils.CardHover(CardImagePanel, CardTextBlock, c, true);
 	}
 
-	public void AddCardToDeckClick(object? sender, RoutedEventArgs args)
+	public void SidebarSelectionChanged(object? sender, SelectionChangedEventArgs args)
 	{
-		if(sender != null)
+		if(sender == null || cardpool == null || args.AddedItems.Count != 1 || args.RemovedItems.Count != 0) return;
+		args.Handled = true;
+		SidebarList.SelectedItem = null;
+		Viewbox v = (Viewbox)(args.AddedItems[0]!);
+		CardStruct card = (CardStruct)v.DataContext!;
+		if(card.card_type == GameConstants.CardType.Quest)
 		{
-			if(cardpool != null /* && args.AddedItems.Count > 0 */ &&
-				DecklistPanel.Children.Count < GameConstants.DECK_SIZE)
-			{
-				CardStruct c = (CardStruct?)((Viewbox)(((Button)sender).Content!)).DataContext!;
-				if(DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content!)).DataContext!)).name == c.name) == GameConstants.MAX_CARD_MULTIPLICITY)
-				{
-					return;
-				}
-				DecklistPanel.Children.Add(CreateDeckButton(c));
-			}
-			DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
-		}
-	}
-	private void SetCardAsQuestClick(object? sender, RoutedEventArgs e)
-	{
-		if(sender != null)
-		{
-			Viewbox v = UIUtils.CreateGenericCard((CardStruct)((Viewbox)((Button)sender).Content!).DataContext!);
-			v.PointerEntered += CardHover;
 			ClassQuestButton.Content = v;
 			ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 		}
+		else
+		{
+			if(DecklistPanel.Children.Count >= GameConstants.DECK_SIZE ||
+				DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content!)).DataContext!)).name == card.name) >= GameConstants.MAX_CARD_MULTIPLICITY) return;
+			DecklistPanel.Children.Add(CreateDeckButton(card));
+		}
+		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 	}
 
 	private void ContentRemoveClick(object sender, RoutedEventArgs args)
@@ -142,11 +123,11 @@ public partial class DeckEditWindow : Window
 		};
 		b.Padding = new Avalonia.Thickness(0, 0, 0, 0);
 		Viewbox v = UIUtils.CreateGenericCard(c);
-		v.PointerEntered += CardHover;
 		b.Content = v;
 		b.PointerPressed += RemoveCardClick;
-		/* b.PointerEntered += CardHover; */
 		b.Click += MoveClick;
+		b.DataContext = c;
+		b.PointerEntered += CardHover;
 		return b;
 	}
 	private void RemoveCardClick(object? sender, RoutedEventArgs args)

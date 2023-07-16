@@ -26,10 +26,16 @@
 			Refresh
 		</Button>
 
-		<ListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" x:Name="ServerListBox" ItemsSource="{Binding ServerRooms}">
+		<ListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" x:Name="ServerListBox" SelectionChanged="ServerListSelectionChanged" ItemsSource="{Binding ServerRooms}">
+			<ListBox.Styles>
+				<Style Selector="ListBoxItem">
+					<Setter Property="BorderBrush" Value="Gray"/>
+					<Setter Property="BorderThickness" Value="2"/>
+				</Style>
+			</ListBox.Styles>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Button Content="{Binding}" Click="RoomClick" HorizontalAlignment="Stretch"/>
+					<TextBlock Text="{Binding}" HorizontalAlignment="Stretch"/>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

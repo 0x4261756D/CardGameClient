@@ -69,11 +69,13 @@ public partial class ServerWindow : Window
 	{
 		UpdateRoomList();
 	}
-	private void RoomClick(object sender, RoutedEventArgs args)
+	private void ServerListSelectionChanged(object? sender, SelectionChangedEventArgs args)
 	{
-		if(PlayerNameBox.Text == "") return;
-		if(ServerAddressBox.Text == null) return;
-		string? targetNameText = (string?)((Button)sender).Content;
+		if(sender == null || ServerAddressBox.Text == null || PlayerNameBox.Text == null || PlayerNameBox.Text == "" ||
+			args.RemovedItems.Count > 0 || args.AddedItems.Count != 1) return;
+		args.Handled = true;
+		ServerListBox.SelectedItem = null;
+		string? targetNameText = (string?)args.AddedItems[0];
 		if(targetNameText == null) return;
 		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.JoinRequest
 		{
@@ -99,6 +101,7 @@ public partial class ServerWindow : Window
 			new ErrorPopup(response.reason!).ShowDialog(this);
 		}
 	}
+
 	private (byte, byte[]?)? ServerTryRequest(PacketContent request)
 	{
 		if(ServerAddressBox.Text == null) return null;
