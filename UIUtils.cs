@@ -37,6 +37,21 @@ public class UIUtils
 		}
 	}
 
+	public static async Task<string?> SelectFileAsync(Window window, string title = "Select file", bool allowMultiple = false)
+	{
+		TopLevel? topLevel = TopLevel.GetTopLevel(window);
+		if(topLevel == null) return null;
+		IReadOnlyList<IStorageFile> files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+		{
+			Title = title,
+			AllowMultiple = allowMultiple,
+		});
+		if(files.Count > 0)
+		{
+			return files[0].Path.AbsolutePath;
+		}
+		return null;
+	}
 	public static async Task<string?> SelectAndReadFileAsync(Window window, string title = "Select file", bool allowMultiple = false)
 	{
 		TopLevel? topLevel = TopLevel.GetTopLevel(window);
