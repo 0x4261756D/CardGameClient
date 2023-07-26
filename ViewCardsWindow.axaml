@@ -8,7 +8,13 @@
 		FontFamily="Noto Sans">
 	<Grid ColumnDefinitions="*" RowDefinitions="Auto,Auto,*">
 		<TextBlock x:Name="Message" Grid.Column="0" Grid.Row="0"/>
-		<ListBox Grid.Column="0" Grid.Row="1" x:Name="CardSelectionList"/>
+		<ListBox Grid.Column="0" Grid.Row="1" x:Name="CardSelectionList">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel/>
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+		</ListBox>
 		<Button Grid.Column="0" Grid.Row="2" Click="CloseClick">
 			Close
 		</Button>
