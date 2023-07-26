@@ -60,7 +60,7 @@ public partial class DuelWindow : Window
 	private void FieldInitialized(object? sender, EventArgs e)
 	{
 		if(sender == null) return;
-		WrapPanel panel = (WrapPanel)sender;
+		Panel panel = (Panel)sender;
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
 			panel.Children.Add(new Button
