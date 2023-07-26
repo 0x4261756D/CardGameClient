@@ -125,26 +125,35 @@ public class UIUtils
 	}
 	private static void CardTextHover(object? sender, PointerEventArgs e)
 	{
-		if(sender == null) return;
-		TextBlock block = (TextBlock)sender;
-		string? current = ToolTip.GetTip(block)?.ToString();
-		block.ClearValue(ToolTip.TipProperty);
-		if(block.Text == null) return;
-		TextLayout layout = block.TextLayout;
-		Point pointerPoint = e.GetPosition(block);
-		TextHitTestResult hitTestResult = layout.HitTestPoint(pointerPoint);
-		int position = hitTestResult.TextPosition;
-		if(position < 0 || position >= block.Text.Length) return;
-		int start = block.Text.LastIndexOf('[', position);
-		int end = block.Text.IndexOf(']', position);
-		if(start < 0 || end < 0 || end >= block.Text.Length || start == end) return;
-		string possibleKeyword = block.Text.Substring(start + 1, end - start - 1);
-		if(possibleKeyword.Contains(' ')) return;
-		if(ClientConstants.KeywordDescriptions.ContainsKey(possibleKeyword))
+		if(sender != null)
 		{
-			string description = ClientConstants.KeywordDescriptions[possibleKeyword];
-			ToolTip.SetTip(block, description);
-			ToolTip.SetIsOpen(block, true);
+			TextBlock block = (TextBlock)sender;
+			if(block.Text != null)
+			{
+				TextLayout layout = block.TextLayout;
+				Point pointerPoint = e.GetPosition(block);
+				TextHitTestResult hitTestResult = layout.HitTestPoint(pointerPoint);
+				int position = hitTestResult.TextPosition;
+				if(position >= 0 && position < block.Text.Length)
+				{
+					int start = block.Text.LastIndexOf('[', position);
+					int end = block.Text.IndexOf(']', position);
+					if(start >= 0 && end >= 0 && end < block.Text.Length && start != end)
+					{
+						string possibleKeyword = block.Text.Substring(start + 1, end - start - 1);
+						if(!possibleKeyword.Contains(' ') && ClientConstants.KeywordDescriptions.ContainsKey(possibleKeyword))
+						{
+							string description = ClientConstants.KeywordDescriptions[possibleKeyword];
+							Functions.Log(description);
+							ToolTip.SetTip(block, description);
+							ToolTip.SetIsOpen(block, true);
+							ToolTip.SetShowDelay(block, 0);
+							return;
+						}
+					}
+				}
+			}
+			block.SetValue(ToolTip.IsOpenProperty, false);
 		}
 	}
 }
