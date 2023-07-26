@@ -559,7 +559,7 @@ public partial class DuelWindow : Window
 		closing = true;
 		Monitor.Enter(stream);
 		List<byte> payload = GeneratePayload<DuelPackets.SurrenderRequest>(new DuelPackets.SurrenderRequest { });
-		if(client.Connected)
+		if(client.Connected && stream.CanWrite)
 		{
 			stream.Write(payload.ToArray(), 0, payload.Count);
 		}

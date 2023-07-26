@@ -25,7 +25,10 @@ public partial class GameResultWindow : Window
 		this.Height = Program.config.height / 2;
 		this.Closed += (_, _) =>
 		{
-			this.parent.Close();
+			if(this.parent.IsEnabled)
+			{
+				this.parent.Close();
+			}
 		};
 		ResultBlock.Text = (response.result == GameConstants.GameResult.Draw) ?
 			"It was a draw" : $"You {response.result}";
