@@ -561,7 +561,14 @@ public partial class DuelWindow : Window
 		List<byte> payload = GeneratePayload<DuelPackets.SurrenderRequest>(new DuelPackets.SurrenderRequest { });
 		if(client.Connected && stream.CanWrite)
 		{
-			stream.Write(payload.ToArray(), 0, payload.Count);
+			try
+			{
+				stream.Write(payload.ToArray(), 0, payload.Count);
+			}
+			catch(Exception e)
+			{
+				Log($"Exception while sending cleanup message: {e}", severity: LogSeverity.Warning);
+			}
 		}
 		Monitor.Exit(stream);
 		networkingTask.Dispose();
