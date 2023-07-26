@@ -21,8 +21,8 @@
 			<Button Click="SurrenderClick" Grid.Row="0" Grid.Column="0">
 				Surrender
 			</Button>
-			<Panel Grid.Row="1" Grid.Column="0" x:Name="CardImagePanel" DockPanel.Dock="Top"/>
-			<ScrollViewer Grid.Row="6" Grid.Column="0" Grid.RowSpan="4" DockPanel.Dock="Bottom">
+			<Panel Grid.Row="1" Grid.Column="0" x:Name="CardImagePanel"/>
+			<ScrollViewer Grid.Row="6" Grid.Column="0" Grid.RowSpan="4">
 				<TextBlock x:Name="CardTextBlock" TextWrapping="Wrap">
 					No Card Selected
 				</TextBlock>
