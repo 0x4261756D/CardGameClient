@@ -15,6 +15,7 @@ public partial class App : Application
 	{
 		if(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
+			this.RequestedThemeVariant = UIUtils.ConvertThemeVariant(Program.config.theme);
 			desktop.MainWindow = new MainWindow();
 			((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).ShutdownRequested += Program.Cleanup;
 		}

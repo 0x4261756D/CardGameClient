@@ -34,6 +34,10 @@
 			<TextBlock>Core Arguments</TextBlock>
 			<TextBox x:Name="CoreArgsInput"/>
 		</StackPanel>
+		<StackPanel Orientation="Vertical">
+			<TextBlock>Theme</TextBlock>
+			<ComboBox x:Name="ThemeInput" ItemsSource="{Binding ThemeVariants}" SelectionChanged="ChangeThemeVariant"/>
+		</StackPanel>
 
 	</StackPanel>
 </Window>

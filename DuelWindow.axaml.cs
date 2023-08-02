@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using CardGameUtils;
 using CardGameUtils.Structs;
@@ -352,7 +353,14 @@ public partial class DuelWindow : Window
 		TurnBlock.Text = turnText;
 		InitBlock.Text = request.hasInitiative ? "You have initiative" : "Your opponent has initiative";
 		DirectionBlock.Text = "Battle direction: " + (request.battleDirectionLeftToRight ? "->" : "<-");
-		Background = request.hasInitiative ? Brushes.Purple : Brushes.Black;
+		if(request.hasInitiative)
+		{
+			Background = Brushes.Purple;
+		}
+		else
+		{
+			this.ClearValue(BackgroundProperty);
+		}
 		shouldEnablePassButtonAfterUpdate = request.hasInitiative;
 
 		OppNameBlock.Text = request.oppField.name;

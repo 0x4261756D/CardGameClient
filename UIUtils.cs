@@ -9,6 +9,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using CardGameUtils;
 using CardGameUtils.Structs;
 using static CardGameUtils.Structs.NetworkingStructs;
@@ -17,6 +18,17 @@ namespace CardGameClient;
 
 public class UIUtils
 {
+	public static ThemeVariant ConvertThemeVariant(ClientConfig.ThemeVariant? theme)
+	{
+		switch(theme)
+		{
+			case ClientConfig.ThemeVariant.Default: return ThemeVariant.Default;
+			case ClientConfig.ThemeVariant.Dark: return ThemeVariant.Dark;
+			case ClientConfig.ThemeVariant.Light: return ThemeVariant.Light;
+		}
+		return ThemeVariant.Default;
+	}
+
 	public static (byte, byte[]?)? TryRequest(PacketContent request, string address, int port, Window? window)
 	{
 		try
