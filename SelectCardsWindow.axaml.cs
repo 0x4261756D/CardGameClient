@@ -63,6 +63,10 @@ public partial class SelectCardsWindow : Window
 		{
 			args.Cancel = !shouldReallyClose;
 		};
+		if(amount == 1)
+		{
+			CardSelectionList.SelectionMode = SelectionMode.Single | SelectionMode.Toggle;
+		}
 	}
 
 	private void CardPointerEntered(object? sender, PointerEventArgs args)
