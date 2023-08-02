@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
 using static CardGameUtils.Structs.NetworkingStructs;
@@ -48,6 +49,7 @@ public partial class SelectCardsWindow : Window
 			TextBlock block = new TextBlock
 			{
 				Text = value.name,
+				TextAlignment = (playerIndex == value.controller) ? TextAlignment.Left : TextAlignment.Right,
 			};
 			Border border = new Border
 			{

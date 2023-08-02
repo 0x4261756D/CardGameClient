@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System;
 using System.IO;
 using Avalonia.Controls.Templates;
+using Avalonia.Media;
 
 namespace CardGameClient;
 
@@ -47,6 +48,7 @@ public partial class CustomSelectCardsWindow : Window
 			TextBlock block = new TextBlock
 			{
 				Text = value.name,
+				TextAlignment = (value.controller == playerIndex) ? TextAlignment.Left : TextAlignment.Right,
 			};
 			Border border = new Border
 			{
