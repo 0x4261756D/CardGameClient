@@ -9,7 +9,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using CardGameUtils;
 using CardGameUtils.Structs;
@@ -79,10 +78,20 @@ public partial class DuelWindow : Window
 		Cleanup();
 		this.Close();
 	}
+	private void TrySend(List<byte> packet)
+	{
+		if(client.Connected)
+		{
+			stream.Write(packet.ToArray(), 0, packet.Count);
+		}
+		else
+		{
+			new ErrorPopup("Stream was closed").Show(this);
+		}
+	}
 	private void PassClick(object? sender, RoutedEventArgs args)
 	{
-		List<byte> payload = GeneratePayload<DuelPackets.PassRequest>(new DuelPackets.PassRequest { });
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		TrySend(GeneratePayload<DuelPackets.PassRequest>(new DuelPackets.PassRequest { }));
 	}
 	private async void HandleNetwork()
 	{
@@ -313,13 +322,11 @@ public partial class DuelWindow : Window
 
 	public void OppGraveClick(object? sender, RoutedEventArgs args)
 	{
-		List<byte> payload = GeneratePayload<DuelPackets.ViewGraveRequest>(new DuelPackets.ViewGraveRequest { opponent = true });
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		TrySend(GeneratePayload<DuelPackets.ViewGraveRequest>(new DuelPackets.ViewGraveRequest { opponent = true }));
 	}
 	public void OwnGraveClick(object? sender, RoutedEventArgs args)
 	{
-		List<byte> payload = GeneratePayload<DuelPackets.ViewGraveRequest>(new DuelPackets.ViewGraveRequest { opponent = false });
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		TrySend(GeneratePayload<DuelPackets.ViewGraveRequest>(new DuelPackets.ViewGraveRequest { opponent = false }));
 	}
 	private void SendCardOption(string option, int uid, GameConstants.Location location)
 	{
@@ -329,7 +336,7 @@ public partial class DuelWindow : Window
 			location = location,
 			uid = uid
 		});
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		TrySend(payload);
 	}
 
 	public void EnqueueFieldUpdate(DuelPackets.FieldUpdateRequest request)
@@ -555,7 +562,7 @@ public partial class DuelWindow : Window
 			location = location,
 			uid = uid
 		});
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		TrySend(payload);
 	}
 
 	private void Cleanup()
@@ -567,7 +574,7 @@ public partial class DuelWindow : Window
 		closing = true;
 		Monitor.Enter(stream);
 		List<byte> payload = GeneratePayload<DuelPackets.SurrenderRequest>(new DuelPackets.SurrenderRequest { });
-		if(client.Connected && stream.CanWrite)
+		if(client.Connected)
 		{
 			try
 			{
