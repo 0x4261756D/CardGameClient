@@ -132,7 +132,7 @@ public class UIUtils
 		Viewbox v = UIUtils.CreateGenericCard(c);
 		CardImagePanel.Children.Add(v);
 
-		CardTextBlock.Text = c.Format();
+		CardTextBlock.Text = c.Format(inDeckEdit);
 		CardTextBlock.PointerMoved += CardTextHover;
 	}
 	private static void CardTextHover(object? sender, PointerEventArgs e)
