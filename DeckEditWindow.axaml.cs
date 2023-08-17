@@ -125,13 +125,12 @@ public partial class DeckEditWindow : Window
 			DataContext = c,
 			Padding = new Avalonia.Thickness(0, 0, 0, 0),
 		};
-		int xAmount = 10;
-		int yAmount = (int)Math.Ceiling((double)GameConstants.DECK_SIZE / (double)xAmount);
-		int borderThickness = 5;
+		double xAmount = 10;
+		double yAmount = Math.Ceiling((double)GameConstants.DECK_SIZE / xAmount);
 		DecklistBorder.GetObservable(Layoutable.BoundsProperty).Subscribe(new AnonymousObserver<Rect>((a) =>
 		{
-			b.Width = (a.Width - borderThickness) / xAmount;
-			b.Height = (a.Height - borderThickness) / yAmount;
+			b.Width = (a.Width - DecklistBorder.BorderThickness.Left - DecklistBorder.BorderThickness.Right) / xAmount - (b.BorderThickness.Left + b.BorderThickness.Right);
+			b.Height = (a.Height - DecklistBorder.BorderThickness.Top - DecklistBorder.BorderThickness.Bottom) / yAmount - (b.BorderThickness.Top + b.BorderThickness.Bottom);
 		}));
 		Viewbox v = UIUtils.CreateGenericCard(c);
 		b.Content = v;
