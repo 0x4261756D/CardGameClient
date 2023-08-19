@@ -69,6 +69,9 @@
 			<WrapPanel x:Name="DecklistPanel">
 			</WrapPanel>
 		</Border>
+		<CheckBox x:Name="SidebarGenericIncludeBox" Grid.Row="1" Grid.Column="8" Click="SidebarGenericIncludeBoxClick">
+			Include generic cards?
+		</CheckBox>
 		<TextBox Grid.Row="2" Grid.Column="8" x:Name="SidebarTextBox" KeyUp="SidebarTextInput" Watermark="Search"/>
 		<ListBox Grid.Row="3" Grid.Column="8" Grid.RowSpan="2" x:Name="SidebarList" SelectionChanged="SidebarSelectionChanged"/>
 	</Grid>

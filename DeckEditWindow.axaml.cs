@@ -67,10 +67,14 @@ public partial class DeckEditWindow : Window
 		}.Show();
 		this.Close();
 	}
+	public void SidebarGenericIncludeBoxClick(object? sender, RoutedEventArgs args)
+	{
+		LoadSidebar(SidebarTextBox?.Text ?? "");
+	}
 	public void LoadSidebar(string fil)
 	{
 		GameConstants.PlayerClass playerClass = (GameConstants.PlayerClass?)ClassSelectBox.SelectedItem ?? GameConstants.PlayerClass.All;
-		(byte, byte[]?) payload = Request(new DeckPackets.SearchRequest() { filter = fil, playerClass = playerClass },
+		(byte, byte[]?) payload = Request(new DeckPackets.SearchRequest() { filter = fil, playerClass = playerClass, includeGenericCards = SidebarGenericIncludeBox.IsChecked ?? false },
 			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		cardpool = DeserializePayload<DeckPackets.SearchResponse>(payload).cards;
 		List<Control> items = new List<Control>();
