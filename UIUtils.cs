@@ -192,7 +192,7 @@ public class UIUtils
 				{
 					Child = new TextBlock
 					{
-						Text = $"Cost: {c.cost} Life: {c.life} Power: {c.power}",
+						Text = $"Cost: {c.cost} Power/Life: {c.power}/{c.life}",
 						FontSize = 50,
 						TextAlignment = TextAlignment.Center,
 						Margin = new Thickness(20),
@@ -213,7 +213,7 @@ public class UIUtils
 				{
 					Child = new TextBlock
 					{
-						Text = $"Cost: {c.cost.ToString()}",
+						Text = $"Cost: {c.cost}",
 						FontSize = 50,
 						TextAlignment = TextAlignment.Center,
 						Margin = new Thickness(20),
