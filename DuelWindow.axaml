@@ -21,12 +21,14 @@
 			<Button Click="SurrenderClick" Grid.Row="0" Grid.Column="0">
 				Surrender
 			</Button>
-			<Panel Grid.Row="1" Grid.Column="0" x:Name="CardImagePanel"/>
-			<ScrollViewer Grid.Row="6" Grid.Column="0" Grid.RowSpan="4">
-				<TextBlock x:Name="CardTextBlock" TextWrapping="Wrap">
-					No Card Selected
-				</TextBlock>
-			</ScrollViewer>
+			<DockPanel Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="2">
+				<Panel x:Name="CardImagePanel" DockPanel.Dock="Top"/>
+				<ScrollViewer DockPanel.Dock="Bottom">
+					<TextBlock x:Name="CardTextBlock" TextWrapping="Wrap">
+						No Card Selected
+					</TextBlock>
+				</ScrollViewer>
+			</DockPanel>
 		</Grid>
 		<Border Grid.Column="2" Grid.Row="0">
 			<StackPanel Orientation="Horizontal">

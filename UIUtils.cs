@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
@@ -82,37 +82,175 @@ public class UIUtils
 		return null;
 	}
 
+	public static Dictionary<string, Bitmap> ArtworkCache = new Dictionary<string, Bitmap>();
+	public static Bitmap? DefaultArtwork;
+	public static Bitmap? FetchArtwork(string name)
+	{
+		if(ArtworkCache.ContainsKey(name))
+		{
+			return ArtworkCache[name];
+		}
+		if(Program.config.picture_path == null)
+		{
+			return null;
+		}
+		string pathNoExtension = Path.Combine(Program.config.picture_path, name);
+		if(File.Exists(pathNoExtension + ".png"))
+		{
+			Bitmap ret = new Bitmap(pathNoExtension + ".png");
+			ArtworkCache[name] = ret;
+			return ret;
+		}
+		if(File.Exists(pathNoExtension + ".jpg"))
+		{
+			Bitmap ret = new Bitmap(pathNoExtension + ".jpg");
+			ArtworkCache[name] = ret;
+			return ret;
+		}
+		if(DefaultArtwork == null && File.Exists(Path.Combine(Program.config.picture_path, "default_artwork.png")))
+		{
+			DefaultArtwork = new Bitmap(Path.Combine(Program.config.picture_path, "default_artwork.png"));
+		}
+		return DefaultArtwork;
+	}
 	public static Viewbox CreateGenericCard(CardStruct c)
 	{
-		Viewbox box = new Viewbox();
-		box.Stretch = Stretch.Uniform;
-		box.VerticalAlignment = VerticalAlignment.Stretch;
-		box.HorizontalAlignment = HorizontalAlignment.Stretch;
-		Panel p = new Panel();
-		TextBlock block = new TextBlock
+		Viewbox box = new Viewbox
 		{
-			Text = c.name,
-			FontSize = 18,
+			Stretch = Stretch.Uniform,
 		};
-		if(c.card_type == GameConstants.CardType.Creature)
+		RelativePanel insidePanel = new RelativePanel
 		{
-			p.Background = Brushes.Orange;
-			block.Foreground = Brushes.Black;
-		}
-		else if(c.card_type == GameConstants.CardType.Spell)
+			Width = 1000,
+			Height = 1500,
+		};
+		Border outsideBorder = new Border
 		{
-			p.Background = Brushes.Blue;
-			if(c.can_be_class_ability)
+			Child = insidePanel,
+			BorderBrush = Brushes.Black,
+			BorderThickness = new Thickness(5),
+		};
+		Border headerBorder = new Border
+		{
+			Child = new TextBlock
 			{
-				block.FontStyle = FontStyle.Oblique;
-			}
-		}
-		else if(c.card_type == GameConstants.CardType.Quest)
+				Text = c.name,
+				FontSize = 50,
+				TextAlignment = TextAlignment.Center,
+			},
+			Margin = new Thickness(30),
+			Padding = new Thickness(10),
+			Background = Brushes.Gray,
+			BorderBrush = Brushes.Black,
+			BorderThickness = new Thickness(3),
+			CornerRadius = new CornerRadius(10),
+		};
+		insidePanel.Children.Add(headerBorder);
+		RelativePanel.SetAlignLeftWithPanel(headerBorder, true);
+		RelativePanel.SetAlignRightWithPanel(headerBorder, true);
+		Border imageBorder = new Border
 		{
-			p.Background = Brushes.Green;
+			Child = new Viewbox
+			{
+				Child = new Image
+				{
+					Source = FetchArtwork(c.name)
+				},
+			},
+			Margin = new Thickness(50, 0),
+			BorderBrush = Brushes.Black,
+			BorderThickness = new Thickness(3),
+		};
+		insidePanel.Children.Add(imageBorder);
+		RelativePanel.SetBelow(imageBorder, headerBorder);
+		Border textBorder = new Border
+		{
+			Child = new TextBlock
+			{
+				Text = c.text,
+				TextWrapping = TextWrapping.Wrap,
+				FontSize = 40,
+				Foreground = Brushes.White,
+			},
+			Margin = new Thickness(40),
+			BorderBrush = Brushes.Black,
+			BorderThickness = new Thickness(3),
+			CornerRadius = new CornerRadius(30),
+			Padding = new Thickness(20),
+			Background = Brush.Parse("#515151")
+		};
+		insidePanel.Children.Add(textBorder);
+		RelativePanel.SetBelow(textBorder, imageBorder);
+		RelativePanel.SetAlignLeftWithPanel(textBorder, true);
+		RelativePanel.SetAlignRightWithPanel(textBorder, true);
+		switch(c.card_type)
+		{
+			case GameConstants.CardType.Creature:
+			{
+				outsideBorder.Background = Brushes.Orange;
+				Border costBorder = new Border
+				{
+					Child = new TextBlock
+					{
+						Text = $"Cost: {c.cost} Life: {c.life} Power: {c.power}",
+						FontSize = 50,
+						TextAlignment = TextAlignment.Center,
+						Margin = new Thickness(20),
+					},
+					BorderBrush = Brushes.Black,
+					BorderThickness = new Thickness(3),
+					Margin = new Thickness(30),					
+					Background = Brushes.Gray,
+				};
+				insidePanel.Children.Add(costBorder);
+				RelativePanel.SetAlignBottomWith(costBorder, textBorder);
+			}
+			break;
+			case GameConstants.CardType.Spell:
+			{
+				outsideBorder.Background = Brushes.SkyBlue;
+				Border costBorder = new Border
+				{
+					Child = new TextBlock
+					{
+						Text = $"Cost: {c.cost.ToString()}",
+						FontSize = 50,
+						TextAlignment = TextAlignment.Center,
+						Margin = new Thickness(20),
+					},
+					BorderBrush = Brushes.Black,
+					BorderThickness = new Thickness(3),
+					Margin = new Thickness(30),					
+					Background = Brushes.Gray,
+				};
+				insidePanel.Children.Add(costBorder);
+				RelativePanel.SetAlignBottomWith(costBorder, textBorder);
+			}
+			break;
+			case GameConstants.CardType.Quest:
+			{
+				outsideBorder.Background = Brushes.Green;
+				Border goalBorder = new Border
+				{
+					Child = new TextBlock
+					{
+						Text = $"{c.position}/{c.cost}",
+						FontSize = 50,
+						TextAlignment = TextAlignment.Center,
+						Margin = new Thickness(20),
+					},
+					BorderBrush = Brushes.Black,
+					BorderThickness = new Thickness(3),
+					Margin = new Thickness(30),
+					Background = Brushes.Gray,
+				};
+				insidePanel.Children.Add(goalBorder);
+				RelativePanel.SetAlignBottomWith(goalBorder, textBorder);
+			}
+			break;
 		}
-		p.Children.Add(block);
-		box.Child = p;
+		RelativePanel.SetAlignBottomWithPanel(textBorder, true);
+		box.Child = outsideBorder;
 		box.DataContext = c;
 		return box;
 	}
