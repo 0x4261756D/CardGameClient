@@ -13,8 +13,10 @@ class Program
 	private static string configPath = "./config/config.json";
 	public static string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 	private static PlatformClientConfig platformConfig = new PlatformClientConfig();
-	public static ClientConfig config = new ClientConfig(new URL("127.0.0.1", 7042),
-		width: 1080, height: 720, core_info: new CoreInfo(), should_spawn_core: false, should_save_player_name: true, server_address: "127.0.0.1", animation_delay_in_ms: 120, theme: ClientConfig.ThemeVariant.Default);
+	public static ClientConfig config = new ClientConfig(deck_edit_url: new URL("127.0.0.1", 7042),
+		width: 1080, height: 720, core_info: new CoreInfo(), should_spawn_core: false, should_save_player_name: true,
+		server_address: "127.0.0.1", animation_delay_in_ms: 120, theme: ClientConfig.ThemeVariant.Default,
+		picture_path: "./pictures/");
 	private static Process? core;
 	private static bool couldReadConfig = false;
 

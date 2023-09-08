@@ -498,8 +498,12 @@ public partial class DuelWindow : Window
 		Button b = new Button
 		{
 			DataContext = card,
+			Background = (card.card_type == GameConstants.CardType.Quest && card.text.Contains("REWARD CLAIMED")) ? Brushes.Green : null,
 		};
-		b.MinWidth = OwnField.Bounds.Width / GameConstants.FIELD_SIZE;
+		if(!card.location.HasFlag(GameConstants.Location.Hand))
+		{
+			b.MinWidth = OwnField.Bounds.Width / GameConstants.FIELD_SIZE;
+		}
 		if(card.location == GameConstants.Location.Field)
 		{
 			b.Width = (OwnField.Bounds.Width - 10) / GameConstants.FIELD_SIZE;
@@ -519,38 +523,13 @@ public partial class DuelWindow : Window
 				OptionsRequest((Button)sender!, card.location, card.uid);
 			};
 		}
-		if(card.card_type != GameConstants.CardType.UNKNOWN)
+		if(card.card_type == GameConstants.CardType.UNKNOWN)
 		{
-			if(card.card_type == GameConstants.CardType.Creature)
-			{
-				b.Background = Brushes.Orange;
-			}
-			else if(card.card_type == GameConstants.CardType.Spell)
-			{
-				b.Background = Brushes.Blue;
-			}
-			else if(card.card_type == GameConstants.CardType.Quest)
-			{
-				if(card.text.Contains("REWARD CLAIMED"))
-				{
-					b.Background = Brushes.Green;
-				}
-				else
-				{
-					b.Background = Brushes.Gray;
-				}
-			}
-			StackPanel contentPanel = new StackPanel();
-			contentPanel.Children.Add(new TextBlock { Text = card.name });
-			if(card.card_type == GameConstants.CardType.Creature && card.location == GameConstants.Location.Field)
-			{
-				contentPanel.Children.Add(new TextBlock { Text = $"Power: {card.power} / Life: {card.life}" });
-			}
-			else if(card.card_type == GameConstants.CardType.Quest)
-			{
-				contentPanel.Children.Add(new TextBlock { Text = card.text.Contains("REWARD CLAIMED") ? "REWARD CLAIMED" : $"Progress: {card.position}/{card.cost}" });
-			}
-			b.Content = contentPanel;
+			b.Background = Brushes.DimGray;
+		}
+		else
+		{
+			b.Content = UIUtils.CreateGenericCard(card);
 		}
 		return b;
 	}

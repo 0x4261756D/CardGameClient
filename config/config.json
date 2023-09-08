@@ -19,9 +19,10 @@
 		"player_name": null,
 		"should_save_player_name": false,
 		"server_address": "h2871632.stratoserver.net",
-		"last_deck_name": null,
+		"last_deck_name": "Pyro_Combo",
 		"animation_delay_in_ms": 120,
-		"theme": 0
+		"theme": 0,
+		"picture_path": "./pictures"
 	},
 	"linux": {
 		"deck_edit_url": {
@@ -45,6 +46,7 @@
 		"server_address": "h2871632.stratoserver.net",
 		"last_deck_name": null,
 		"animation_delay_in_ms": 250,
-		"theme": 0
+		"theme": 0,
+		"picture_path": null
 	}
 }

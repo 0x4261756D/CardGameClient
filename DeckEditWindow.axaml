@@ -12,9 +12,16 @@
 				Grid.Column="0">
 			Back
 		</Button>
+		<DockPanel Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="2">
+			<Panel x:Name="CardImagePanel" DockPanel.Dock="Top"/>
+			<ScrollViewer DockPanel.Dock="Bottom">
+				<TextBlock x:Name="CardTextBlock" TextWrapping="Wrap">
+					No Card Selected
+				</TextBlock>
+			</ScrollViewer>
+		</DockPanel>
 		<ComboBox 	Grid.Row="2"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
+					Grid.Column="2"
 					Name="DeckSelectBox"
 					ItemsSource="{Binding Decknames}"
 					SelectionChanged="DeckSelectionChanged"
@@ -25,7 +32,7 @@
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
 		</ComboBox>
-		<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="NewDeckName" Watermark="Deck Name"/>
+		<TextBox Grid.Row="1" Grid.Column="2" x:Name="NewDeckName" Watermark="Deck Name"/>
 		<Button Grid.Row="1" Grid.Column="3" Click="CreateNewDeckClick">Create New Deck</Button>
 		<Button Grid.Row="2" Grid.Column="3" Click="SaveDeckClick">
 			Save Deck
@@ -34,14 +41,6 @@
 			Delete Deck
 		</Button>
 		<TextBlock Grid.Row="2" Grid.Column="4" x:Name="DeckSizeBlock"/>
-		<DockPanel Grid.Row="3" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
-			<Panel x:Name="CardImagePanel" DockPanel.Dock="Top"/>
-			<ScrollViewer DockPanel.Dock="Bottom">
-				<TextBlock x:Name="CardTextBlock" TextWrapping="Wrap">
-					No Card Selected
-				</TextBlock>
-			</ScrollViewer>
-		</DockPanel>
 		<TextBlock Grid.Row="3" Grid.Column="2">
 			Select your class:
 		</TextBlock>
@@ -60,11 +59,11 @@
 		<TextBlock Grid.Row="3" Grid.Column="4">
 			Your ability:
 		</TextBlock>
-		<Button x:Name="ClassAbilityButton" Grid.Row="3" Grid.Column="5" Click="ContentRemoveClick"/>
+		<Button x:Name="ClassAbilityButton" Grid.Row="0" Grid.Column="5" Grid.RowSpan="4" Click="ContentRemoveClick"/>
 		<TextBlock Grid.Row="3" Grid.Column="6">
 			Your quest:
 		</TextBlock>
-		<Button x:Name="ClassQuestButton" Grid.Row="3" Grid.Column="7" Click="ContentRemoveClick"/>
+		<Button x:Name="ClassQuestButton" Grid.Row="0" Grid.Column="7" Grid.RowSpan="4" Click="ContentRemoveClick"/>
 		<Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="6" BorderThickness="2" BorderBrush="White" x:Name="DecklistBorder">
 			<WrapPanel x:Name="DecklistPanel">
 			</WrapPanel>
