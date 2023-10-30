@@ -47,6 +47,6 @@
 		"last_deck_name": null,
 		"animation_delay_in_ms": 250,
 		"theme": 0,
-		"picture_path": null
+		"picture_path": "./pictures"
 	}
 }
