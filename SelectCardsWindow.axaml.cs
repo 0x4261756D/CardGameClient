@@ -25,9 +25,9 @@ public partial class SelectCardsWindow : Window
 		showCardAction = (_) => { };
 		InitializeComponent();
 	}
-	private Stream stream;
+	private readonly Stream stream;
 	private bool shouldReallyClose = false;
-	private Action<CardStruct> showCardAction;
+	private readonly Action<CardStruct> showCardAction;
 
 	public SelectCardsWindow(string text, int amount, CardStruct[] cards, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
 	{
@@ -39,29 +39,29 @@ public partial class SelectCardsWindow : Window
 		this.stream = stream;
 		DataContext = new SelectedCardViewModel(amount);
 		InitializeComponent();
-		this.Width = Program.config.width / 2;
-		this.Height = Program.config.height / 2;
+		Width = Program.config.width / 2;
+		Height = Program.config.height / 2;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
 		CardSelectionList.DataContext = cards;
 		CardSelectionList.ItemsSource = cards;
 		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
 		{
-			TextBlock block = new TextBlock
+			TextBlock block = new()
 			{
 				Text = value.name,
 				TextAlignment = (playerIndex == value.controller) ? TextAlignment.Left : TextAlignment.Right,
 			};
-			Border border = new Border
+			Border border = new()
 			{
 				Child = block,
-				Background = Avalonia.Media.Brushes.Transparent,
+				Background = Brushes.Transparent,
 			};
 			border.PointerEntered += CardPointerEntered;
 			return border;
 		});
 		Message.Text = text;
 		Amount.Text = $"/ {amount}";
-		this.Closing += (sender, args) =>
+		Closing += (sender, args) =>
 		{
 			args.Cancel = !shouldReallyClose;
 		};
@@ -75,7 +75,7 @@ public partial class SelectCardsWindow : Window
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-		showCardAction((CardStruct)((Control)(sender)).DataContext!);
+		showCardAction((CardStruct)((Control)sender).DataContext!);
 	}
 
 	public void CardSelectionChanged(object? sender, SelectionChangedEventArgs args)
@@ -87,13 +87,12 @@ public partial class SelectCardsWindow : Window
 
 	public void ConfirmClick(object? sender, RoutedEventArgs args)
 	{
-		List<byte> payload = GeneratePayload<DuelPackets.SelectCardsResponse>(new DuelPackets.SelectCardsResponse
+		stream.Write(GeneratePayload(new DuelPackets.SelectCardsResponse
 		{
 			uids = UIUtils.CardListBoxSelectionToUID(CardSelectionList)
-		});
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		}));
 		shouldReallyClose = true;
-		this.Close();
+		Close();
 	}
 }
 
@@ -128,7 +127,7 @@ public class SelectedCardViewModel : INotifyPropertyChanged
 			{
 				selectedCount = value;
 				NotifyPropertyChanged();
-				NotifyPropertyChanged("CanConfirm");
+				NotifyPropertyChanged(nameof(CanConfirm));
 			}
 		}
 	}

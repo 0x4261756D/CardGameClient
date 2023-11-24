@@ -21,9 +21,9 @@ public partial class ServerWindow : Window
 	{
 		new MainWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
-		this.Close();
+		Close();
 	}
 	private void UpdateRoomList()
 	{
@@ -50,14 +50,14 @@ public partial class ServerWindow : Window
 		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload.Value);
 		if(response.success)
 		{
-			RoomWindow w = new RoomWindow(ServerAddressBox.Text, 7043, playerName)
+			RoomWindow w = new(ServerAddressBox.Text, 7043, playerName)
 			{
-				WindowState = this.WindowState,
+				WindowState = WindowState,
 			};
 			if(!w.closed)
 			{
 				w.Show();
-				this.Close();
+				Close();
 			}
 		}
 		else
@@ -92,9 +92,9 @@ public partial class ServerWindow : Window
 		{
 			new RoomWindow(ServerAddressBox.Text, 7043, ((ServerWindowViewModel)DataContext!).PlayerName)
 			{
-				WindowState = this.WindowState,
+				WindowState = WindowState,
 			}.Show();
-			this.Close();
+			Close();
 		}
 		else
 		{
@@ -112,14 +112,8 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 {
 	public ServerWindowViewModel()
 	{
-		if(PlayerName == null)
-		{
-			PlayerName = Convert.ToBase64String(Encoding.UTF8.GetBytes(DateTime.Now.Millisecond + DateTime.Now.ToLongTimeString()));
-		}
-		if(Program.config.server_address == null)
-		{
-			Program.config.server_address = "127.0.0.1";
-		}
+		PlayerName ??= Convert.ToBase64String(Encoding.UTF8.GetBytes(DateTime.Now.Millisecond + DateTime.Now.ToLongTimeString()));
+		Program.config.server_address ??= "127.0.0.1";
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;
@@ -132,10 +126,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 	{
 		get
 		{
-			if(Program.config.server_address == null)
-			{
-				Program.config.server_address = "127.0.0.1";
-			}
+			Program.config.server_address ??= "127.0.0.1";
 			return Program.config.server_address;
 		}
 		set
@@ -152,10 +143,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 	{
 		get
 		{
-			if(Program.config.player_name == null)
-			{
-				Program.config.player_name = Convert.ToBase64String(Encoding.UTF8.GetBytes(DateTime.Now.Millisecond + DateTime.Now.ToLongTimeString()));
-			}
+			Program.config.player_name ??= Convert.ToBase64String(Encoding.UTF8.GetBytes(DateTime.Now.Millisecond + DateTime.Now.ToLongTimeString()));
 			return Program.config.player_name;
 		}
 		set
@@ -167,7 +155,7 @@ public class ServerWindowViewModel : INotifyPropertyChanged
 			}
 		}
 	}
-	private string[] serverRooms = new string[0];
+	private string[] serverRooms = [];
 	public string[] ServerRooms
 	{
 		get => serverRooms;

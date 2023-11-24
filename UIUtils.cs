@@ -20,13 +20,13 @@ public class UIUtils
 {
 	public static ThemeVariant ConvertThemeVariant(ClientConfig.ThemeVariant? theme)
 	{
-		switch(theme)
+		return theme switch
 		{
-			case ClientConfig.ThemeVariant.Default: return ThemeVariant.Default;
-			case ClientConfig.ThemeVariant.Dark: return ThemeVariant.Dark;
-			case ClientConfig.ThemeVariant.Light: return ThemeVariant.Light;
-		}
-		return ThemeVariant.Default;
+			ClientConfig.ThemeVariant.Default => ThemeVariant.Default,
+			ClientConfig.ThemeVariant.Dark => ThemeVariant.Dark,
+			ClientConfig.ThemeVariant.Light => ThemeVariant.Light,
+			_ => ThemeVariant.Default,
+		};
 	}
 
 	public static (byte, byte[]?)? TryRequest(PacketContent request, string address, int port, Window? window)
@@ -76,19 +76,19 @@ public class UIUtils
 		if(files.Count > 0)
 		{
 			await using Stream stream = await files[0].OpenReadAsync();
-			using StreamReader reader = new StreamReader(stream);
+			using StreamReader reader = new(stream);
 			return await reader.ReadToEndAsync();
 		}
 		return null;
 	}
 
-	public static Dictionary<string, Bitmap> ArtworkCache = new Dictionary<string, Bitmap>();
+	public static Dictionary<string, Bitmap> ArtworkCache = [];
 	public static Bitmap? DefaultArtwork;
 	public static Bitmap? FetchArtwork(string name)
 	{
-		if(ArtworkCache.ContainsKey(name))
+		if(ArtworkCache.TryGetValue(name, out Bitmap? bitmap))
 		{
-			return ArtworkCache[name];
+			return bitmap;
 		}
 		if(Program.config.picture_path == null)
 		{
@@ -97,13 +97,13 @@ public class UIUtils
 		string pathNoExtension = Path.Combine(Program.config.picture_path, name);
 		if(File.Exists(pathNoExtension + ".png"))
 		{
-			Bitmap ret = new Bitmap(pathNoExtension + ".png");
+			Bitmap ret = new(pathNoExtension + ".png");
 			ArtworkCache[name] = ret;
 			return ret;
 		}
 		if(File.Exists(pathNoExtension + ".jpg"))
 		{
-			Bitmap ret = new Bitmap(pathNoExtension + ".jpg");
+			Bitmap ret = new(pathNoExtension + ".jpg");
 			ArtworkCache[name] = ret;
 			return ret;
 		}
@@ -115,22 +115,22 @@ public class UIUtils
 	}
 	public static Viewbox CreateGenericCard(CardStruct c)
 	{
-		Viewbox box = new Viewbox
+		Viewbox box = new()
 		{
 			Stretch = Stretch.Uniform,
 		};
-		RelativePanel insidePanel = new RelativePanel
+		RelativePanel insidePanel = new()
 		{
 			Width = 1000,
 			Height = 1500,
 		};
-		Border outsideBorder = new Border
+		Border outsideBorder = new()
 		{
 			Child = insidePanel,
 			BorderBrush = Brushes.Black,
 			BorderThickness = new Thickness(5),
 		};
-		Border headerBorder = new Border
+		Border headerBorder = new()
 		{
 			Child = new TextBlock
 			{
@@ -148,7 +148,7 @@ public class UIUtils
 		insidePanel.Children.Add(headerBorder);
 		RelativePanel.SetAlignLeftWithPanel(headerBorder, true);
 		RelativePanel.SetAlignRightWithPanel(headerBorder, true);
-		Border imageBorder = new Border
+		Border imageBorder = new()
 		{
 			Child = new Viewbox
 			{
@@ -163,7 +163,7 @@ public class UIUtils
 		};
 		insidePanel.Children.Add(imageBorder);
 		RelativePanel.SetBelow(imageBorder, headerBorder);
-		Border textBorder = new Border
+		Border textBorder = new()
 		{
 			Child = new TextBlock
 			{
@@ -209,7 +209,7 @@ public class UIUtils
 			case GameConstants.CardType.Spell:
 			{
 				outsideBorder.Background = Brushes.SkyBlue;
-				Border costBorder = new Border
+				Border costBorder = new()
 				{
 					Child = new TextBlock
 					{
@@ -230,7 +230,7 @@ public class UIUtils
 			case GameConstants.CardType.Quest:
 			{
 				outsideBorder.Background = Brushes.Green;
-				Border goalBorder = new Border
+				Border goalBorder = new()
 				{
 					Child = new TextBlock
 					{
@@ -267,7 +267,7 @@ public class UIUtils
 	public static void CardHover(Panel CardImagePanel, TextBlock CardTextBlock, CardStruct c, bool inDeckEdit)
 	{
 		CardImagePanel.Children.Clear();
-		Viewbox v = UIUtils.CreateGenericCard(c);
+		Viewbox v = CreateGenericCard(c);
 		CardImagePanel.Children.Add(v);
 
 		CardTextBlock.Text = c.Format(inDeckEdit);

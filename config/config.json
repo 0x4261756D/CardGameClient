@@ -43,7 +43,7 @@
 		},
 		"player_name": null,
 		"should_save_player_name": false,
-		"server_address": "127.0.0.1",
+		"server_address": "h2871632.stratoserver.net",
 		"last_deck_name": "Arty",
 		"animation_delay_in_ms": 250,
 		"theme": 0,

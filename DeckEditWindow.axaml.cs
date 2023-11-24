@@ -20,7 +20,7 @@ namespace CardGameClient;
 
 public partial class DeckEditWindow : Window
 {
-	private Flyout moveFlyout = new Flyout();
+	private readonly Flyout moveFlyout = new();
 	private CardStruct[]? cardpool;
 
 	public DeckEditWindow()
@@ -77,7 +77,7 @@ public partial class DeckEditWindow : Window
 		(byte, byte[]?) payload = Request(new DeckPackets.SearchRequest() { filter = fil, playerClass = playerClass, includeGenericCards = SidebarGenericIncludeBox.IsChecked ?? false },
 			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		cardpool = DeserializePayload<DeckPackets.SearchResponse>(payload).cards;
-		List<Control> items = new List<Control>();
+		List<Control> items = [];
 		foreach(CardStruct c in cardpool)
 		{
 			Viewbox v = UIUtils.CreateGenericCard(c);
@@ -91,7 +91,7 @@ public partial class DeckEditWindow : Window
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-		CardStruct c = ((CardStruct)(((Control)sender).DataContext!));
+		CardStruct c = (CardStruct)((Control)sender).DataContext!;
 		UIUtils.CardHover(CardImagePanel, CardTextBlock, c, true);
 	}
 
@@ -100,7 +100,7 @@ public partial class DeckEditWindow : Window
 		if(sender == null || cardpool == null || args.AddedItems.Count != 1 || args.RemovedItems.Count != 0) return;
 		args.Handled = true;
 		SidebarList.SelectedItem = null;
-		Viewbox v = (Viewbox)(args.AddedItems[0]!);
+		Viewbox v = (Viewbox)args.AddedItems[0]!;
 		CardStruct card = (CardStruct)v.DataContext!;
 		if(card.card_type == GameConstants.CardType.Quest)
 		{
@@ -110,7 +110,7 @@ public partial class DeckEditWindow : Window
 		else
 		{
 			if(DecklistPanel.Children.Count >= GameConstants.DECK_SIZE ||
-				DecklistPanel.Children.Count(x => ((CardStruct)(((Viewbox)(((Button)x).Content!)).DataContext!)).name == card.name) >= GameConstants.MAX_CARD_MULTIPLICITY) return;
+				DecklistPanel.Children.Count(x => ((CardStruct)((Viewbox)((Button)x).Content!).DataContext!).name == card.name) >= GameConstants.MAX_CARD_MULTIPLICITY) return;
 			DecklistPanel.Children.Add(CreateDeckButton(card));
 		}
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
@@ -124,14 +124,14 @@ public partial class DeckEditWindow : Window
 
 	public Button CreateDeckButton(CardStruct c)
 	{
-		Button b = new Button()
+		Button b = new()
 		{
 			DataContext = c,
-			Padding = new Avalonia.Thickness(0, 0, 0, 0),
+			Padding = new Thickness(0, 0, 0, 0),
 		};
 		double xAmount = 10;
-		double yAmount = Math.Ceiling((double)GameConstants.DECK_SIZE / xAmount);
-		DecklistBorder.GetObservable(Layoutable.BoundsProperty).Subscribe(new AnonymousObserver<Rect>((a) =>
+		double yAmount = Math.Ceiling(GameConstants.DECK_SIZE / xAmount);
+		DecklistBorder.GetObservable(BoundsProperty).Subscribe(new AnonymousObserver<Rect>((a) =>
 		{
 			b.Width = (a.Width - DecklistBorder.BorderThickness.Left - DecklistBorder.BorderThickness.Right) / xAmount - (b.BorderThickness.Left + b.BorderThickness.Right);
 			b.Height = (a.Height - DecklistBorder.BorderThickness.Top - DecklistBorder.BorderThickness.Bottom) / yAmount - (b.BorderThickness.Top + b.BorderThickness.Bottom);
@@ -154,9 +154,9 @@ public partial class DeckEditWindow : Window
 		Button button = (Button)sender!;
 		int index = DecklistPanel.Children.IndexOf(button);
 		int max = DecklistPanel.Children.Count - 1;
-		StackPanel panel = new StackPanel();
+		StackPanel panel = new();
 
-		NumericUpDown numeric = new NumericUpDown
+		NumericUpDown numeric = new()
 		{
 			AllowSpin = true,
 			Value = index,
@@ -165,7 +165,7 @@ public partial class DeckEditWindow : Window
 			Increment = 1,
 		};
 		panel.Children.Add(numeric);
-		Button submitButton = new Button
+		Button submitButton = new()
 		{
 			Content = new TextBlock
 			{
@@ -179,10 +179,10 @@ public partial class DeckEditWindow : Window
 			DecklistPanel.Children.RemoveAt(index);
 			DecklistPanel.Children.Insert(newInd, button);
 		};
-		CardStruct c = ((CardStruct)((Viewbox)button.Content!).DataContext!);
+		CardStruct c = (CardStruct)((Viewbox)button.Content!).DataContext!;
 		if(c.can_be_class_ability)
 		{
-			Button setAbilityButton = new Button
+			Button setAbilityButton = new()
 			{
 				Content = new TextBlock
 				{
@@ -257,7 +257,7 @@ public partial class DeckEditWindow : Window
 
 	private void ColorWrongThings(GameConstants.PlayerClass? playerClass)
 	{
-		foreach(Button child in DecklistPanel.Children)
+		foreach(Button child in DecklistPanel.Children.Cast<Button>())
 		{
 			// Oh boy, do I love GUI programming...
 			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content!).DataContext!).card_class;
@@ -265,12 +265,12 @@ public partial class DeckEditWindow : Window
 				cardClass != playerClass)
 			{
 				child.BorderBrush = Brushes.Red;
-				child.BorderThickness = new Avalonia.Thickness(5);
+				child.BorderThickness = new Thickness(5);
 			}
 			else
 			{
 				child.BorderBrush = null;
-				child.BorderThickness = new Avalonia.Thickness(1);
+				child.BorderThickness = new Thickness(1);
 			}
 		}
 		if(ClassQuestButton.Content != null)
@@ -280,18 +280,18 @@ public partial class DeckEditWindow : Window
 				cardClass != playerClass)
 			{
 				ClassQuestButton.BorderBrush = Brushes.Red;
-				ClassQuestButton.BorderThickness = new Avalonia.Thickness(5);
+				ClassQuestButton.BorderThickness = new Thickness(5);
 			}
 			else
 			{
 				ClassQuestButton.BorderBrush = null;
-				ClassQuestButton.BorderThickness = new Avalonia.Thickness(1);
+				ClassQuestButton.BorderThickness = new Thickness(1);
 			}
 		}
 		else
 		{
 			ClassQuestButton.BorderBrush = null;
-			ClassQuestButton.BorderThickness = new Avalonia.Thickness(1);
+			ClassQuestButton.BorderThickness = new Thickness(1);
 		}
 		if(ClassAbilityButton.Content != null)
 		{
@@ -300,18 +300,18 @@ public partial class DeckEditWindow : Window
 				cardClass != playerClass)
 			{
 				ClassAbilityButton.BorderBrush = Brushes.Red;
-				ClassAbilityButton.BorderThickness = new Avalonia.Thickness(5);
+				ClassAbilityButton.BorderThickness = new Thickness(5);
 			}
 			else
 			{
 				ClassAbilityButton.BorderBrush = null;
-				ClassAbilityButton.BorderThickness = new Avalonia.Thickness(1);
+				ClassAbilityButton.BorderThickness = new Thickness(1);
 			}
 		}
 		else
 		{
 			ClassAbilityButton.BorderBrush = null;
-			ClassAbilityButton.BorderThickness = new Avalonia.Thickness(1);
+			ClassAbilityButton.BorderThickness = new Thickness(1);
 		}
 	}
 
@@ -323,7 +323,7 @@ public partial class DeckEditWindow : Window
 		{
 			deck = new DeckPackets.Deck
 			{
-				cards = new CardStruct[0],
+				cards = [],
 				name = newName,
 			}
 		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
@@ -344,9 +344,9 @@ public partial class DeckEditWindow : Window
 			playerClass = GameConstants.PlayerClass.UNKNOWN;
 		}
 		Viewbox? abilityBox = (Viewbox?)ClassAbilityButton.Content;
-		CardStruct? ability = abilityBox == null ? null : (CardStruct?)(abilityBox).DataContext;
+		CardStruct? ability = abilityBox == null ? null : (CardStruct?)abilityBox.DataContext;
 		Viewbox? questBox = (Viewbox?)ClassQuestButton.Content;
-		CardStruct? quest = questBox == null ? null : (CardStruct?)(questBox).DataContext;
+		CardStruct? quest = questBox == null ? null : (CardStruct?)questBox.DataContext;
 		Request(new DeckPackets.ListUpdateRequest
 		{
 			deck = new DeckPackets.Deck
@@ -355,7 +355,7 @@ public partial class DeckEditWindow : Window
 				ability = ability,
 				quest = quest,
 				player_class = playerClass,
-				name = ((string)DeckSelectBox.SelectedItem!)
+				name = (string)DeckSelectBox.SelectedItem!
 			}
 		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 	}
@@ -365,7 +365,7 @@ public partial class DeckEditWindow : Window
 		{
 			deck = new DeckPackets.Deck
 			{
-				name = ((string)DeckSelectBox.SelectedItem!)
+				name = (string)DeckSelectBox.SelectedItem!
 			}
 		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		((DeckEditWindowViewModel)DataContext!).Decknames.Remove((string)DeckSelectBox.SelectedItem!);
@@ -407,12 +407,12 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 
-	private ObservableCollection<GameConstants.PlayerClass> classes = new ObservableCollection<GameConstants.PlayerClass>(Enum.GetValues<GameConstants.PlayerClass>());
+	private readonly ObservableCollection<GameConstants.PlayerClass> classes = new(Enum.GetValues<GameConstants.PlayerClass>());
 	public ObservableCollection<GameConstants.PlayerClass> Classes
 	{
 		get => classes;
 	}
-	private ObservableCollection<string> decknames = new ObservableCollection<string>();
+	private ObservableCollection<string> decknames = [];
 	public ObservableCollection<string> Decknames
 	{
 		get => decknames;

@@ -13,27 +13,27 @@ public partial class ViewCardsWindow : Window
 	// This only exists because Avalonia requires it
 	public ViewCardsWindow()
 	{
-		this.showCardAction = (_) => { };
+		showCardAction = (_) => { };
 		InitializeComponent();
 	}
-	private Action<CardStruct> showCardAction;
+	private readonly Action<CardStruct> showCardAction;
 
-	public ViewCardsWindow(CardStruct[] cards, string? message, int playerIndex, Action<CardStruct> showCardAction)
+	public ViewCardsWindow(CardStruct[] cards, string? message, Action<CardStruct> showCardAction)
 	{
 		InitializeComponent();
-		this.Width = Program.config.width / 2;
-		this.Height = Program.config.height / 2;
+		Width = Program.config.width / 2;
+		Height = Program.config.height / 2;
 		this.showCardAction = showCardAction;
 		CardSelectionList.MaxHeight = Program.config.height / 3;
 		CardSelectionList.DataContext = cards;
 		CardSelectionList.ItemsSource = cards;
 		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
 		{
-			TextBlock block = new TextBlock
+			TextBlock block = new()
 			{
 				Text = value.name,
 			};
-			Border border = new Border
+			Border border = new()
 			{
 				Child = block,
 				Background = Avalonia.Media.Brushes.Transparent,
@@ -51,10 +51,10 @@ public partial class ViewCardsWindow : Window
 	{
 		if(sender == null) return;
 		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-		showCardAction((CardStruct)((Control)(sender)).DataContext!);
+		showCardAction((CardStruct)((Control)sender).DataContext!);
 	}
 	public void CloseClick(object? sender, RoutedEventArgs args)
 	{
-		this.Close();
+		Close();
 	}
 }

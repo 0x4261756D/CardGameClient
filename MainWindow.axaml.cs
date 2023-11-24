@@ -16,35 +16,35 @@ public partial class MainWindow : Window
 	{
 		new ServerWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
-		this.Close();
+		Close();
 	}
 
 	private void ToDeckEditClick(object sender, RoutedEventArgs e)
 	{
 		new DeckEditWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
-		this.Close();
+		Close();
 	}
 
 	private void ToReplaysClick(object sender, RoutedEventArgs e)
 	{
 		new ReplaysWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
-		this.Close();
+		Close();
 	}
 
 	private void ToSettingsClick(object sender, RoutedEventArgs e)
 	{
 		new SettingsWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
-		this.Close();
+		Close();
 	}
 }

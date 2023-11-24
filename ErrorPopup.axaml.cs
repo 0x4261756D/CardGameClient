@@ -18,24 +18,19 @@ public partial class ErrorPopup : Window
 	{
 		DataContext = new ErrorPopupViewModel(msg);
 		InitializeComponent();
-		this.Width = Program.config.width / 2;
-		this.Height = Program.config.height / 2;
-		this.Topmost = true;
+		Width = Program.config.width / 2;
+		Height = Program.config.height / 2;
+		Topmost = true;
 	}
 
 	private void CloseClick(object? sender, RoutedEventArgs args)
 	{
-		this.Close();
+		Close();
 	}
 }
-public class ErrorPopupViewModel : INotifyPropertyChanged
+public class ErrorPopupViewModel(string msg) : INotifyPropertyChanged
 {
-	public ErrorPopupViewModel(string msg)
-	{
-		message = msg;
-	}
-
-	private string message;
+	private string message = msg;
 	public string Message
 	{
 		get => message;

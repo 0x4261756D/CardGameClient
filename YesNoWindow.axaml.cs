@@ -17,16 +17,16 @@ public partial class YesNoWindow : Window
 		InitializeComponent();
 		stream = new TcpClient().GetStream();
 	}
-	Stream stream;
+	readonly Stream stream;
 	private bool shouldReallyClose = false;
 	public YesNoWindow(string description, Stream stream)
 	{
 		InitializeComponent();
 		MessageBlock.Text = description;
 		this.stream = stream;
-		this.Width = Program.config.width / 2;
-		this.Height = Program.config.height / 2;
-		this.Closing += (sender, args) =>
+		Width = Program.config.width / 2;
+		Height = Program.config.height / 2;
+		Closing += (sender, args) =>
 		{
 			args.Cancel = !shouldReallyClose;
 		};
@@ -34,22 +34,20 @@ public partial class YesNoWindow : Window
 
 	public void YesClick(object? sender, RoutedEventArgs args)
 	{
-		List<byte> payload = GeneratePayload<DuelPackets.YesNoResponse>(new DuelPackets.YesNoResponse
+		stream.Write(GeneratePayload(new DuelPackets.YesNoResponse
 		{
 			result = true
-		});
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		}));
 		shouldReallyClose = true;
 		Close();
 	}
 
 	public void NoClick(object? sender, RoutedEventArgs args)
 	{
-		List<byte> payload = GeneratePayload<DuelPackets.YesNoResponse>(new DuelPackets.YesNoResponse
+		stream.Write(GeneratePayload(new DuelPackets.YesNoResponse
 		{
 			result = false
-		});
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		}));
 		shouldReallyClose = true;
 		Close();
 	}

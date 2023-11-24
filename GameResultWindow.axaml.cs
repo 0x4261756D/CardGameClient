@@ -15,15 +15,15 @@ public partial class GameResultWindow : Window
 		parent = new Window();
 	}
 
-	Window parent;
+	readonly Window parent;
 
 	public GameResultWindow(Window parent, DuelPackets.GameResultResponse response)
 	{
 		this.parent = parent;
 		InitializeComponent();
-		this.Width = Program.config.width / 2;
-		this.Height = Program.config.height / 2;
-		this.Closed += (_, _) =>
+		Width = Program.config.width / 2;
+		Height = Program.config.height / 2;
+		Closed += (_, _) =>
 		{
 			if(this.parent.IsEnabled)
 			{
@@ -32,14 +32,14 @@ public partial class GameResultWindow : Window
 		};
 		ResultBlock.Text = (response.result == GameConstants.GameResult.Draw) ?
 			"It was a draw" : $"You {response.result}";
-		this.Topmost = true;
+		Topmost = true;
 	}
 	public void BackClick(object? sender, RoutedEventArgs args)
 	{
 		new ServerWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
-		this.Close();
+		Close();
 	}
 }

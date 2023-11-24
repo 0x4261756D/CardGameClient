@@ -12,8 +12,8 @@ class Program
 {
 	private static string configPath = "./config/config.json";
 	public static string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-	private static PlatformClientConfig platformConfig = new PlatformClientConfig();
-	public static ClientConfig config = new ClientConfig(deck_edit_url: new URL("127.0.0.1", 7042),
+	private static PlatformClientConfig platformConfig = new();
+	public static ClientConfig config = new(deck_edit_url: new URL("127.0.0.1", 7042),
 		width: 1080, height: 720, core_info: new CoreInfo(), should_spawn_core: false, should_save_player_name: true,
 		server_address: "127.0.0.1", animation_delay_in_ms: 120, theme: ClientConfig.ThemeVariant.Default,
 		picture_path: "./pictures/");
@@ -61,7 +61,7 @@ class Program
 			{
 				throw new Exception("No Core file name provided");
 			}
-			ProcessStartInfo info = new ProcessStartInfo
+			ProcessStartInfo info = new()
 			{
 				Arguments = config.core_info.Arguments,
 				CreateNoWindow = config.core_info.CreateNoWindow,
@@ -113,11 +113,7 @@ class Program
 			{
 				platformConfig.windows = config;
 			}
-			File.WriteAllText(configPath, JsonSerializer.Serialize(platformConfig, options: new JsonSerializerOptions
-			{
-				WriteIndented = true,
-				IncludeFields = true,
-			}).Replace("  ", "\t"));
+			File.WriteAllText(configPath, JsonSerializer.Serialize(platformConfig, options: NetworkingConstants.jsonPrettyOption).Replace("  ", "\t"));
 		}
 	}
 }

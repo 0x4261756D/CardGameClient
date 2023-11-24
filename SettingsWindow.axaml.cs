@@ -14,7 +14,7 @@ public partial class SettingsWindow : Window
 	public SettingsWindow()
 	{
 		InitializeComponent();
-		this.DataContext = new SettingsWindowViewModel();
+		DataContext = new SettingsWindowViewModel();
 		WidthInput.Value = Program.config.width;
 		HeightInput.Value = Program.config.height;
 		ShouldSpawnCoreInput.IsChecked = Program.config.should_spawn_core;
@@ -27,7 +27,7 @@ public partial class SettingsWindow : Window
 	{
 		new MainWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
 		if(Application.Current != null)
 		{
@@ -40,8 +40,7 @@ public partial class SettingsWindow : Window
 		Program.config.animation_delay_in_ms = (int?)AnimationDelayInput.Value ?? 120;
 		Program.config.core_info.Arguments = CoreArgsInput.Text ?? "--mode=client --config=../../../config/config.json --additional_cards_url=h2871632.stratoserver.net";
 		Program.config.theme = (ClientConfig.ThemeVariant?)ThemeInput.SelectedItem;
-		TopLevel? topLevel = TopLevel.GetTopLevel(this);
-		this.Close();
+		Close();
 	}
 	private void ChangeThemeVariant(object? sender, SelectionChangedEventArgs args)
 	{
@@ -60,7 +59,7 @@ public class SettingsWindowViewModel : INotifyPropertyChanged
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 
-	private ObservableCollection<ClientConfig.ThemeVariant> themeVariants = new ObservableCollection<ClientConfig.ThemeVariant>(Enum.GetValues<ClientConfig.ThemeVariant>());
+	private readonly ObservableCollection<ClientConfig.ThemeVariant> themeVariants = new(Enum.GetValues<ClientConfig.ThemeVariant>());
 	public ObservableCollection<ClientConfig.ThemeVariant> ThemeVariants
 	{
 		get => themeVariants;

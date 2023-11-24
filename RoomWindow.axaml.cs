@@ -15,9 +15,9 @@ namespace CardGameClient;
 
 public partial class RoomWindow : Window
 {
-	private string address;
-	private int port;
-	private string name;
+	private readonly string address;
+	private readonly int port;
+	private readonly string name;
 	public bool closed = false;
 	public RoomWindow()
 	{
@@ -31,7 +31,7 @@ public partial class RoomWindow : Window
 		this.port = port;
 		this.name = name;
 		DataContext = new RoomWindowViewModel(name);
-		this.Closed += (sender, args) => CloseRoom();
+		Closed += (sender, args) => CloseRoom();
 		InitializeComponent();
 		if(DeckSelectBox.ItemCount <= 0)
 		{
@@ -68,9 +68,9 @@ public partial class RoomWindow : Window
 		CloseRoom();
 		new ServerWindow
 		{
-			WindowState = this.WindowState,
+			WindowState = WindowState,
 		}.Show();
-		this.Close();
+		Close();
 	}
 	public void CloseRoom()
 	{
@@ -85,8 +85,7 @@ public partial class RoomWindow : Window
 	}
 	private async void TryStartClick(object? sender, RoutedEventArgs args)
 	{
-		string? deckname = DeckSelectBox.SelectedItem as string;
-		if(deckname == null || deckname == "")
+		if(DeckSelectBox.SelectedItem is not string deckname || deckname == "")
 		{
 			await new ErrorPopup("No deck selected").ShowDialog(this);
 			return;
@@ -108,48 +107,43 @@ public partial class RoomWindow : Window
 		try
 		{
 
-			using(TcpClient client = new TcpClient(address, port))
+			using TcpClient client = new(address, port);
+			using NetworkStream stream = client.GetStream();
+			stream.Write(Functions.GeneratePayload(new ServerPackets.StartRequest
 			{
-				using(NetworkStream stream = client.GetStream())
+				decklist = decklist,
+				name = ((RoomWindowViewModel)DataContext!).PlayerName,
+				noshuffle = NoShuffleBox.IsChecked ?? false
+			}));
+			byte[]? bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
+			ServerPackets.StartResponse response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(bytes);
+			if(response.success == ServerPackets.StartResponse.Result.Failure)
+			{
+				new ErrorPopup(response.reason!).Show();
+				return;
+			}
+			else
+			{
+				((Button)sender!).IsEnabled = false;
+				if(response.success == ServerPackets.StartResponse.Result.Success)
 				{
-					List<byte> payload = Functions.GeneratePayload<ServerPackets.StartRequest>(new ServerPackets.StartRequest
+					StartGame(response.port, response.id!);
+				}
+				else
+				{
+					await Task.Run(() =>
 					{
-						decklist = decklist,
-						name = ((RoomWindowViewModel)DataContext!).PlayerName,
-						noshuffle = NoShuffleBox.IsChecked ?? false
-					});
-					stream.Write(payload.ToArray(), 0, payload.Count);
-					byte[]? bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
-					ServerPackets.StartResponse response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(bytes);
-					if(response.success == ServerPackets.StartResponse.Result.Failure)
-					{
-						new ErrorPopup(response.reason!).Show();
-						return;
-					}
-					else
-					{
-						((Button)sender!).IsEnabled = false;
-						if(response.success == ServerPackets.StartResponse.Result.Success)
+						bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
+						response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(bytes);
+						if(response.success != ServerPackets.StartResponse.Result.Success)
 						{
-							StartGame(response.port, response.id!);
+							_ = new ErrorPopup(response.reason ?? "Duel creation failed for unknown reason");
 						}
 						else
 						{
-							await Task.Run(() =>
-							{
-								bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
-								response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(bytes);
-								if(response.success != ServerPackets.StartResponse.Result.Success)
-								{
-									new ErrorPopup(response.reason ?? "Duel creation failed for unknown reason");
-								}
-								else
-								{
-									StartGame(response.port, response.id!);
-								}
-							});
+							StartGame(response.port, response.id!);
 						}
-					}
+					});
 				}
 			}
 		}
@@ -161,19 +155,19 @@ public partial class RoomWindow : Window
 
 	public async void StartGame(int port, string id)
 	{
-		TcpClient client = new TcpClient();
+		TcpClient client = new();
 		await client.ConnectAsync(address, port);
 		byte[] idBytes = Encoding.UTF8.GetBytes(id);
-		await client.GetStream().WriteAsync(idBytes, 0, idBytes.Length);
+		await client.GetStream().WriteAsync(idBytes);
 		byte[] playerIndex = new byte[1];
 		await client.GetStream().ReadExactlyAsync(playerIndex, 0, 1);
 		await Dispatcher.UIThread.InvokeAsync(() =>
 		{
 			new DuelWindow(playerIndex[0], client)
 			{
-				WindowState = this.WindowState,
+				WindowState = WindowState,
 			}.Show();
-			this.Close();
+			Close();
 		}, priority: DispatcherPriority.Background);
 	}
 }
@@ -216,7 +210,7 @@ public class RoomWindowViewModel : INotifyPropertyChanged
 		}
 	}
 
-	private List<string> decknames = new List<string>();
+	private List<string> decknames = [];
 	public List<string> Decknames
 	{
 		get => decknames;
