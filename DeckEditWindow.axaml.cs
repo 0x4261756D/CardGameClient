@@ -8,7 +8,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Reactive;
 using CardGameUtils;
@@ -226,7 +225,6 @@ public partial class DeckEditWindow : Window
 		{
 			ClassSelectBox.SelectedItem = response.player_class;
 		}
-
 		foreach(CardStruct c in response.cards)
 		{
 			DecklistPanel.Children.Add(CreateDeckButton(c));

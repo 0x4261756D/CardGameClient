@@ -82,8 +82,8 @@ public class UIUtils
 		return null;
 	}
 
-	public static Dictionary<string, Bitmap> ArtworkCache = [];
-	public static Bitmap? DefaultArtwork;
+	private static readonly Dictionary<string, Bitmap> ArtworkCache = [];
+	private static Bitmap? DefaultArtwork;
 	public static Bitmap? FetchArtwork(string name)
 	{
 		if(ArtworkCache.TryGetValue(name, out Bitmap? bitmap))
@@ -171,6 +171,7 @@ public class UIUtils
 				TextWrapping = TextWrapping.Wrap,
 				FontSize = 40,
 				Foreground = Brushes.White,
+				Margin = new Thickness(0, 0, 0, 100)
 			},
 			Margin = new Thickness(40),
 			BorderBrush = Brushes.Black,
@@ -188,7 +189,7 @@ public class UIUtils
 			case GameConstants.CardType.Creature:
 			{
 				outsideBorder.Background = Brushes.Orange;
-				Border costBorder = new Border
+				Border costBorder = new()
 				{
 					Child = new TextBlock
 					{
@@ -291,10 +292,9 @@ public class UIUtils
 					if(start >= 0 && end >= 0 && end < block.Text.Length && start != end)
 					{
 						string possibleKeyword = block.Text.Substring(start + 1, end - start - 1);
-						if(!possibleKeyword.Contains(' ') && ClientConstants.KeywordDescriptions.ContainsKey(possibleKeyword))
+						if(!possibleKeyword.Contains(' ') && ClientConstants.KeywordDescriptions.TryGetValue(possibleKeyword, out string? value))
 						{
-							string description = ClientConstants.KeywordDescriptions[possibleKeyword];
-							Functions.Log(description);
+							string description = value;
 							ToolTip.SetTip(block, description);
 							ToolTip.SetIsOpen(block, true);
 							ToolTip.SetShowDelay(block, 0);
