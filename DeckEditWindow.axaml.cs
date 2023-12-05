@@ -132,8 +132,8 @@ public partial class DeckEditWindow : Window
 		double yAmount = Math.Ceiling(GameConstants.DECK_SIZE / xAmount);
 		DecklistBorder.GetObservable(BoundsProperty).Subscribe(new AnonymousObserver<Rect>((a) =>
 		{
-			b.Width = (a.Width - DecklistBorder.BorderThickness.Left - DecklistBorder.BorderThickness.Right) / xAmount - (b.BorderThickness.Left + b.BorderThickness.Right);
-			b.Height = (a.Height - DecklistBorder.BorderThickness.Top - DecklistBorder.BorderThickness.Bottom) / yAmount - (b.BorderThickness.Top + b.BorderThickness.Bottom);
+			b.Width = (a.Width - DecklistBorder.BorderThickness.Left - DecklistBorder.BorderThickness.Right - 20) / xAmount - (b.BorderThickness.Left + b.BorderThickness.Right);
+			b.Height = (a.Height - DecklistBorder.BorderThickness.Top - DecklistBorder.BorderThickness.Bottom - 20) / yAmount - (b.BorderThickness.Top + b.BorderThickness.Bottom);
 		}));
 		Viewbox v = UIUtils.CreateGenericCard(c);
 		b.Content = v;
