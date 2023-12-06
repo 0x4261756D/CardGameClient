@@ -41,6 +41,9 @@
 			Delete Deck
 		</Button>
 		<TextBlock Grid.Row="2" Grid.Column="4" x:Name="DeckSizeBlock"/>
+		<Button Grid.Row="3" Grid.Column="4" Click="SortDeckClick">
+			Sort Deck
+		</Button>
 		<TextBlock Grid.Row="3" Grid.Column="2">
 			Select your class:
 		</TextBlock>

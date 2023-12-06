@@ -121,6 +121,13 @@ public partial class DeckEditWindow : Window
 		ColorWrongThings((GameConstants.PlayerClass?)ClassSelectBox.SelectedItem);
 	}
 
+	private void SortDeckClick(object sender, RoutedEventArgs args)
+	{
+		List<Control> c = [.. DecklistPanel.Children.OrderBy(x => ((CardStruct)((Control)((Button)x).Content!).DataContext!).name)];
+		DecklistPanel.Children.Clear();
+		DecklistPanel.Children.AddRange(c);
+	}
+
 	public Button CreateDeckButton(CardStruct c)
 	{
 		Button b = new()
