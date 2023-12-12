@@ -234,7 +234,7 @@ public partial class DuelWindow : Window
 					StackPanel p = new();
 					foreach(string text in response.options)
 					{
-						Button option = new Button
+						Button option = new()
 						{
 							Content = new TextBlock
 							{
@@ -381,25 +381,29 @@ public partial class DuelWindow : Window
 		OppQuestPanel.Children.Add(CreateCardButton(request.oppField.quest));
 		Avalonia.Thickness oppBorderThickness = new(2, 2, 2, 0);
 		PhaseBlock.Text = (request.markedZone != null) ? "Battle Phase" : "Main Phase";
-		if(request.ownField.shownCard != null)
 		{
-			TextBlock text = new() { Text = $"You: {request.ownField.shownCard.name}: {request.ownField.shownReason}" };
+			TextBlock text = new() { Text = $"You: {request.ownField.shownInfo.card?.name}: {request.ownField.shownInfo.description}" };
 			text.PointerEntered += (sender, args) =>
 			{
 				if(sender == null) return;
 				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-				UIUtils.CardHover(CardImagePanel, CardTextBlock, request.ownField.shownCard, false);
+				if(request.ownField.shownInfo.card != null)
+				{
+					UIUtils.CardHover(CardImagePanel, CardTextBlock, request.ownField.shownInfo.card, false);
+				}
 			};
 			activities.Insert(0, text);
 		}
-		if(request.oppField.shownCard != null)
 		{
-			TextBlock text = new() { Text = $"Opp: {request.oppField.shownCard.name}: {request.oppField.shownReason}" };
+			TextBlock text = new() { Text = $"Opp: {request.oppField.shownInfo.card?.name}: {request.oppField.shownInfo.description}" };
 			text.PointerEntered += (sender, args) =>
 			{
 				if(sender == null) return;
 				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
-				UIUtils.CardHover(CardImagePanel, CardTextBlock, request.oppField.shownCard, false);
+				if(request.oppField.shownInfo.card != null)
+				{
+					UIUtils.CardHover(CardImagePanel, CardTextBlock, request.oppField.shownInfo.card, false);
+				}
 			};
 			activities.Insert(0, text);
 		}
@@ -437,9 +441,9 @@ public partial class DuelWindow : Window
 			OppHandPanel.Children.Add(CreateCardButton(request.oppField.hand[i]));
 		}
 		OppShowPanel.Children.Clear();
-		if(request.oppField.shownCard != null)
+		if(request.oppField.shownInfo.card != null)
 		{
-			OppShowPanel.Children.Add(CreateCardButton(request.oppField.shownCard));
+			OppShowPanel.Children.Add(CreateCardButton(request.oppField.shownInfo.card));
 		}
 
 		OwnNameBlock.Text = request.ownField.name;
@@ -486,9 +490,9 @@ public partial class DuelWindow : Window
 			OwnHandPanel.Children.Add(CreateCardButton(request.ownField.hand[i]));
 		}
 		OwnShowPanel.Children.Clear();
-		if(request.ownField.shownCard != null)
+		if(request.ownField.shownInfo.card != null)
 		{
-			OwnShowPanel.Children.Add(CreateCardButton(request.ownField.shownCard));
+			OwnShowPanel.Children.Add(CreateCardButton(request.ownField.shownInfo.card));
 		}
 		ActivityLogList.ItemsSource = activities;
 	}
