@@ -18,14 +18,6 @@ namespace CardGameClient;
 
 public partial class CustomSelectCardsWindow : Window
 {
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
-	public CustomSelectCardsWindow()
-	{
-		InitializeComponent();
-		stream = new TcpClient().GetStream();
-		showCardAction = (_) => { };
-	}
 	private readonly Stream stream;
 	private bool shouldReallyClose = false;
 	private readonly Action<CardStruct> showCardAction;

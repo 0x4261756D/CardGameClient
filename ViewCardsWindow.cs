@@ -9,13 +9,6 @@ namespace CardGameClient;
 
 public partial class ViewCardsWindow : Window
 {
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
-	public ViewCardsWindow()
-	{
-		showCardAction = (_) => { };
-		InitializeComponent();
-	}
 	private readonly Action<CardStruct> showCardAction;
 
 	public ViewCardsWindow(CardStruct[] cards, string? message, Action<CardStruct> showCardAction)

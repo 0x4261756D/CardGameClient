@@ -8,13 +8,6 @@ namespace CardGameClient;
 
 public partial class SelectZoneWindow : Window
 {
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
-	public SelectZoneWindow()
-	{
-		InitializeComponent();
-	}
-
 	private bool shouldReallyClose = false;
 
 	public SelectZoneWindow(bool[] options, Stream stream)

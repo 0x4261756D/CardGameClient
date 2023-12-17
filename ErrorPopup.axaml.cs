@@ -7,13 +7,6 @@ namespace CardGameClient;
 
 public partial class ErrorPopup : Window
 {
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
-	public ErrorPopup()
-	{
-		InitializeComponent();
-	}
-
 	public ErrorPopup(string msg)
 	{
 		DataContext = new ErrorPopupViewModel(msg);

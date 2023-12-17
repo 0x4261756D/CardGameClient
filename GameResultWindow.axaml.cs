@@ -7,14 +7,6 @@ namespace CardGameClient;
 
 public partial class GameResultWindow : Window
 {
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
-	public GameResultWindow()
-	{
-		InitializeComponent();
-		parent = new Window();
-	}
-
 	readonly Window parent;
 
 	public GameResultWindow(Window parent, DuelPackets.GameResultResponse response)

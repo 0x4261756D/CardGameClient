@@ -9,14 +9,6 @@ using static CardGameUtils.Structs.NetworkingStructs;
 namespace CardGameClient;
 public partial class YesNoWindow : Window
 {
-
-	// DONT USE THIS
-	// This only exists because Avalonia requires it
-	public YesNoWindow()
-	{
-		InitializeComponent();
-		stream = new TcpClient().GetStream();
-	}
 	readonly Stream stream;
 	private bool shouldReallyClose = false;
 	public YesNoWindow(string description, Stream stream)

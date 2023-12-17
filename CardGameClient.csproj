@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<NoWarn>AVLN:0005</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove=".gitignore" />
