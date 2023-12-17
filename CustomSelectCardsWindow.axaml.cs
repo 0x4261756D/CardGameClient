@@ -1,18 +1,18 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using CardGameUtils.Structs;
-using static CardGameUtils.Structs.NetworkingStructs;
-using static CardGameUtils.Functions;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System;
-using System.IO;
-using Avalonia.Controls.Templates;
 using Avalonia.Media;
+using CardGameUtils.Structs;
+using static CardGameUtils.Functions;
+using static CardGameUtils.Structs.NetworkingStructs;
 
 namespace CardGameClient;
 

@@ -19,12 +19,6 @@ public partial class RoomWindow : Window
 	private readonly int port;
 	private readonly string name;
 	public bool closed = false;
-	public RoomWindow()
-	{
-		InitializeComponent();
-		address = "DONT USE THIS";
-		name = "DONT USE THIS";
-	}
 	public RoomWindow(string address, int port, string name)
 	{
 		this.address = address;

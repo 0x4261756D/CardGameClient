@@ -200,7 +200,7 @@ public class UIUtils
 					},
 					BorderBrush = Brushes.Black,
 					BorderThickness = new Thickness(3),
-					Margin = new Thickness(30),					
+					Margin = new Thickness(30),
 					Background = Brushes.Gray,
 				};
 				insidePanel.Children.Add(costBorder);
@@ -221,7 +221,7 @@ public class UIUtils
 					},
 					BorderBrush = Brushes.Black,
 					BorderThickness = new Thickness(3),
-					Margin = new Thickness(30),					
+					Margin = new Thickness(30),
 					Background = Brushes.Gray,
 				};
 				insidePanel.Children.Add(costBorder);

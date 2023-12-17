@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using Avalonia.Controls;
 using static CardGameUtils.Functions;

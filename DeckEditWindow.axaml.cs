@@ -356,7 +356,7 @@ public partial class DeckEditWindow : Window
 		{
 			deck = new DeckPackets.Deck
 			{
-				cards = DecklistPanel.Children.ToList().ConvertAll(x => (CardStruct)((Viewbox)((Button)x).Content!).DataContext!).ToArray(),
+				cards = [.. DecklistPanel.Children.ToList().ConvertAll(x => (CardStruct)((Viewbox)((Button)x).Content!).DataContext!)],
 				ability = ability,
 				quest = quest,
 				player_class = playerClass,
