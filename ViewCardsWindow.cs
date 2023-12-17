@@ -20,7 +20,7 @@ public partial class ViewCardsWindow : Window
 		CardSelectionList.MaxHeight = Program.config.height / 3;
 		CardSelectionList.DataContext = cards;
 		CardSelectionList.ItemsSource = cards;
-		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, namescope) =>
+		CardSelectionList.ItemTemplate = new FuncDataTemplate<CardStruct>((value, _) =>
 		{
 			TextBlock block = new()
 			{

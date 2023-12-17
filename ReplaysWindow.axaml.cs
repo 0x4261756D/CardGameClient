@@ -53,7 +53,7 @@ public partial class ReplaysWindow : Window
 				);
 			}
 			Replay.GameAction lastAction = replay.actions.FindLast(IsFieldUpdateForCurrentPlayer)!;
-			window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(lastAction.packetType, lastAction.packetContentBytes()));
+			window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(lastAction.packetType, lastAction.PacketContentBytes()));
 			window.UpdateField();
 		}
 	}
@@ -103,7 +103,7 @@ public partial class ReplaysWindow : Window
 			action = replay.actions[actionIndex];
 		}
 		((ReplaysViewModel)DataContext!).ActionList.Insert(0, $"* {actionIndex}: Player {action.player}: {(action.clientToServer ? "<-" : "->")} {Enum.GetName((NetworkingConstants.PacketType)action.packetType) ?? "UNKNOWN"}");
-		window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(replay.actions[actionIndex].packetType, replay.actions[actionIndex].packetContentBytes()));
+		window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(replay.actions[actionIndex].packetType, replay.actions[actionIndex].PacketContentBytes()));
 		window.UpdateField();
 		actionIndex++;
 	}
@@ -135,7 +135,7 @@ public partial class ReplaysWindow : Window
 			}
 			action = replay.actions[actionIndex];
 		}
-		window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(replay.actions[actionIndex].packetType, replay.actions[actionIndex].packetContentBytes()));
+		window.EnqueueFieldUpdate(DeserializePayload<NetworkingStructs.DuelPackets.FieldUpdateRequest>(replay.actions[actionIndex].packetType, replay.actions[actionIndex].PacketContentBytes()));
 		window.UpdateField();
 		actionIndex++;
 	}
@@ -174,7 +174,7 @@ public class ReplaysViewModel : INotifyPropertyChanged
 		}
 	}
 
-	private ObservableCollection<string> actionList = new ObservableCollection<string>();
+	private readonly ObservableCollection<string> actionList = [];
 	public ObservableCollection<string> ActionList
 	{
 		get => actionList;
