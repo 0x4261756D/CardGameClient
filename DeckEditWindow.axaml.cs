@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
@@ -108,8 +107,22 @@ public partial class DeckEditWindow : Window
 		}
 		else
 		{
-			if(DecklistPanel.Children.Count >= GameConstants.DECK_SIZE ||
-				DecklistPanel.Children.Count(x => ((CardStruct)((Viewbox)((Button)x).Content!).DataContext!).name == card.name) >= GameConstants.MAX_CARD_MULTIPLICITY) return;
+			if(DecklistPanel.Children.Count >= GameConstants.DECK_SIZE)
+			{
+				return;
+			}
+			int i = 0;
+			foreach(Control c in DecklistPanel.Children)
+			{
+				if(((CardStruct)((Viewbox)((Button)c).Content!).DataContext!).name == card.name)
+				{
+					i++;
+					if(i >= GameConstants.MAX_CARD_MULTIPLICITY)
+					{
+						return;
+					}
+				}
+			}
 			DecklistPanel.Children.Add(CreateDeckButton(card));
 		}
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
@@ -123,9 +136,12 @@ public partial class DeckEditWindow : Window
 
 	private void SortDeckClick(object sender, RoutedEventArgs args)
 	{
-		List<Control> c = [.. DecklistPanel.Children.OrderBy(x => ((CardStruct)((Control)((Button)x).Content!).DataContext!).name)];
+		Control[] children = new Control[DecklistPanel.Children.Count];
+		DecklistPanel.Children.CopyTo(children, 0);
+		// This is fun, see no problem with this...
+		Array.Sort(children, (child1, child2) => ((CardStruct)((Control)((Button)child1).Content!).DataContext!).name.CompareTo(((CardStruct)((Control)((Button)child2).Content!).DataContext!).name));
 		DecklistPanel.Children.Clear();
-		DecklistPanel.Children.AddRange(c);
+		DecklistPanel.Children.AddRange(children);
 	}
 
 	public Button CreateDeckButton(CardStruct c)
@@ -262,8 +278,9 @@ public partial class DeckEditWindow : Window
 
 	private void ColorWrongThings(GameConstants.PlayerClass? playerClass)
 	{
-		foreach(Button child in DecklistPanel.Children.Cast<Button>())
+		foreach(Control c in DecklistPanel.Children)
 		{
+			Button child = (Button)c;
 			// Oh boy, do I love GUI programming...
 			GameConstants.PlayerClass cardClass = ((CardStruct)((Viewbox)child.Content!).DataContext!).card_class;
 			if(cardClass != GameConstants.PlayerClass.All && playerClass != GameConstants.PlayerClass.All &&
@@ -352,11 +369,13 @@ public partial class DeckEditWindow : Window
 		CardStruct? ability = abilityBox == null ? null : (CardStruct?)abilityBox.DataContext;
 		Viewbox? questBox = (Viewbox?)ClassQuestButton.Content;
 		CardStruct? quest = questBox == null ? null : (CardStruct?)questBox.DataContext;
+		Control[] children = new Control[DecklistPanel.Children.Count];
+		DecklistPanel.Children.CopyTo(children, 0);
 		Request(new DeckPackets.ListUpdateRequest
 		{
 			deck = new DeckPackets.Deck
 			{
-				cards = [.. DecklistPanel.Children.ToList().ConvertAll(x => (CardStruct)((Viewbox)((Button)x).Content!).DataContext!)],
+				cards = Array.ConvertAll(children, x => (CardStruct)((Viewbox)((Button)x).Content!).DataContext!),
 				ability = ability,
 				quest = quest,
 				player_class = playerClass,

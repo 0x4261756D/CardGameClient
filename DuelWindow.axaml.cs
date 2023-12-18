@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -223,7 +222,7 @@ public partial class DuelWindow : Window
 	{
 		if(response.location == GameConstants.Location.Hand)
 		{
-			foreach(Button b in OwnHandPanel.Children.Cast<Button>())
+			foreach(Control b in OwnHandPanel.Children)
 			{
 				if(((CardStruct)b.DataContext!).uid == response.uid)
 				{
@@ -252,7 +251,7 @@ public partial class DuelWindow : Window
 		}
 		else if(response.location == GameConstants.Location.Field)
 		{
-			foreach(Button b in OwnField.Children.Cast<Button>())
+			foreach(Control b in OwnField.Children)
 			{
 				if(b.DataContext == null || b.DataContext == DataContext)
 				{
