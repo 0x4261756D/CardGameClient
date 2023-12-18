@@ -381,6 +381,7 @@ public partial class DuelWindow : Window
 		OppQuestPanel.Children.Add(CreateCardButton(request.oppField.quest));
 		Avalonia.Thickness oppBorderThickness = new(2, 2, 2, 0);
 		PhaseBlock.Text = (request.markedZone != null) ? "Battle Phase" : "Main Phase";
+		if(request.ownField.shownInfo.card != null && request.ownField.shownInfo.description != null)
 		{
 			TextBlock text = new() { Text = $"You: {request.ownField.shownInfo.card?.name}: {request.ownField.shownInfo.description}" };
 			text.PointerEntered += (sender, args) =>
@@ -394,6 +395,7 @@ public partial class DuelWindow : Window
 			};
 			activities.Insert(0, text);
 		}
+		if(request.oppField.shownInfo.card != null && request.oppField.shownInfo.description != null)
 		{
 			TextBlock text = new() { Text = $"Opp: {request.oppField.shownInfo.card?.name}: {request.oppField.shownInfo.description}" };
 			text.PointerEntered += (sender, args) =>
