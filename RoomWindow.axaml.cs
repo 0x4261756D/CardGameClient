@@ -15,18 +15,21 @@ namespace CardGameClient;
 
 public partial class RoomWindow : Window
 {
-	private readonly string address;
-	private readonly int port;
-	private readonly string name;
+	private readonly Task networkTask;
+	private readonly TcpClient client;
+	private readonly string name, address;
 	public bool closed = false;
-	public RoomWindow(string address, int port, string name)
+	public RoomWindow(string address, TcpClient client, string name, string? opponentName = null)
 	{
+		this.client = client;
 		this.address = address;
-		this.port = port;
+		networkTask = new Task(HandleNetwork, TaskCreationOptions.LongRunning);
+		networkTask.Start();
 		this.name = name;
 		DataContext = new RoomWindowViewModel(name);
 		Closed += (sender, args) => CloseRoom();
 		InitializeComponent();
+		OpponentNameBlock.Text = opponentName;
 		if(DeckSelectBox.ItemCount <= 0)
 		{
 			CloseRoom();
@@ -53,6 +56,44 @@ public partial class RoomWindow : Window
 		}
 	}
 
+	private async void HandleNetwork()
+	{
+		while(!closed)
+		{
+			if(client.Connected)
+			{
+				(byte, byte[]?)? payload = await Task.Run(() => Functions.TryReceiveRawPacket(client.GetStream(), 100));
+				if(payload != null)
+				{
+					await Dispatcher.UIThread.InvokeAsync(() => HandlePacket(payload.Value));
+				}
+			}
+		}
+	}
+
+	private void HandlePacket((byte type, byte[]? bytes) packet)
+	{
+		if(packet.type >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		{
+			Functions.Log($"Unrecognized packet type ({packet.type})");
+			throw new Exception($"Unrecognized packet type ({packet.type})");
+		}
+		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)packet.type;
+		switch(type)
+		{
+			case NetworkingConstants.PacketType.ServerOpponentChangedResponse:
+			{
+				string? name = Functions.DeserializeJson<ServerPackets.OpponentChangedResponse>(packet.bytes!).name;
+				OpponentNameBlock.Text = name;
+			}
+			break;
+			default:
+			{
+				throw new Exception($"Unexpected packet of type {type}");
+			}
+		}
+	}
+
 	public void DeckSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
 		Program.config.last_deck_name = args.AddedItems[0]?.ToString();
@@ -70,7 +111,9 @@ public partial class RoomWindow : Window
 	{
 		if(!closed)
 		{
-			Functions.Request(new ServerPackets.LeaveRequest(name: name), address, port);
+			Functions.Request(new ServerPackets.LeaveRequest(name: name), address, 7043);
+			client.Close();
+			networkTask.Dispose();
 			closed = true;
 		}
 	}
@@ -79,6 +122,11 @@ public partial class RoomWindow : Window
 		if(DeckSelectBox.SelectedItem is not string deckname || deckname == "")
 		{
 			await new ErrorPopup("No deck selected").ShowDialog(this);
+			return;
+		}
+		if(OpponentNameBlock.Text is null || OpponentNameBlock.Text == "")
+		{
+			await new ErrorPopup("You have no opponent").ShowDialog(this);
 			return;
 		}
 		(byte, byte[]?)? responseBytes = UIUtils.TryRequest(new DeckPackets.ListRequest(name: deckname),
@@ -95,9 +143,8 @@ public partial class RoomWindow : Window
 		}
 		try
 		{
-
-			using TcpClient client = new(address, port);
-			using NetworkStream stream = client.GetStream();
+			using TcpClient startClient = new(address, 7043);
+			using NetworkStream stream = startClient.GetStream();
 			stream.Write(Functions.GeneratePayload(new ServerPackets.StartRequest
 			(
 				decklist: decklist,
@@ -144,15 +191,15 @@ public partial class RoomWindow : Window
 
 	public async void StartGame(int port, string id)
 	{
-		TcpClient client = new();
-		await client.ConnectAsync(address, port);
+		TcpClient duelClient = new();
+		await duelClient.ConnectAsync(address, port);
 		byte[] idBytes = Encoding.UTF8.GetBytes(id);
-		await client.GetStream().WriteAsync(idBytes);
+		await duelClient.GetStream().WriteAsync(idBytes);
 		byte[] playerIndex = new byte[1];
-		await client.GetStream().ReadExactlyAsync(playerIndex, 0, 1);
+		await duelClient.GetStream().ReadExactlyAsync(playerIndex, 0, 1);
 		await Dispatcher.UIThread.InvokeAsync(() =>
 		{
-			new DuelWindow(playerIndex[0], client)
+			new DuelWindow(playerIndex[0], duelClient)
 			{
 				WindowState = WindowState,
 			}.Show();

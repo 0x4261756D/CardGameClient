@@ -24,6 +24,10 @@
 		<CheckBox x:Name="NoShuffleBox">
 			No Shuffle
 		</CheckBox>
+		<TextBlock>
+			Your opponent:
+		</TextBlock>
+		<TextBlock x:Name="OpponentNameBlock"></TextBlock>
 		<Button Click="TryStartClick">
 			Try to start
 		</Button>

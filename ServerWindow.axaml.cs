@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Avalonia.Controls;
@@ -39,7 +40,9 @@ public partial class ServerWindow : Window
 	{
 		if(ServerAddressBox.Text == null) return;
 		string playerName = ((ServerWindowViewModel)DataContext!).PlayerName;
-		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.CreateRequest(name: playerName));
+		TcpClient client = new(ServerAddressBox.Text, 7043);
+		client.GetStream().Write(Functions.GeneratePayload(new ServerPackets.CreateRequest(name: playerName)));
+		(byte, byte[]?)? payload = Functions.ReceiveRawPacket(client.GetStream());
 		if(payload == null)
 		{
 			return;
@@ -47,7 +50,7 @@ public partial class ServerWindow : Window
 		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload.Value);
 		if(response.success)
 		{
-			RoomWindow w = new(ServerAddressBox.Text, 7043, playerName)
+			RoomWindow w = new(ServerAddressBox.Text, client, playerName)
 			{
 				WindowState = WindowState,
 			};
@@ -74,11 +77,13 @@ public partial class ServerWindow : Window
 		ServerListBox.SelectedItem = null;
 		string? targetNameText = (string?)args.AddedItems[0];
 		if(targetNameText == null) return;
-		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.JoinRequest
+		TcpClient client = new(ServerAddressBox.Text, 7043);
+		client.GetStream().Write(Functions.GeneratePayload(new ServerPackets.JoinRequest
 		(
 			name: PlayerNameBox.Text,
 			targetName: targetNameText
-		));
+		)));
+		(byte, byte[]?)? payload = Functions.ReceiveRawPacket(client.GetStream());
 		if(payload == null)
 		{
 			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
@@ -87,7 +92,7 @@ public partial class ServerWindow : Window
 		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload.Value);
 		if(response.success)
 		{
-			new RoomWindow(ServerAddressBox.Text, 7043, ((ServerWindowViewModel)DataContext!).PlayerName)
+			new RoomWindow(ServerAddressBox.Text, client, ((ServerWindowViewModel)DataContext!).PlayerName, opponentName: targetNameText)
 			{
 				WindowState = WindowState,
 			}.Show();
