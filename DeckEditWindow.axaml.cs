@@ -72,7 +72,7 @@ public partial class DeckEditWindow : Window
 	public void LoadSidebar(string fil)
 	{
 		GameConstants.PlayerClass playerClass = (GameConstants.PlayerClass?)ClassSelectBox.SelectedItem ?? GameConstants.PlayerClass.All;
-		(byte, byte[]?) payload = Request(new DeckPackets.SearchRequest() { filter = fil, playerClass = playerClass, includeGenericCards = SidebarGenericIncludeBox.IsChecked ?? false },
+		(byte, byte[]?) payload = Request(new DeckPackets.SearchRequest(filter: fil, playerClass: playerClass, includeGenericCards: SidebarGenericIncludeBox.IsChecked ?? false),
 			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		cardpool = DeserializePayload<DeckPackets.SearchResponse>(payload).cards;
 		List<Control> items = [];
@@ -234,10 +234,8 @@ public partial class DeckEditWindow : Window
 	}
 	public void LoadDeck(string deckName)
 	{
-		(byte, byte[]?) payload = Request(new DeckPackets.ListRequest
-		{
-			name = deckName
-		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		(byte, byte[]?) payload = Request(new DeckPackets.ListRequest(name: deckName),
+			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		DecklistPanel.Children.Clear();
 		DeckPackets.Deck response = DeserializePayload<DeckPackets.ListResponse>(payload).deck;
 		if(response.player_class == GameConstants.PlayerClass.UNKNOWN)
@@ -342,13 +340,13 @@ public partial class DeckEditWindow : Window
 		string? newName = NewDeckName.Text;
 		if(newName == null || newName == "") return;
 		Request(new DeckPackets.ListUpdateRequest
-		{
-			deck = new DeckPackets.Deck
+		(
+			deck: new DeckPackets.Deck
 			{
 				cards = [],
 				name = newName,
 			}
-		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		((DeckEditWindowViewModel)DataContext!).Decknames.Add(newName);
 		DeckSelectBox.SelectedItem = newName;
 		DeckSizeBlock.Text = "0";
@@ -372,8 +370,8 @@ public partial class DeckEditWindow : Window
 		Control[] children = new Control[DecklistPanel.Children.Count];
 		DecklistPanel.Children.CopyTo(children, 0);
 		Request(new DeckPackets.ListUpdateRequest
-		{
-			deck = new DeckPackets.Deck
+		(
+			deck: new DeckPackets.Deck
 			{
 				cards = Array.ConvertAll(children, x => (CardStruct)((Viewbox)((Button)x).Content!).DataContext!),
 				ability = ability,
@@ -381,17 +379,17 @@ public partial class DeckEditWindow : Window
 				player_class = playerClass,
 				name = (string)DeckSelectBox.SelectedItem!
 			}
-		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 	}
 	public void DeleteDeckClick(object? sender, RoutedEventArgs args)
 	{
 		Request(new DeckPackets.ListUpdateRequest
-		{
-			deck = new DeckPackets.Deck
+		(
+			deck: new DeckPackets.Deck
 			{
 				name = (string)DeckSelectBox.SelectedItem!
 			}
-		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
+		), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
 		((DeckEditWindowViewModel)DataContext!).Decknames.Remove((string)DeckSelectBox.SelectedItem!);
 		DeckSelectBox.SelectedIndex = DeckSelectBox.ItemCount - 1;
 	}

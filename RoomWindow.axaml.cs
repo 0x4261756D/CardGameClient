@@ -70,10 +70,7 @@ public partial class RoomWindow : Window
 	{
 		if(!closed)
 		{
-			Functions.Request(new ServerPackets.LeaveRequest
-			{
-				name = name
-			}, address, port);
+			Functions.Request(new ServerPackets.LeaveRequest(name: name), address, port);
 			closed = true;
 		}
 	}
@@ -84,10 +81,8 @@ public partial class RoomWindow : Window
 			await new ErrorPopup("No deck selected").ShowDialog(this);
 			return;
 		}
-		(byte, byte[]?)? responseBytes = UIUtils.TryRequest(new DeckPackets.ListRequest
-		{
-			name = deckname,
-		}, Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, this);
+		(byte, byte[]?)? responseBytes = UIUtils.TryRequest(new DeckPackets.ListRequest(name: deckname),
+			Program.config.deck_edit_url.address, Program.config.deck_edit_url.port, this);
 		if(responseBytes == null)
 		{
 			return;
@@ -104,11 +99,11 @@ public partial class RoomWindow : Window
 			using TcpClient client = new(address, port);
 			using NetworkStream stream = client.GetStream();
 			stream.Write(Functions.GeneratePayload(new ServerPackets.StartRequest
-			{
-				decklist = decklist,
-				name = ((RoomWindowViewModel)DataContext!).PlayerName,
-				noshuffle = NoShuffleBox.IsChecked ?? false
-			}));
+			(
+				decklist: decklist,
+				name: ((RoomWindowViewModel)DataContext!).PlayerName,
+				noshuffle: NoShuffleBox.IsChecked ?? false
+			)));
 			byte[]? bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
 			ServerPackets.StartResponse response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(bytes);
 			if(response.success == ServerPackets.StartResponse.Result.Failure)

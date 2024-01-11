@@ -64,20 +64,14 @@ public partial class CustomSelectCardsWindow : Window
 
 	public void ConfirmClick(object? sender, RoutedEventArgs args)
 	{
-		stream.Write(GeneratePayload(new DuelPackets.CustomSelectCardsResponse
-		{
-			uids = UIUtils.CardListBoxSelectionToUID(CardSelectionList),
-		}));
+		stream.Write(GeneratePayload(new DuelPackets.CustomSelectCardsResponse(uids: UIUtils.CardListBoxSelectionToUID(CardSelectionList))));
 		shouldReallyClose = true;
 		Close();
 	}
 
 	public void CardSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		stream.Write(GeneratePayload(new DuelPackets.CustomSelectCardsIntermediateRequest
-		{
-			uids = UIUtils.CardListBoxSelectionToUID((ListBox)sender),
-		}));
+		stream.Write(GeneratePayload(new DuelPackets.CustomSelectCardsIntermediateRequest(uids: UIUtils.CardListBoxSelectionToUID((ListBox)sender))));
 		((CustomSelectCardViewModel)DataContext!).CanConfirm = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateResponse>(ReceiveRawPacket((NetworkStream)stream)!).isValid;
 	}
 }

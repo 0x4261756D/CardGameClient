@@ -322,20 +322,20 @@ public partial class DuelWindow : Window
 
 	public void OppGraveClick(object? sender, RoutedEventArgs args)
 	{
-		TrySend(GeneratePayload(new DuelPackets.ViewGraveRequest { opponent = true }));
+		TrySend(GeneratePayload(new DuelPackets.ViewGraveRequest(opponent: true)));
 	}
 	public void OwnGraveClick(object? sender, RoutedEventArgs args)
 	{
-		TrySend(GeneratePayload(new DuelPackets.ViewGraveRequest { opponent = false }));
+		TrySend(GeneratePayload(new DuelPackets.ViewGraveRequest(opponent: false)));
 	}
 	private void SendCardOption(string option, int uid, GameConstants.Location location)
 	{
 		TrySend(GeneratePayload(new DuelPackets.SelectOptionRequest
-		{
-			desc = option,
-			location = location,
-			uid = uid
-		}));
+		(
+			desc: option,
+			location: location,
+			uid: uid
+		)));
 	}
 
 	public void EnqueueFieldUpdate(DuelPackets.FieldUpdateRequest request)
@@ -541,11 +541,7 @@ public partial class DuelWindow : Window
 
 	private void OptionsRequest(GameConstants.Location location, int uid)
 	{
-		TrySend(GeneratePayload(new DuelPackets.GetOptionsRequest
-		{
-			location = location,
-			uid = uid
-		}));
+		TrySend(GeneratePayload(new DuelPackets.GetOptionsRequest(location: location, uid: uid)));
 	}
 
 	private void Cleanup()

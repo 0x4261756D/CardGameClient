@@ -79,10 +79,7 @@ public partial class SelectCardsWindow : Window
 
 	public void ConfirmClick(object? sender, RoutedEventArgs args)
 	{
-		stream.Write(GeneratePayload(new DuelPackets.SelectCardsResponse
-		{
-			uids = UIUtils.CardListBoxSelectionToUID(CardSelectionList)
-		}));
+		stream.Write(GeneratePayload(new DuelPackets.SelectCardsResponse(uids: UIUtils.CardListBoxSelectionToUID(CardSelectionList))));
 		shouldReallyClose = true;
 		Close();
 	}

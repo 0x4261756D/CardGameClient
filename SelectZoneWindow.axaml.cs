@@ -23,10 +23,7 @@ public partial class SelectZoneWindow : Window
 			b.Click += (sender, _) =>
 			{
 				int zone = (int)((Button)sender!).Content!;
-				stream.Write(GeneratePayload(new DuelPackets.SelectZoneResponse
-				{
-					zone = zone
-				}));
+				stream.Write(GeneratePayload(new DuelPackets.SelectZoneResponse(zone: zone)));
 				shouldReallyClose = true;
 				Close();
 			};

@@ -39,10 +39,7 @@ public partial class ServerWindow : Window
 	{
 		if(ServerAddressBox.Text == null) return;
 		string playerName = ((ServerWindowViewModel)DataContext!).PlayerName;
-		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.CreateRequest
-		{
-			name = playerName,
-		});
+		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.CreateRequest(name: playerName));
 		if(payload == null)
 		{
 			return;
@@ -78,10 +75,10 @@ public partial class ServerWindow : Window
 		string? targetNameText = (string?)args.AddedItems[0];
 		if(targetNameText == null) return;
 		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.JoinRequest
-		{
-			name = PlayerNameBox.Text,
-			targetName = targetNameText
-		});
+		(
+			name: PlayerNameBox.Text,
+			targetName: targetNameText
+		));
 		if(payload == null)
 		{
 			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
