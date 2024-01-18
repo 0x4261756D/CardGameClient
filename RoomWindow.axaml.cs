@@ -17,16 +17,15 @@ public partial class RoomWindow : Window
 {
 	private readonly Task networkTask;
 	private readonly TcpClient client;
-	private readonly string name, address;
+	private readonly string address;
 	public bool closed = false;
-	public RoomWindow(string address, TcpClient client, string name, string? opponentName = null)
+	public RoomWindow(string address, TcpClient client, string? opponentName = null)
 	{
 		this.client = client;
 		this.address = address;
 		networkTask = new Task(HandleNetwork, TaskCreationOptions.LongRunning);
 		networkTask.Start();
-		this.name = name;
-		DataContext = new RoomWindowViewModel(name);
+		DataContext = new RoomWindowViewModel();
 		Closed += (sender, args) => CloseRoom();
 		InitializeComponent();
 		OpponentNameBlock.Text = opponentName;
@@ -87,6 +86,19 @@ public partial class RoomWindow : Window
 				OpponentNameBlock.Text = name;
 			}
 			break;
+			case NetworkingConstants.PacketType.ServerStartResponse:
+			{
+				ServerPackets.StartResponse response = Functions.DeserializeJson<ServerPackets.StartResponse>(packet.bytes!);
+				if(response.success != ServerPackets.StartResponse.Result.Success)
+				{
+					_ = new ErrorPopup(response.reason ?? "Duel creation failed for unknown reason");
+				}
+				else
+				{
+					StartGame(response.port, response.id!);
+				}
+			}
+			break;
 			default:
 			{
 				throw new Exception($"Unexpected packet of type {type}");
@@ -111,9 +123,9 @@ public partial class RoomWindow : Window
 	{
 		if(!closed)
 		{
-			Functions.Request(new ServerPackets.LeaveRequest(name: name), address, 7043);
-			client.Close();
 			networkTask.Dispose();
+			client.GetStream().Write(Functions.GeneratePayload(new ServerPackets.LeaveRequest()));
+			client.Close();
 			closed = true;
 		}
 	}
@@ -143,16 +155,12 @@ public partial class RoomWindow : Window
 		}
 		try
 		{
-			using TcpClient startClient = new(address, 7043);
-			using NetworkStream stream = startClient.GetStream();
-			stream.Write(Functions.GeneratePayload(new ServerPackets.StartRequest
+			client.GetStream().Write(Functions.GeneratePayload(new ServerPackets.StartRequest
 			(
 				decklist: decklist,
-				name: ((RoomWindowViewModel)DataContext!).PlayerName,
 				noshuffle: NoShuffleBox.IsChecked ?? false
 			)));
-			byte[]? bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
-			ServerPackets.StartResponse response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(bytes);
+			ServerPackets.StartResponse response = Functions.ReceivePacket<ServerPackets.StartResponse>(client.GetStream());
 			if(response.success == ServerPackets.StartResponse.Result.Failure)
 			{
 				new ErrorPopup(response.reason!).Show();
@@ -164,22 +172,6 @@ public partial class RoomWindow : Window
 				if(response.success == ServerPackets.StartResponse.Result.Success)
 				{
 					StartGame(response.port, response.id!);
-				}
-				else
-				{
-					await Task.Run(() =>
-					{
-						bytes = Functions.ReceivePacket<ServerPackets.StartResponse>(stream);
-						response = (bytes == null) ? new ServerPackets.StartResponse() : Functions.DeserializeJson<ServerPackets.StartResponse>(bytes);
-						if(response.success != ServerPackets.StartResponse.Result.Success)
-						{
-							_ = new ErrorPopup(response.reason ?? "Duel creation failed for unknown reason");
-						}
-						else
-						{
-							StartGame(response.port, response.id!);
-						}
-					});
 				}
 			}
 		}
@@ -209,9 +201,8 @@ public partial class RoomWindow : Window
 }
 public class RoomWindowViewModel : INotifyPropertyChanged
 {
-	public RoomWindowViewModel(string name)
+	public RoomWindowViewModel()
 	{
-		playerName = name;
 		LoadDecks();
 	}
 
@@ -230,20 +221,6 @@ public class RoomWindowViewModel : INotifyPropertyChanged
 	private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 	{
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-	}
-
-	private string playerName;
-	public string PlayerName
-	{
-		get => playerName;
-		set
-		{
-			if(value != playerName)
-			{
-				playerName = value;
-				NotifyPropertyChanged();
-			}
-		}
 	}
 
 	private List<string> decknames = [];

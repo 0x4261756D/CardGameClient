@@ -338,8 +338,7 @@ public partial class DeckEditWindow : Window
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
 		string? newName = NewDeckName.Text;
-		if(newName == null || newName == "") return;
-		Request(new DeckPackets.ListUpdateRequest
+		Send(new DeckPackets.ListUpdateRequest
 		(
 			deck: new DeckPackets.Deck
 			{
@@ -369,7 +368,7 @@ public partial class DeckEditWindow : Window
 		CardStruct? quest = questBox == null ? null : (CardStruct?)questBox.DataContext;
 		Control[] children = new Control[DecklistPanel.Children.Count];
 		DecklistPanel.Children.CopyTo(children, 0);
-		Request(new DeckPackets.ListUpdateRequest
+		Send(new DeckPackets.ListUpdateRequest
 		(
 			deck: new DeckPackets.Deck
 			{
@@ -383,7 +382,7 @@ public partial class DeckEditWindow : Window
 	}
 	public void DeleteDeckClick(object? sender, RoutedEventArgs args)
 	{
-		Request(new DeckPackets.ListUpdateRequest
+		Send(new DeckPackets.ListUpdateRequest
 		(
 			deck: new DeckPackets.Deck
 			{

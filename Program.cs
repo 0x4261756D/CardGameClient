@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
@@ -45,7 +45,7 @@ class Program
 		if(File.Exists(configPath))
 		{
 			couldReadConfig = true;
-			platformConfig = JsonSerializer.Deserialize<PlatformClientConfig>(File.ReadAllText(configPath), NetworkingConstants.jsonIncludeOption)!;
+			platformConfig = JsonSerializer.Deserialize<PlatformClientConfig>(File.ReadAllText(configPath), GenericConstants.platformClientConfigSerialization)!;
 			if(Environment.OSVersion.Platform == PlatformID.Unix)
 			{
 				config = platformConfig.linux!;
@@ -81,7 +81,7 @@ class Program
 			}
 		}
 
-		BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+		_ = BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 	}
 
 	// Avalonia configuration, don't remove; also used by visual designer.
@@ -113,7 +113,7 @@ class Program
 			{
 				platformConfig.windows = config;
 			}
-			File.WriteAllText(configPath, JsonSerializer.Serialize(platformConfig, options: NetworkingConstants.jsonPrettyOption).Replace("  ", "\t"));
+			File.WriteAllText(configPath, JsonSerializer.Serialize(platformConfig, options: GenericConstants.platformClientConfigSerialization).Replace("  ", "\t"));
 		}
 	}
 }

@@ -28,13 +28,26 @@ public partial class ServerWindow : Window
 	}
 	private void UpdateRoomList()
 	{
-		(byte, byte[]?)? payload = ServerTryRequest(new ServerPackets.RoomsRequest());
-		if(payload == null)
+		if(ServerAddressBox.Text == null)
 		{
 			new ErrorPopup("Connection to the server timed out").Show();
 			return;
 		}
-		((ServerWindowViewModel)DataContext!).ServerRooms = Functions.DeserializePayload<ServerPackets.RoomsResponse>(payload.Value).rooms;
+		try
+		{
+			using TcpClient updateClient = new(ServerAddressBox.Text, 7043);
+			using NetworkStream updateStream = updateClient.GetStream();
+			updateStream.Write(Functions.GeneratePayload(new ServerPackets.RoomsRequest()));
+			((ServerWindowViewModel)DataContext!).ServerRooms = Functions.ReceivePacket<ServerPackets.RoomsResponse>(updateStream).rooms;
+		}
+		catch(Exception ex)
+		{
+			if(IsVisible)
+			{
+				new ErrorPopup(ex.Message).Show();
+			}
+			return;
+		}
 	}
 	private void HostClick(object? sender, RoutedEventArgs args)
 	{
@@ -50,7 +63,7 @@ public partial class ServerWindow : Window
 		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload.Value);
 		if(response.success)
 		{
-			RoomWindow w = new(ServerAddressBox.Text, client, playerName)
+			RoomWindow w = new(address: ServerAddressBox.Text, client: client)
 			{
 				WindowState = WindowState,
 			};
@@ -92,7 +105,7 @@ public partial class ServerWindow : Window
 		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload.Value);
 		if(response.success)
 		{
-			new RoomWindow(ServerAddressBox.Text, client, ((ServerWindowViewModel)DataContext!).PlayerName, opponentName: targetNameText)
+			new RoomWindow(ServerAddressBox.Text, client, opponentName: targetNameText)
 			{
 				WindowState = WindowState,
 			}.Show();
@@ -102,12 +115,6 @@ public partial class ServerWindow : Window
 		{
 			new ErrorPopup(response.reason!).ShowDialog(this);
 		}
-	}
-
-	private (byte, byte[]?)? ServerTryRequest(PacketContent request)
-	{
-		if(ServerAddressBox.Text == null) return null;
-		return UIUtils.TryRequest(request, ServerAddressBox.Text, 7043, this);
 	}
 }
 public class ServerWindowViewModel : INotifyPropertyChanged

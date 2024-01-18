@@ -71,7 +71,7 @@ public partial class ReplaysWindow : Window
 			return;
 		}
 		string text = File.ReadAllText(FilePathBox.Text);
-		replay = JsonSerializer.Deserialize<Replay>(text, NetworkingConstants.jsonIncludeOption);
+		replay = JsonSerializer.Deserialize<Replay>(text, GenericConstants.replaySerialization);
 		if(replay == null)
 		{
 			_ = new ErrorPopup($"Could not open replay {FilePathBox.Text}");
