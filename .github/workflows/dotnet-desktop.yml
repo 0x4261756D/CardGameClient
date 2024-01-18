@@ -19,7 +19,7 @@ jobs:
   fix-formatting:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     env:
       Test_Project_Path: CardGameClient                           # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
