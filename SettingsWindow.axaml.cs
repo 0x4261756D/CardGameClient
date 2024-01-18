@@ -54,7 +54,9 @@ public class SettingsWindowViewModel : INotifyPropertyChanged
 {
 	public event PropertyChangedEventHandler? PropertyChanged;
 
+	#pragma warning disable IDE0051
 	private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+	#pragma warning restore IDE0051
 	{
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}

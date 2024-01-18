@@ -42,8 +42,14 @@ public partial class ViewCardsWindow : Window
 	}
 	private void CardPointerEntered(object? sender, PointerEventArgs args)
 	{
-		if(sender == null) return;
-		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+		if(sender == null)
+		{
+			return;
+		}
+		if(args.KeyModifiers.HasFlag(KeyModifiers.Control))
+		{
+			return;
+		}
 		showCardAction((CardStruct)((Control)sender).DataContext!);
 	}
 	public void CloseClick(object? sender, RoutedEventArgs args)

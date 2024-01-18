@@ -51,16 +51,15 @@ public partial class ServerWindow : Window
 	}
 	private void HostClick(object? sender, RoutedEventArgs args)
 	{
-		if(ServerAddressBox.Text == null) return;
-		string playerName = ((ServerWindowViewModel)DataContext!).PlayerName;
-		TcpClient client = new(ServerAddressBox.Text, 7043);
-		client.GetStream().Write(Functions.GeneratePayload(new ServerPackets.CreateRequest(name: playerName)));
-		(byte, byte[]?)? payload = Functions.ReceiveRawPacket(client.GetStream());
-		if(payload == null)
+		if(ServerAddressBox.Text == null)
 		{
 			return;
 		}
-		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload.Value);
+		string playerName = ((ServerWindowViewModel)DataContext!).PlayerName;
+		TcpClient client = new(ServerAddressBox.Text, 7043);
+		client.GetStream().Write(Functions.GeneratePayload(new ServerPackets.CreateRequest(name: playerName)));
+		(byte, byte[]?) payload = Functions.ReceiveRawPacket(client.GetStream());
+		ServerPackets.CreateResponse response = Functions.DeserializePayload<ServerPackets.CreateResponse>(payload);
 		if(response.success)
 		{
 			RoomWindow w = new(address: ServerAddressBox.Text, client: client)
@@ -75,7 +74,7 @@ public partial class ServerWindow : Window
 		}
 		else
 		{
-			new ErrorPopup(response.reason!).ShowDialog(this);
+			_ = new ErrorPopup(response.reason!).ShowDialog(this);
 		}
 	}
 	void RefreshClick(object? sender, RoutedEventArgs args)
@@ -84,25 +83,27 @@ public partial class ServerWindow : Window
 	}
 	private void ServerListSelectionChanged(object? sender, SelectionChangedEventArgs args)
 	{
-		if(sender == null || ServerAddressBox.Text == null || PlayerNameBox.Text == null || PlayerNameBox.Text == "" ||
-			args.RemovedItems.Count > 0 || args.AddedItems.Count != 1) return;
+		if(sender == null || ServerAddressBox.Text == null || PlayerNameBox.Text == null || string.IsNullOrEmpty(PlayerNameBox.Text) ||
+			args.RemovedItems.Count > 0 || args.AddedItems.Count != 1)
+		{
+			return;
+		}
+
 		args.Handled = true;
 		ServerListBox.SelectedItem = null;
 		string? targetNameText = (string?)args.AddedItems[0];
-		if(targetNameText == null) return;
+		if(targetNameText == null)
+		{
+			return;
+		}
 		TcpClient client = new(ServerAddressBox.Text, 7043);
 		client.GetStream().Write(Functions.GeneratePayload(new ServerPackets.JoinRequest
 		(
 			name: PlayerNameBox.Text,
 			targetName: targetNameText
 		)));
-		(byte, byte[]?)? payload = Functions.ReceiveRawPacket(client.GetStream());
-		if(payload == null)
-		{
-			new ErrorPopup("Connection to the server timed out").ShowDialog(this);
-			return;
-		}
-		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload.Value);
+		(byte, byte[]?) payload = Functions.ReceiveRawPacket(client.GetStream());
+		ServerPackets.JoinResponse response = Functions.DeserializePayload<ServerPackets.JoinResponse>(payload);
 		if(response.success)
 		{
 			new RoomWindow(ServerAddressBox.Text, client, opponentName: targetNameText)
@@ -113,7 +114,7 @@ public partial class ServerWindow : Window
 		}
 		else
 		{
-			new ErrorPopup(response.reason!).ShowDialog(this);
+			_ = new ErrorPopup(response.reason!).ShowDialog(this);
 		}
 	}
 }

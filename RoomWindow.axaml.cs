@@ -18,7 +18,7 @@ public partial class RoomWindow : Window
 	private readonly Task networkTask;
 	private readonly TcpClient client;
 	private readonly string address;
-	public bool closed = false;
+	public bool closed;
 	public RoomWindow(string address, TcpClient client, string? opponentName = null)
 	{
 		this.client = client;
@@ -61,7 +61,7 @@ public partial class RoomWindow : Window
 		{
 			if(client.Connected)
 			{
-				(byte, byte[]?)? payload = await Task.Run(() => Functions.TryReceiveRawPacket(client.GetStream(), 100));
+				(byte, byte[]?)? payload = await Task.Run(() => Functions.TryReceiveRawPacket(client.GetStream(), 100)).ConfigureAwait(false);
 				if(payload != null)
 				{
 					await Dispatcher.UIThread.InvokeAsync(() => HandlePacket(payload.Value));
@@ -131,14 +131,14 @@ public partial class RoomWindow : Window
 	}
 	private async void TryStartClick(object? sender, RoutedEventArgs args)
 	{
-		if(DeckSelectBox.SelectedItem is not string deckname || deckname == "")
+		if(DeckSelectBox.SelectedItem is not string deckname || string.IsNullOrEmpty(deckname))
 		{
-			await new ErrorPopup("No deck selected").ShowDialog(this);
+			await new ErrorPopup("No deck selected").ShowDialog(this).ConfigureAwait(false);
 			return;
 		}
-		if(OpponentNameBlock.Text is null || OpponentNameBlock.Text == "")
+		if(OpponentNameBlock.Text is null or "")
 		{
-			await new ErrorPopup("You have no opponent").ShowDialog(this);
+			await new ErrorPopup("You have no opponent").ShowDialog(this).ConfigureAwait(false);
 			return;
 		}
 		(byte, byte[]?)? responseBytes = UIUtils.TryRequest(new DeckPackets.ListRequest(name: deckname),
@@ -150,7 +150,7 @@ public partial class RoomWindow : Window
 		string[]? decklist = Functions.DeserializePayload<DeckPackets.ListResponse>(responseBytes.Value).deck.ToString()?.Split('\n');
 		if(decklist == null)
 		{
-			await new ErrorPopup("Deck list could not be loaded properly").ShowDialog(this);
+			await new ErrorPopup("Deck list could not be loaded properly").ShowDialog(this).ConfigureAwait(false);
 			return;
 		}
 		try
@@ -184,11 +184,11 @@ public partial class RoomWindow : Window
 	public async void StartGame(int port, string id)
 	{
 		TcpClient duelClient = new();
-		await duelClient.ConnectAsync(address, port);
+		await duelClient.ConnectAsync(address, port).ConfigureAwait(false);
 		byte[] idBytes = Encoding.UTF8.GetBytes(id);
-		await duelClient.GetStream().WriteAsync(idBytes);
+		await duelClient.GetStream().WriteAsync(idBytes).ConfigureAwait(false);
 		byte[] playerIndex = new byte[1];
-		await duelClient.GetStream().ReadExactlyAsync(playerIndex, 0, 1);
+		await duelClient.GetStream().ReadExactlyAsync(playerIndex, 0, 1).ConfigureAwait(false);
 		await Dispatcher.UIThread.InvokeAsync(() =>
 		{
 			new DuelWindow(playerIndex[0], duelClient)

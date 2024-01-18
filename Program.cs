@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
@@ -18,7 +18,7 @@ class Program
 		server_address: "127.0.0.1", animation_delay_in_ms: 120, theme: ClientConfig.ThemeVariant.Default,
 		picture_path: "./pictures/");
 	private static Process? core;
-	private static bool couldReadConfig = false;
+	private static bool couldReadConfig;
 
 	// Initialization code. Don't use any Avalonia, third-party APIs or any
 	// SynchronizationContext-reliant code before AppMain is called: things aren't initialized

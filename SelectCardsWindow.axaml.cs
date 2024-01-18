@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
@@ -18,7 +16,7 @@ namespace CardGameClient;
 public partial class SelectCardsWindow : Window
 {
 	private readonly Stream stream;
-	private bool shouldReallyClose = false;
+	private bool shouldReallyClose;
 	private readonly Action<CardStruct> showCardAction;
 
 	public SelectCardsWindow(string text, int amount, CardStruct[] cards, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
@@ -65,14 +63,23 @@ public partial class SelectCardsWindow : Window
 
 	private void CardPointerEntered(object? sender, PointerEventArgs args)
 	{
-		if(sender == null) return;
-		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+		if(sender == null)
+		{
+			return;
+		}
+		if(args.KeyModifiers.HasFlag(KeyModifiers.Control))
+		{
+			return;
+		}
 		showCardAction((CardStruct)((Control)sender).DataContext!);
 	}
 
 	public void CardSelectionChanged(object? sender, SelectionChangedEventArgs args)
 	{
-		if(sender == null) return;
+		if(sender == null)
+		{
+			return;
+		}
 		int newCount = ((ListBox)sender).SelectedItems?.Count ?? 0;
 		((SelectedCardViewModel)DataContext!).SelectedCount = newCount;
 	}

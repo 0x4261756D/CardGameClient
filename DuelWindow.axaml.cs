@@ -25,10 +25,10 @@ public partial class DuelWindow : Window
 	private readonly Task networkingTask;
 	private readonly Flyout optionsFlyout = new();
 	readonly Queue<DuelPackets.FieldUpdateRequest> fieldUpdateQueue = new();
-	private Task? fieldUpdateTask = null;
-	private bool closing = false;
-	private bool shouldEnablePassButtonAfterUpdate = false;
-	private Window? windowToShowAfterUpdate = null;
+	private Task? fieldUpdateTask;
+	private bool closing;
+	private bool shouldEnablePassButtonAfterUpdate;
+	private Window? windowToShowAfterUpdate;
 	private readonly ObservableCollection<TextBlock> activities = [];
 
 	// This constructor creates a completely empty duel window with no interaction possibility
@@ -59,7 +59,10 @@ public partial class DuelWindow : Window
 
 	private void FieldInitialized(object? sender, EventArgs e)
 	{
-		if(sender == null) return;
+		if(sender == null)
+		{
+			return;
+		}
 		Panel panel = (Panel)sender;
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{
@@ -101,7 +104,7 @@ public partial class DuelWindow : Window
 		{
 			if(client.Connected)
 			{
-				(byte, byte[]?)? payload = await Task.Run(() => TryReceiveRawPacket((NetworkStream)stream, 100));
+				(byte, byte[]?)? payload = await Task.Run(() => TryReceiveRawPacket((NetworkStream)stream, 100)).ConfigureAwait(false);
 				if(payload != null && await Dispatcher.UIThread.InvokeAsync(() => HandlePacket(payload.Value)))
 				{
 					return;
@@ -109,7 +112,7 @@ public partial class DuelWindow : Window
 				if(fieldUpdateQueue.Count > 0)
 				{
 					hasPassed = false;
-					if(fieldUpdateTask == null || (fieldUpdateTask != null && fieldUpdateTask.IsCompleted))
+					if(fieldUpdateTask == null || fieldUpdateTask.IsCompleted)
 					{
 						await Dispatcher.UIThread.InvokeAsync(() =>
 						{
@@ -382,11 +385,17 @@ public partial class DuelWindow : Window
 		PhaseBlock.Text = (request.markedZone != null) ? "Battle Phase" : "Main Phase";
 		if(request.ownField.shownInfo.card != null && request.ownField.shownInfo.description != null)
 		{
-			TextBlock text = new() { Text = $"You: {request.ownField.shownInfo.card?.name}: {request.ownField.shownInfo.description}" };
+			TextBlock text = new() { Text = $"You: {request.ownField.shownInfo.card.name}: {request.ownField.shownInfo.description}" };
 			text.PointerEntered += (sender, args) =>
 			{
-				if(sender == null) return;
-				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+				if(sender == null)
+				{
+					return;
+				}
+				if(args.KeyModifiers.HasFlag(KeyModifiers.Control))
+				{
+					return;
+				}
 				if(request.ownField.shownInfo.card != null)
 				{
 					UIUtils.CardHover(CardImagePanel, CardTextBlock, request.ownField.shownInfo.card, false);
@@ -396,11 +405,17 @@ public partial class DuelWindow : Window
 		}
 		if(request.oppField.shownInfo.card != null && request.oppField.shownInfo.description != null)
 		{
-			TextBlock text = new() { Text = $"Opp: {request.oppField.shownInfo.card?.name}: {request.oppField.shownInfo.description}" };
+			TextBlock text = new() { Text = $"Opp: {request.oppField.shownInfo.card.name}: {request.oppField.shownInfo.description}" };
 			text.PointerEntered += (sender, args) =>
 			{
-				if(sender == null) return;
-				if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+				if(sender == null)
+				{
+					return;
+				}
+				if(args.KeyModifiers.HasFlag(KeyModifiers.Control))
+				{
+					return;
+				}
 				if(request.oppField.shownInfo.card != null)
 				{
 					UIUtils.CardHover(CardImagePanel, CardTextBlock, request.oppField.shownInfo.card, false);
@@ -516,8 +531,14 @@ public partial class DuelWindow : Window
 		b.Height = OwnField.Bounds.Height - 10;
 		b.PointerEntered += (sender, args) =>
 		{
-			if(sender == null) return;
-			if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+			if(sender == null)
+			{
+				return;
+			}
+			if(args.KeyModifiers.HasFlag(KeyModifiers.Control))
+			{
+				return;
+			}
 			UIUtils.CardHover(CardImagePanel, CardTextBlock, card, false);
 		};
 		if(card.controller == playerIndex)

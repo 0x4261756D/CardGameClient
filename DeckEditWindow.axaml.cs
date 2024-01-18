@@ -87,15 +87,24 @@ public partial class DeckEditWindow : Window
 
 	private void CardHover(object? sender, PointerEventArgs args)
 	{
-		if(sender == null) return;
-		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+		if(sender == null)
+		{
+			return;
+		}
+		if(args.KeyModifiers.HasFlag(KeyModifiers.Control))
+		{
+			return;
+		}
 		CardStruct c = (CardStruct)((Control)sender).DataContext!;
 		UIUtils.CardHover(CardImagePanel, CardTextBlock, c, true);
 	}
 
 	public void SidebarSelectionChanged(object? sender, SelectionChangedEventArgs args)
 	{
-		if(sender == null || cardpool == null || args.AddedItems.Count != 1 || args.RemovedItems.Count != 0) return;
+		if(sender == null || cardpool == null || args.AddedItems.Count != 1 || args.RemovedItems.Count != 0)
+		{
+			return;
+		}
 		args.Handled = true;
 		SidebarList.SelectedItem = null;
 		Viewbox v = (Viewbox)args.AddedItems[0]!;
@@ -153,7 +162,7 @@ public partial class DeckEditWindow : Window
 		};
 		double xAmount = 10;
 		double yAmount = Math.Ceiling(GameConstants.DECK_SIZE / xAmount);
-		DecklistBorder.GetObservable(BoundsProperty).Subscribe(new AnonymousObserver<Rect>((a) =>
+		_ = DecklistBorder.GetObservable(BoundsProperty).Subscribe(new AnonymousObserver<Rect>((a) =>
 		{
 			b.Width = (a.Width - DecklistBorder.BorderThickness.Left - DecklistBorder.BorderThickness.Right - 20) / xAmount - (b.BorderThickness.Left + b.BorderThickness.Right);
 			b.Height = (a.Height - DecklistBorder.BorderThickness.Top - DecklistBorder.BorderThickness.Bottom - 20) / yAmount - (b.BorderThickness.Top + b.BorderThickness.Bottom);
@@ -167,8 +176,11 @@ public partial class DeckEditWindow : Window
 	}
 	private void RemoveCardClick(object? sender, RoutedEventArgs args)
 	{
-		if(sender == null) return;
-		DecklistPanel.Children.Remove((Button)sender);
+		if(sender == null)
+		{
+			return;
+		}
+		_ = DecklistPanel.Children.Remove((Button)sender);
 		DeckSizeBlock.Text = DecklistPanel.Children.Count.ToString();
 	}
 	private void MoveClick(object? sender, RoutedEventArgs e)
@@ -197,7 +209,10 @@ public partial class DeckEditWindow : Window
 		submitButton.Click += (_, _) =>
 		{
 			int newInd = (int)numeric.Value;
-			if(newInd < 0 || newInd > max) return;
+			if(newInd < 0 || newInd > max)
+			{
+				return;
+			}
 			DecklistPanel.Children.RemoveAt(index);
 			DecklistPanel.Children.Insert(newInd, button);
 		};
@@ -226,9 +241,9 @@ public partial class DeckEditWindow : Window
 	}
 	public void DeckSelectionChanged(object sender, SelectionChangedEventArgs args)
 	{
-		if(args != null && args.AddedItems.Count > 0 && args.AddedItems[0] != null && DecklistPanel.Bounds.Width > 0 && DecklistPanel.Bounds.Height > 0)
+		if(args.AddedItems.Count > 0 && DecklistPanel.Bounds.Width > 0 && DecklistPanel.Bounds.Height > 0)
 		{
-			Program.config.last_deck_name = args?.AddedItems[0]?.ToString();
+			Program.config.last_deck_name = args.AddedItems[0]?.ToString();
 			LoadDeck(args?.AddedItems[0]!.ToString()!);
 		}
 	}
@@ -338,6 +353,10 @@ public partial class DeckEditWindow : Window
 	public void CreateNewDeckClick(object? sender, RoutedEventArgs args)
 	{
 		string? newName = NewDeckName.Text;
+		if(newName is null or "")
+		{
+			return;
+		}
 		Send(new DeckPackets.ListUpdateRequest
 		(
 			deck: new DeckPackets.Deck
@@ -353,7 +372,7 @@ public partial class DeckEditWindow : Window
 	}
 	public void SaveDeckClick(object? sender, RoutedEventArgs args)
 	{
-		if(DeckSelectBox.SelectedItem == null || (string)DeckSelectBox.SelectedItem == "")
+		if(DeckSelectBox.SelectedItem == null || string.IsNullOrEmpty((string)DeckSelectBox.SelectedItem))
 		{
 			return;
 		}
@@ -389,7 +408,7 @@ public partial class DeckEditWindow : Window
 				name = (string)DeckSelectBox.SelectedItem!
 			}
 		), Program.config.deck_edit_url.address, Program.config.deck_edit_url.port);
-		((DeckEditWindowViewModel)DataContext!).Decknames.Remove((string)DeckSelectBox.SelectedItem!);
+		_ = ((DeckEditWindowViewModel)DataContext!).Decknames.Remove((string)DeckSelectBox.SelectedItem!);
 		DeckSelectBox.SelectedIndex = DeckSelectBox.ItemCount - 1;
 	}
 	public void SidebarTextInput(object? sender, KeyEventArgs args)
@@ -417,7 +436,7 @@ public class DeckEditWindowViewModel : INotifyPropertyChanged
 		{
 			Decknames.Add(name);
 		}
-		classes.Remove(GameConstants.PlayerClass.UNKNOWN);
+		_ = classes.Remove(GameConstants.PlayerClass.UNKNOWN);
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;

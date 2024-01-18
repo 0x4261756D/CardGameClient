@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
@@ -19,7 +18,7 @@ namespace CardGameClient;
 public partial class CustomSelectCardsWindow : Window
 {
 	private readonly Stream stream;
-	private bool shouldReallyClose = false;
+	private bool shouldReallyClose;
 	private readonly Action<CardStruct> showCardAction;
 
 	public CustomSelectCardsWindow(string text, CardStruct[] cards, bool initialState, Stream stream, int playerIndex, Action<CardStruct> showCardAction)
@@ -57,8 +56,14 @@ public partial class CustomSelectCardsWindow : Window
 	}
 	private void CardPointerEntered(object? sender, PointerEventArgs args)
 	{
-		if(sender == null) return;
-		if(args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+		if(sender == null)
+		{
+			return;
+		}
+		if(args.KeyModifiers.HasFlag(KeyModifiers.Control))
+		{
+			return;
+		}
 		showCardAction((CardStruct)((Control)sender).DataContext!);
 	}
 

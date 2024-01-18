@@ -8,7 +8,7 @@ namespace CardGameClient;
 public partial class YesNoWindow : Window
 {
 	readonly Stream stream;
-	private bool shouldReallyClose = false;
+	private bool shouldReallyClose;
 	public YesNoWindow(string description, Stream stream)
 	{
 		InitializeComponent();

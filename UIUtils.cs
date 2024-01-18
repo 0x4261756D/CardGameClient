@@ -39,7 +39,7 @@ public class UIUtils
 		{
 			if(window != null && window.IsVisible)
 			{
-				new ErrorPopup(ex.Message).ShowDialog(window);
+				new ErrorPopup(ex.Message).Show(window);
 			}
 			else
 			{
@@ -52,12 +52,15 @@ public class UIUtils
 	public static async Task<string?> SelectFileAsync(Window window, string title = "Select file", bool allowMultiple = false)
 	{
 		TopLevel? topLevel = TopLevel.GetTopLevel(window);
-		if(topLevel == null) return null;
+		if(topLevel == null)
+		{
+			return null;
+		}
 		IReadOnlyList<IStorageFile> files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
 		{
 			Title = title,
 			AllowMultiple = allowMultiple,
-		});
+		}).ConfigureAwait(false);
 		if(files.Count > 0)
 		{
 			return files[0].Path.AbsolutePath;
@@ -67,17 +70,22 @@ public class UIUtils
 	public static async Task<string?> SelectAndReadFileAsync(Window window, string title = "Select file", bool allowMultiple = false)
 	{
 		TopLevel? topLevel = TopLevel.GetTopLevel(window);
-		if(topLevel == null) return null;
+		if(topLevel == null)
+		{
+			return null;
+		}
 		IReadOnlyList<IStorageFile> files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
 		{
 			Title = title,
 			AllowMultiple = allowMultiple,
-		});
+		}).ConfigureAwait(false);
 		if(files.Count > 0)
 		{
+			#pragma warning disable CA2007
 			await using Stream stream = await files[0].OpenReadAsync();
+			#pragma warning restore CA2007
 			using StreamReader reader = new(stream);
-			return await reader.ReadToEndAsync();
+			return await reader.ReadToEndAsync().ConfigureAwait(false);
 		}
 		return null;
 	}
@@ -303,7 +311,7 @@ public class UIUtils
 					}
 				}
 			}
-			block.SetValue(ToolTip.IsOpenProperty, false);
+			_ = block.SetValue(ToolTip.IsOpenProperty, false);
 		}
 	}
 }

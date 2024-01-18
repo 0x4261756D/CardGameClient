@@ -7,7 +7,7 @@ namespace CardGameClient;
 
 public partial class SelectZoneWindow : Window
 {
-	private bool shouldReallyClose = false;
+	private bool shouldReallyClose;
 
 	public SelectZoneWindow(bool[] options, Stream stream)
 	{
