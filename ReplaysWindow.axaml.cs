@@ -36,7 +36,7 @@ public partial class ReplaysWindow : Window
 
 	public async void SelectFileClick(object sender, RoutedEventArgs args)
 	{
-		FilePathBox.Text = await UIUtils.SelectFileAsync(this, "Select Replay").ConfigureAwait(false);
+		FilePathBox.Text = await UIUtils.SelectFileAsync(this, "Select Replay").ConfigureAwait(true);
 	}
 
 	public void ToEndClick(object sender, RoutedEventArgs args)

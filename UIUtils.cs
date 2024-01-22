@@ -60,7 +60,7 @@ public class UIUtils
 		{
 			Title = title,
 			AllowMultiple = allowMultiple,
-		}).ConfigureAwait(false);
+		}).ConfigureAwait(true);
 		if(files.Count > 0)
 		{
 			return files[0].Path.AbsolutePath;
@@ -78,14 +78,14 @@ public class UIUtils
 		{
 			Title = title,
 			AllowMultiple = allowMultiple,
-		}).ConfigureAwait(false);
+		}).ConfigureAwait(true);
 		if(files.Count > 0)
 		{
 			#pragma warning disable CA2007
 			await using Stream stream = await files[0].OpenReadAsync();
 			#pragma warning restore CA2007
 			using StreamReader reader = new(stream);
-			return await reader.ReadToEndAsync().ConfigureAwait(false);
+			return await reader.ReadToEndAsync().ConfigureAwait(true);
 		}
 		return null;
 	}
