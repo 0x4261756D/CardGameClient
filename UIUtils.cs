@@ -81,9 +81,9 @@ public class UIUtils
 		}).ConfigureAwait(true);
 		if(files.Count > 0)
 		{
-			#pragma warning disable CA2007
+#pragma warning disable CA2007
 			await using Stream stream = await files[0].OpenReadAsync();
-			#pragma warning restore CA2007
+#pragma warning restore CA2007
 			using StreamReader reader = new(stream);
 			return await reader.ReadToEndAsync().ConfigureAwait(true);
 		}
