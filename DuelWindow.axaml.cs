@@ -234,16 +234,16 @@ public partial class DuelWindow : Window
 						return;
 					}
 					StackPanel p = new();
-					foreach(string text in response.options)
+					foreach(CardAction action in response.options)
 					{
 						Button option = new()
 						{
 							Content = new TextBlock
 							{
-								Text = text
+								Text = action.description
 							}
 						};
-						option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+						option.Click += (_, _) => SendCardOption(action, response.uid, response.location);
 						p.Children.Add(option);
 					}
 					optionsFlyout.Content = p;
@@ -263,16 +263,16 @@ public partial class DuelWindow : Window
 				if(((CardStruct)b.DataContext).uid == response.uid)
 				{
 					StackPanel p = new();
-					foreach(string text in response.options)
+					foreach(CardAction action in response.options)
 					{
 						Button option = new()
 						{
 							Content = new TextBlock
 							{
-								Text = text
+								Text = action.description
 							}
 						};
-						option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+						option.Click += (_, _) => SendCardOption(action, response.uid, response.location);
 						p.Children.Add(option);
 					}
 					optionsFlyout.Content = p;
@@ -284,16 +284,16 @@ public partial class DuelWindow : Window
 		else if(response.location == GameConstants.Location.Quest)
 		{
 			StackPanel p = new();
-			foreach(string text in response.options)
+			foreach(CardAction action in response.options)
 			{
 				Button option = new()
 				{
 					Content = new TextBlock
 					{
-						Text = text
+						Text = action.description
 					}
 				};
-				option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+				option.Click += (_, _) => SendCardOption(action, response.uid, response.location);
 				p.Children.Add(option);
 			}
 			optionsFlyout.Content = p;
@@ -302,16 +302,16 @@ public partial class DuelWindow : Window
 		else if(response.location == GameConstants.Location.Ability)
 		{
 			StackPanel p = new();
-			foreach(string text in response.options)
+			foreach(CardAction action in response.options)
 			{
 				Button option = new()
 				{
 					Content = new TextBlock
 					{
-						Text = text
+						Text = action.description
 					}
 				};
-				option.Click += (_, _) => SendCardOption(text, response.uid, response.location);
+				option.Click += (_, _) => SendCardOption(action, response.uid, response.location);
 				p.Children.Add(option);
 			}
 			optionsFlyout.Content = p;
@@ -331,13 +331,13 @@ public partial class DuelWindow : Window
 	{
 		TrySend(GeneratePayload(new DuelPackets.ViewGraveRequest(opponent: false)));
 	}
-	private void SendCardOption(string option, int uid, GameConstants.Location location)
+	private void SendCardOption(CardAction action, int uid, GameConstants.Location location)
 	{
 		TrySend(GeneratePayload(new DuelPackets.SelectOptionRequest
 		(
-			desc: option,
 			location: location,
-			uid: uid
+			uid: uid,
+			cardAction: action
 		)));
 	}
 
