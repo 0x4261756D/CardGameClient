@@ -284,34 +284,36 @@ public class UIUtils
 	}
 	private static void CardTextHover(object? sender, PointerEventArgs e)
 	{
-		if(sender != null)
+		if(sender is null)
 		{
-			TextBlock block = (TextBlock)sender;
-			if(block.Text != null)
+			return;
+		}
+		TextBlock block = (TextBlock)sender;
+		if(block.Text is not null)
+		{
+			TextLayout layout = block.TextLayout;
+			Point pointerPoint = e.GetPosition(block);
+			TextHitTestResult hitTestResult = layout.HitTestPoint(pointerPoint);
+			int position = hitTestResult.TextPosition;
+			if(position >= 0 && position < block.Text.Length)
 			{
-				TextLayout layout = block.TextLayout;
-				Point pointerPoint = e.GetPosition(block);
-				TextHitTestResult hitTestResult = layout.HitTestPoint(pointerPoint);
-				int position = hitTestResult.TextPosition;
-				if(position >= 0 && position < block.Text.Length)
+				int start = block.Text.LastIndexOf('[', position);
+				int end = block.Text.IndexOf(']', position);
+				if(start >= 0 && end >= 0 && end < block.Text.Length && start != end)
 				{
-					int start = block.Text.LastIndexOf('[', position);
-					int end = block.Text.IndexOf(']', position);
-					if(start >= 0 && end >= 0 && end < block.Text.Length && start != end)
+					string possibleKeyword = block.Text.Substring(start + 1, end - start - 1);
+					if(!possibleKeyword.Contains(' ') && ClientConstants.KeywordDescriptions.TryGetValue(possibleKeyword, out string? value))
 					{
-						string possibleKeyword = block.Text.Substring(start + 1, end - start - 1);
-						if(!possibleKeyword.Contains(' ') && ClientConstants.KeywordDescriptions.TryGetValue(possibleKeyword, out string? value))
-						{
-							string description = value;
-							ToolTip.SetTip(block, description);
-							ToolTip.SetIsOpen(block, true);
-							ToolTip.SetShowDelay(block, 0);
-							return;
-						}
+						string description = value;
+						ToolTip.SetTip(block, description);
+						ToolTip.SetIsOpen(block, true);
+						ToolTip.SetShowDelay(block, 0);
+						return;
 					}
 				}
 			}
-			_ = block.SetValue(ToolTip.IsOpenProperty, false);
 		}
+		_ = block.SetValue(ToolTip.IsOpenProperty, false);
 	}
+
 }
