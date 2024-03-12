@@ -1,5 +1,7 @@
 # CardGameClient
 
+# Moved to [here](https://github.com/0x4261756DCardGame)
+
 A client for a card game.
 
 ## Prerequisites
